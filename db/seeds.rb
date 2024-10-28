@@ -7,3 +7,25 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+Game.destroy_all
+Player.destroy_all
+
+game = Game.create!(
+  game_state: {
+    deck: [].tap do |cards|
+      %w[♠︎ ♣︎ ♥︎ ♦︎].each do |suit|
+        %w[A 2 3 4 5 6 7 8 9 10 J Q K].each do |rank|
+          cards << { suit:, rank: }
+        end
+      end
+      2.times { cards << { suit: '*', rank: '*' } }
+    end,
+    discard_pile: []
+  },
+  turn: 1
+)
+
+Player.create!(name: 'Katy', game:)
+Player.create!(name: 'Cobb', game:)
+
+puts 'Seeded game and players'

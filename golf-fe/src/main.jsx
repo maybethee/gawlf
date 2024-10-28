@@ -5,6 +5,6 @@ import Game from "./Game.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Game gameId={1} />
+    <Game gameId={2} playerId={1} />
   </StrictMode>
 );
