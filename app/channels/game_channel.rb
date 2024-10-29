@@ -26,13 +26,32 @@ class GameChannel < ApplicationCable::Channel
 
     Rails.logger.debug("drawn card: #{drawn_card}")
 
+    @game.game_state['drawn_card'] = drawn_card
     @game.game_state['deck'].delete(drawn_card)
+
     @game.save
 
     broadcast_message = {
       action: 'card_drawn',
       player_id: @player.id,
-      card: drawn_card,
+      card: @game.reload.game_state['drawn_card'],
+      game_state: @game.reload.game_state
+    }
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
+  def discard_card(data)
+    @game = Game.find(params[:game_id])
+    @player = Player.find(data['player_id'])
+
+    @game.game_state['discard_pile'] << @game.game_state['drawn_card']
+    @game.save
+
+    broadcast_message = {
+      action: 'card_discarded',
+      player_id: @player.id,
+      discard_pile: @game.reload.game_state['discard_pile'],
       game_state: @game.reload.game_state
     }
 

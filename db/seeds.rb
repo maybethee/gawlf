@@ -7,8 +7,11 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-Game.destroy_all
-Player.destroy_all
+Player.delete_all
+Game.delete_all
+
+ActiveRecord::Base.connection.reset_pk_sequence!('games')
+ActiveRecord::Base.connection.reset_pk_sequence!('players')
 
 game = Game.create!(
   game_state: {
@@ -20,7 +23,8 @@ game = Game.create!(
       end
       2.times { cards << { suit: '*', rank: '*' } }
     end,
-    discard_pile: []
+    discard_pile: [],
+    drawn_card: '',
   },
   turn: 1
 )
