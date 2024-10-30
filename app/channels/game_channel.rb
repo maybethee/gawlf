@@ -58,6 +58,42 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
+  def setup_hole
+    Player.all.each do |player|
+      deal_hand(player)
+    end
+
+    broadcast_message = {
+      action: 'hole_setup',
+      players: Player.all,
+      game_state: @game.reload.game_state
+    }
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
+  def deal_hand(player)
+    @game = Game.find(params[:game_id])
+    @player = player
+
+    6.times do
+      drawn_card = @game.game_state['deck'].sample
+      @player.add_card(drawn_card)
+      @game.game_state['deck'].delete(drawn_card)
+    end
+
+    @game.save
+
+    # broadcast_message = {
+    #   action: 'hand_dealt',
+    #   player_id: @player.id,
+    #   player_hand: @player.reload.hand,
+    #   game_state: @game.reload.game_state
+    # }
+
+    # ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
   end

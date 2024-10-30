@@ -24,12 +24,12 @@ game = Game.create!(
       2.times { cards << { suit: '*', rank: '*' } }
     end,
     discard_pile: [],
-    drawn_card: '',
+    drawn_card: {},
   },
   turn: 1
 )
 
-Player.create!(name: 'Katy', game:)
-Player.create!(name: 'Cobb', game:)
+Player.create!(name: 'Katy', game:, hand: [])
+Player.create!(name: 'Cobb', game:, hand: [])
 
 puts 'Seeded game and players'

@@ -5,6 +5,7 @@ function Game({ gameId, playerId }) {
   const [gameState, setGameState] = useState(null);
   const [drawnCard, setDrawnCard] = useState(null);
   const [discardPile, setDiscardPile] = useState([]);
+  const [playerHands, setPlayerHands] = useState([]);
   const subscriptionRef = useRef(null);
 
   // console.log("Game ID:", gameId);
@@ -17,16 +18,20 @@ function Game({ gameId, playerId }) {
         },
         received(data) {
           console.log("Received data:", data);
-          if (data.action === "card_drawn" && data.player_id === playerId) {
+          if (data.action === "card_drawn") {
             setDrawnCard(data.card);
 
             setGameState(data.game_state);
-          } else if (
-            data.action === "card_discarded" &&
-            data.player_id === playerId
-          ) {
+          } else if (data.action === "card_discarded") {
             setDiscardPile(data.game_state.discard_pile);
             setGameState(data.game_state);
+          } else if (data.action === "hole_setup") {
+            const hands = [];
+            data.players.forEach((player) => {
+              hands.push({ id: player.id, hand: player.hand });
+            });
+            setPlayerHands(hands);
+            setGameState(data.gameState);
           } else {
             setGameState(data.game_state);
           }
@@ -61,16 +66,22 @@ function Game({ gameId, playerId }) {
     subscriptionRef.current.perform("discard_card", { player_id: playerId });
   };
 
+  const handleSetupHole = () => {
+    subscriptionRef.current.perform("setup_hole");
+  };
+
   return (
     <div style={{ marginLeft: "3rem" }}>
       <div>Game State: {JSON.stringify(gameState)}</div>
       <button onClick={handleDrawCard}>Draw from Deck</button>
       <button onClick={handleDiscardCard}>Discard</button>
+      <button onClick={handleSetupHole}>Hole Start</button>
+
       {drawnCard && (
         <div>
           <div>
             <p>Drawn card:</p>
-            <p>{`${drawnCard.rank} of ${drawnCard.suit}`}</p>
+            <p>{`${drawnCard.rank}${drawnCard.suit}`}</p>
           </div>
         </div>
       )}
@@ -78,10 +89,29 @@ function Game({ gameId, playerId }) {
         <p>Discard Pile:</p>
         <p>
           {discardPile.map((card) => {
-            return `${card.rank} of ${card.suit}, `;
+            return `${card.rank}${card.suit}, `;
           })}
         </p>
       </div>
+
+      {playerHands && (
+        <div>
+          <p>Player Hands:</p>
+          {playerHands.map((playerHand) => (
+            <div key={playerHand.id}>
+              <p className="playerName">Player {playerHand.id}</p>
+              <div className="hand">
+                {playerHand.hand.map((card) => (
+                  <div
+                    className="card"
+                    key={`${card.rank}${card.suit}`}
+                  >{`${card.rank}${card.suit}`}</div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
