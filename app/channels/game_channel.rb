@@ -83,15 +83,23 @@ class GameChannel < ApplicationCable::Channel
     end
 
     @game.save
+  end
 
-    # broadcast_message = {
-    #   action: 'hand_dealt',
-    #   player_id: @player.id,
-    #   player_hand: @player.reload.hand,
-    #   game_state: @game.reload.game_state
-    # }
+  def swap_card
+    @game = Game.find(params[:game_id])
 
-    # ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+    next_player_id = @game.next_player.id
+    @game.update!(current_player_id: next_player_id)
+
+    Rails.logger.debug("current player id: #{@game.current_player_id}")
+
+    broadcast_message = {
+      action: 'card_swapped',
+      current_player_id: @game.reload.current_player_id,
+      game_state: @game.reload.game_state
+    }
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
   def unsubscribed

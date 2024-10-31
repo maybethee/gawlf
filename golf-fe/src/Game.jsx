@@ -6,6 +6,7 @@ function Game({ gameId, playerId }) {
   const [drawnCard, setDrawnCard] = useState(null);
   const [discardPile, setDiscardPile] = useState([]);
   const [playerHands, setPlayerHands] = useState([]);
+  const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const subscriptionRef = useRef(null);
 
   // console.log("Game ID:", gameId);
@@ -31,6 +32,10 @@ function Game({ gameId, playerId }) {
               hands.push({ id: player.id, hand: player.hand });
             });
             setPlayerHands(hands);
+            setGameState(data.gameState);
+          } else if (data.action === "card_swapped") {
+            console.log(data.current_player_id);
+            setCurrentPlayerId(data.current_player_id);
             setGameState(data.gameState);
           } else {
             setGameState(data.game_state);
@@ -70,12 +75,23 @@ function Game({ gameId, playerId }) {
     subscriptionRef.current.perform("setup_hole");
   };
 
+  const handleSwapCard = () => {
+    subscriptionRef.current.perform("swap_card");
+  };
+
+  const isPlayerTurn = currentPlayerId === playerId;
+
   return (
     <div style={{ marginLeft: "3rem" }}>
       <div>Game State: {JSON.stringify(gameState)}</div>
       <button onClick={handleDrawCard}>Draw from Deck</button>
       <button onClick={handleDiscardCard}>Discard</button>
       <button onClick={handleSetupHole}>Hole Start</button>
+      <button onClick={handleSwapCard}>Swap Card (next player's turn)</button>
+
+      <h2 className={isPlayerTurn ? "your_turn" : "not_your_turn"}>
+        Green if your turn!
+      </h2>
 
       {drawnCard && (
         <div>

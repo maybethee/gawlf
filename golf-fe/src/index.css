@@ -72,5 +72,10 @@ button:focus-visible {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.card {
+.your_turn {
+  color: green;
+}
+
+.not_your_turn {
+  color: grey;
 }

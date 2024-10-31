@@ -7,8 +7,8 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-Player.delete_all
-Game.delete_all
+Game.destroy_all
+Player.destroy_all
 
 ActiveRecord::Base.connection.reset_pk_sequence!('games')
 ActiveRecord::Base.connection.reset_pk_sequence!('players')
@@ -24,12 +24,13 @@ game = Game.create!(
       2.times { cards << { suit: '*', rank: '*' } }
     end,
     discard_pile: [],
-    drawn_card: {},
+    drawn_card: {}
   },
   turn: 1
 )
 
-Player.create!(name: 'Katy', game:, hand: [])
-Player.create!(name: 'Cobb', game:, hand: [])
+katy = Player.create!(name: 'Katy', game:, hand: [])
+cobb = Player.create!(name: 'Cobb', game:, hand: [])
 
+game.update!(current_player_id: katy.id)
 puts 'Seeded game and players'
