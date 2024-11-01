@@ -1,2 +1,13 @@
-class ApplicationController < ActionController::API
+class ApplicationController < ActionController::Base
+  layout 'application'
+
+  protected
+
+  def after_sign_in_path_for(_resource)
+    'http://localhost:5173'
+  end
+
+  def after_sign_up_path_for(_resource)
+    'http://localhost:5173'
+  end
 end

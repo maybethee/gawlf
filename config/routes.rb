@@ -1,7 +1,10 @@
-Rails.application.routes.draw do 
+Rails.application.routes.draw do
+  devise_for :users
   mount ActionCable.server => '/cable'
   resources :games
-  
+
+  get '/current_user', to: 'sessions#show'
+
   namespace :api do
     namespace :v1 do
       post '/games/:game_id/draw_card', to: 'games#draw_card'
