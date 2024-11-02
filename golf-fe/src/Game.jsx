@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import UserBtns from "./UserBtns";
 import cable from "./cable";
 
 function Game({ gameId, playerId }) {
@@ -83,8 +82,7 @@ function Game({ gameId, playerId }) {
   const isPlayerTurn = currentPlayerId === playerId;
 
   return (
-    <div style={{ marginLeft: "3rem" }}>
-      <UserBtns />
+    <div>
       <div>Game State: {JSON.stringify(gameState)}</div>
       <button onClick={handleDrawCard}>Draw from Deck</button>
       <button onClick={handleDiscardCard}>Discard</button>

@@ -10,3 +10,12 @@ export const getCurrentUser = async () => {
     return null;
   }
 };
+
+export const createLobby = async () => {
+  const response = await fetch("http://localhost:3000/create_lobby");
+  const data = await response.json();
+
+  console.log(data.message);
+  console.log("fetched data.game_id:", data.game_id);
+  return data.game_id;
+};

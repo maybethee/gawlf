@@ -1,10 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import Game from "./Game.jsx";
+
+import App from "./App";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Game gameId={1} playerId={1} />
+    <App />
   </StrictMode>
 );

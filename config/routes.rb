@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :games
 
   get '/current_user', to: 'sessions#show'
+  get '/create_lobby', to: 'lobbies#create_lobby'
 
   namespace :api do
     namespace :v1 do
