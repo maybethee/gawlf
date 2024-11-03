@@ -9,9 +9,24 @@
 #   end
 Game.destroy_all
 Player.destroy_all
+User.destroy_all
 
 ActiveRecord::Base.connection.reset_pk_sequence!('games')
 ActiveRecord::Base.connection.reset_pk_sequence!('players')
+ActiveRecord::Base.connection.reset_pk_sequence!('users')
+
+# user1 = User.new
+# user1.email = 'charlie@gmail.com'
+# user1.encrypted_password = 'pass'
+# user1.save!
+
+# user2 = User.new
+# user2.email = 'tofu@gmail.com'
+# user2.encrypted_password = 'pass'
+# user2.save!
+
+User.create!(email: 'charlie@gmail.com', password: 'password', password_confirmation: 'password')
+User.create!(email: 'tofu@gmail.com', password: 'password', password_confirmation: 'password')
 
 game = Game.create!(
   game_state: {

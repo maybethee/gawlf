@@ -1,10 +1,14 @@
 Rails.application.routes.draw do
   devise_for :users
   mount ActionCable.server => '/cable'
-  resources :games
+  resources :games do
+    resources :players, only: %i[index create]
+  end
 
   get '/current_user', to: 'sessions#show'
-  get '/create_lobby', to: 'lobbies#create_lobby'
+  get '/create_lobby', to: 'lobbies#create'
+  post '/join_lobby', to: 'lobbies#join'
+  post '/lobby_status', to: 'lobbies#status'
 
   namespace :api do
     namespace :v1 do
