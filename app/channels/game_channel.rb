@@ -102,6 +102,19 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
+  def fetch_joined_players
+    @game = Game.find(params[:game_id])
+
+    Rails.logger.debug("Game's players: #{@game.reload.players.inspect}")
+
+    broadcast_message = {
+      action: 'players_fetched',
+      player_names: @game.reload.players
+    }
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
   end

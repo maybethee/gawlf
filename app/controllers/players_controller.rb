@@ -16,10 +16,12 @@ class PlayersController < ApplicationController
 
   # POST /players
   def create
+    Rails.logger.debug "Received parameters: #{params.inspect}"
     @game = Game.find(params[:game_id])
     @player = @game.players.create(player_params)
 
     if @player.save
+     ActionCable.server.broadcast("game_#{@game.id}", { action: "player_joined", player: @player })
       render json: @player, status: :created
     else
       render json: @player.errors, status: :unprocessable_entity
@@ -48,6 +50,6 @@ class PlayersController < ApplicationController
   end
 
   def player_params
-    params.require(:player).permit(:name, :game_id, :hand)
+    params.require(:player).permit(:name, :game_id, hand: [])
   end
 end

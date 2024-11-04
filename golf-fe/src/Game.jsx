@@ -9,7 +9,6 @@ function Game({ gameId, playerId }) {
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const subscriptionRef = useRef(null);
 
-  // console.log("Game ID:", gameId);
   useEffect(() => {
     subscriptionRef.current = cable.subscriptions.create(
       { channel: "GameChannel", game_id: gameId },
@@ -83,9 +82,6 @@ function Game({ gameId, playerId }) {
 
   return (
     <div>
-      <div>
-        <h3>Players in Lobby:</h3>
-      </div>
       <div>Game State: {JSON.stringify(gameState)}</div>
       <button onClick={handleDrawCard}>Draw from Deck</button>
       <button onClick={handleDiscardCard}>Discard</button>

@@ -19,13 +19,28 @@ export const createPlayer = async (playerName, gameId) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: playerName, game_id: gameId, hand: [] }),
+      body: JSON.stringify({
+        player: { name: playerName, game_id: gameId, hand: [] },
+      }),
     }
   );
   const data = await response.json();
   console.log("created player:", data);
 
   return data;
+};
+
+export const fetchJoinedPlayers = async (gameId) => {
+  const response = await fetch(
+    `http://localhost:3000/games/${gameId}/players`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.json();
 };
 
 export const createLobby = async () => {
