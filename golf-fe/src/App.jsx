@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import UserBtns from "./UserBtns";
+// import UserBtns from "./UserBtns";
 import Game from "./Game";
 import {
   createLobby,
@@ -46,6 +46,8 @@ function App() {
           if (data.action === "player_joined") {
             console.log(data.player);
             setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
+          } else if (data.action === "hole_setup") {
+            setLobbyStatus("active");
           }
         },
         disconnected() {
@@ -82,6 +84,7 @@ function App() {
     const data = await joinLobby(lobbyCodeInput);
     console.log("lobby data:", data);
     setGameId(data.game_id);
+    setLobbyStatus("waiting");
   };
 
   const handleCreatePlayer = async (e) => {
@@ -92,60 +95,73 @@ function App() {
     setPlayerId(data.id);
   };
 
+  const handleSetupHole = () => {
+    subscriptionRef.current.perform("setup_hole");
+  };
+
+  if (lobbyStatus !== "active")
+    return (
+      <div>
+        {!gameId ? (
+          <div>
+            <button onClick={handleCreateLobby}>Create Lobby</button>
+            <form onSubmit={handleJoinLobby} action="">
+              <label htmlFor="">
+                Lobby Code:
+                <input
+                  type="text"
+                  value={lobbyCodeInput}
+                  onChange={(e) => {
+                    setLobbyCodeInput(e.target.value);
+                  }}
+                />
+              </label>
+              <button>Join Lobby</button>
+            </form>
+            <br />
+            <br />
+          </div>
+        ) : (
+          <div>
+            <h2>{lobbyCode}</h2>
+            <p>Share this code to let others join this game</p>
+
+            <form onSubmit={handleCreatePlayer} action="">
+              <label htmlFor="">
+                Enter Name:
+                <input
+                  type="text"
+                  value={playerName}
+                  onChange={(e) => {
+                    setPlayerName(e.target.value);
+                  }}
+                />
+              </label>
+              <button>Join Game</button>
+            </form>
+          </div>
+        )}
+
+        {joinedPlayers.length ? (
+          <div>
+            <h3>Players in Game:</h3>
+            <ul>
+              {joinedPlayers.map((player) => {
+                return <li key={player.name}>{player.name}</li>;
+              })}
+            </ul>
+          </div>
+        ) : null}
+
+        <button onClick={handleSetupHole}>Hole Start</button>
+      </div>
+    );
+
   return (
     <div style={{ marginLeft: "3rem" }}>
-      <UserBtns />
+      {/* <UserBtns /> */}
 
-      <button onClick={handleCreateLobby}>Create Lobby</button>
-      <form onSubmit={handleJoinLobby} action="">
-        <label htmlFor="">
-          Lobby Code:
-          <input
-            type="text"
-            value={lobbyCodeInput}
-            onChange={(e) => {
-              setLobbyCodeInput(e.target.value);
-            }}
-          />
-        </label>
-        <button>Join Lobby</button>
-      </form>
-      <br />
-      <br />
-
-      {lobbyCode && (
-        <div>
-          <h2>{lobbyCode}</h2>
-          <p>Share this code to let others join this game</p>
-        </div>
-      )}
-
-      <form onSubmit={handleCreatePlayer} action="">
-        <label htmlFor="">
-          Enter Name:
-          <input
-            type="text"
-            value={playerName}
-            onChange={(e) => {
-              setPlayerName(e.target.value);
-            }}
-          />
-        </label>
-        <button>Join Game</button>
-      </form>
-
-      {joinedPlayers.length ? (
-        <div>
-          <h3>Players in Game:</h3>
-          <ul>
-            {joinedPlayers.map((player) => {
-              return <li key={player.name}>{player.name}</li>;
-            })}
-          </ul>
-        </div>
-      ) : null}
-
-      {gameId && <Game gameId={gameId} playerId={playerId} />}
+      <Game gameId={gameId} playerId={playerId} />
     </div>
   );
 }

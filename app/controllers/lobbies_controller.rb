@@ -16,7 +16,6 @@ class LobbiesController < ApplicationController
     Rails.logger.debug("passed lobby code: #{params[:lobby_code]}")
     Rails.logger.debug("found game: #{game.inspect}")
 
-
     if game && game.status == 'waiting'
       render json: { message: 'Joined lobby', game_id: game.id }
     else
@@ -27,6 +26,11 @@ class LobbiesController < ApplicationController
   def status
     game = Game.find_by(lobby_code: params[:lobby_code])
     render json: { status: game.status }
+  end
+
+  def update_status
+    game = Game.find_by(lobby_code: params[:lobby_code])
+    game.update
   end
 
   private

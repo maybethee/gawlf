@@ -24,6 +24,7 @@ function Game({ gameId, playerId }) {
             setGameState(data.game_state);
           } else if (data.action === "card_discarded") {
             setDiscardPile(data.game_state.discard_pile);
+            setCurrentPlayerId(data.current_player_id);
             setGameState(data.game_state);
           } else if (data.action === "hole_setup") {
             const hands = [];
@@ -31,11 +32,12 @@ function Game({ gameId, playerId }) {
               hands.push({ id: player.id, hand: player.hand });
             });
             setPlayerHands(hands);
+            setCurrentPlayerId(data.current_player_id);
             setGameState(data.gameState);
           } else if (data.action === "card_swapped") {
             console.log(data.current_player_id);
             setCurrentPlayerId(data.current_player_id);
-            setGameState(data.gameState);
+            setGameState(data.game_state);
           } else {
             setGameState(data.game_state);
           }
@@ -79,6 +81,10 @@ function Game({ gameId, playerId }) {
   };
 
   const isPlayerTurn = currentPlayerId === playerId;
+
+  if (!gameId) {
+    return null;
+  }
 
   return (
     <div>

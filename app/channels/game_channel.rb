@@ -19,7 +19,6 @@ class GameChannel < ApplicationCable::Channel
     Rails.logger.debug("GameChannel draw_card called with data: #{data}")
     logger.info "Broadcasting to game_#{params[:game_id]} with data: #{data}"
 
-    @game = Game.find(params[:game_id])
     @player = Player.find(data['player_id'])
 
     drawn_card = @game.game_state['deck'].sample
@@ -41,52 +40,8 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
-  def discard_card(data)
-    @game = Game.find(params[:game_id])
-    @player = Player.find(data['player_id'])
-
-    @game.game_state['discard_pile'] << @game.game_state['drawn_card']
-    @game.save
-
-    broadcast_message = {
-      action: 'card_discarded',
-      player_id: @player.id,
-      discard_pile: @game.reload.game_state['discard_pile'],
-      game_state: @game.reload.game_state
-    }
-
-    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
-  end
-
-  def setup_hole
-    Player.all.each do |player|
-      deal_hand(player)
-    end
-
-    broadcast_message = {
-      action: 'hole_setup',
-      players: Player.all,
-      game_state: @game.reload.game_state
-    }
-
-    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
-  end
-
-  def deal_hand(player)
-    @game = Game.find(params[:game_id])
-    @player = player
-
-    6.times do
-      drawn_card = @game.game_state['deck'].sample
-      @player.add_card(drawn_card)
-      @game.game_state['deck'].delete(drawn_card)
-    end
-
-    @game.save
-  end
-
   def swap_card
-    @game = Game.find(params[:game_id])
+    # @game = Game.find(params[:game_id])
 
     next_player_id = @game.next_player.id
     @game.update!(current_player_id: next_player_id)
@@ -100,6 +55,62 @@ class GameChannel < ApplicationCable::Channel
     }
 
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
+  def discard_card(data)
+    @player = Player.find(data['player_id'])
+    
+    @game.game_state['discard_pile'] << @game.game_state['drawn_card']
+    @game.save
+    
+    next_player_id = @game.next_player.id
+    @game.update!(current_player_id: next_player_id)
+
+    broadcast_message = {
+      action: 'card_discarded',
+      player_id: @player.id,
+      discard_pile: @game.reload.game_state['discard_pile'],
+      current_player_id: @game.reload.current_player_id,
+      game_state: @game.reload.game_state
+    }
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
+  def setup_hole
+    @game.players.all.each do |player|
+      deal_hand(player)
+    end
+
+    # eventually, have some sort of way for players to decide who goes first manually? and if none chosen then pick random?
+
+    random_player_id = @game.players.pluck(:id).sample
+
+    Rails.logger.debug("random player: #{random_player_id.inspect}")
+    @game.update!(current_player_id: random_player_id)
+
+    # Rails.logger.debug("updated game: #{@game.inspect}")
+    broadcast_message = {
+      action: 'hole_setup',
+      players: @game.reload.players.all,
+      current_player_id: @game.reload.current_player_id,
+      game_state: @game.reload.game_state
+    }
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
+  def deal_hand(player)
+    # @game = Game.find(params[:game_id])
+    @player = player
+
+    6.times do
+      drawn_card = @game.game_state['deck'].sample
+      @player.add_card(drawn_card)
+      @game.game_state['deck'].delete(drawn_card)
+    end
+
+    @game.save
   end
 
   def fetch_joined_players
