@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-// import UserBtns from "./UserBtns";
+import { useState, useEffect } from "react";
 import Game from "./Game";
 import {
   createLobby,
@@ -8,19 +7,23 @@ import {
   createPlayer,
   fetchJoinedPlayers,
 } from "./api";
-import cable from "./cable";
+import { useGame } from "./context/useGame";
 
 function App() {
-  const [gameId, setGameId] = useState(null);
+  const {
+    gameId,
+    setGameId,
+    joinedPlayers,
+    setJoinedPlayers,
+    lobbyStatus,
+    setLobbyStatus,
+    performAction,
+  } = useGame();
 
-  const [joinedPlayers, setJoinedPlayers] = useState([]);
   const [playerName, setPlayerName] = useState("");
   const [playerId, setPlayerId] = useState(null);
   const [lobbyCode, setLobbyCode] = useState("");
-  const [lobbyStatus, setLobbyStatus] = useState("");
   const [lobbyCodeInput, setLobbyCodeInput] = useState("");
-
-  const subscriptionRef = useRef(null);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -34,47 +37,14 @@ function App() {
     };
 
     fetchPlayers();
-
-    subscriptionRef.current = cable.subscriptions.create(
-      { channel: "GameChannel", game_id: gameId },
-      {
-        connected() {
-          console.log("Connected to GameChannel for game ID:", gameId);
-        },
-        received(data) {
-          console.log("Received data:", data);
-          if (data.action === "player_joined") {
-            console.log(data.player);
-            setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
-          } else if (data.action === "hole_setup") {
-            setLobbyStatus("active");
-          }
-        },
-        disconnected() {
-          console.log("Disconnected from GameChannel for game ID:", gameId);
-        },
-        rejected() {
-          console.log("Subscription rejected for game ID:", gameId);
-        },
-      }
-    );
-    console.log("Subscription created in Lobby:", subscriptionRef.current);
-
-    return () => {
-      if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
-        console.log("Unsubscribed from GameChannel for game ID:", gameId);
-      }
-    };
   }, [gameId]);
 
   const handleCreateLobby = async () => {
     const data = await createLobby();
-    const generatedGameId = data.game_id;
-    const createdLobbyCode = data.lobby_code;
-    console.log("create lobby game id:", generatedGameId);
-    setGameId(generatedGameId);
-    setLobbyCode(createdLobbyCode);
+    console.log("create lobby game id:", data.game_id);
+
+    setGameId(data.game_id);
+    setLobbyCode(data.lobby_code);
     setLobbyStatus("waiting");
   };
 
@@ -96,7 +66,7 @@ function App() {
   };
 
   const handleSetupHole = () => {
-    subscriptionRef.current.perform("setup_hole");
+    performAction("setup_hole");
   };
 
   if (lobbyStatus !== "active")
@@ -159,8 +129,6 @@ function App() {
 
   return (
     <div style={{ marginLeft: "3rem" }}>
-      {/* <UserBtns /> */}
-
       <Game gameId={gameId} playerId={playerId} />
     </div>
   );
