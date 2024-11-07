@@ -24,6 +24,7 @@ function App() {
   const [playerId, setPlayerId] = useState(null);
   const [lobbyCode, setLobbyCode] = useState("");
   const [lobbyCodeInput, setLobbyCodeInput] = useState("");
+  const [isLobbyHost, setIsLobbyHost] = useState(false);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -46,6 +47,7 @@ function App() {
     setGameId(data.game_id);
     setLobbyCode(data.lobby_code);
     setLobbyStatus("waiting");
+    setIsLobbyHost(true);
   };
 
   const handleJoinLobby = async (e) => {
@@ -54,6 +56,7 @@ function App() {
     const data = await joinLobby(lobbyCodeInput);
     console.log("lobby data:", data);
     setGameId(data.game_id);
+    setLobbyCode(lobbyCodeInput);
     setLobbyStatus("waiting");
   };
 
@@ -96,19 +99,21 @@ function App() {
             <h2>{lobbyCode}</h2>
             <p>Share this code to let others join this game</p>
 
-            <form onSubmit={handleCreatePlayer} action="">
-              <label htmlFor="">
-                Enter Name:
-                <input
-                  type="text"
-                  value={playerName}
-                  onChange={(e) => {
-                    setPlayerName(e.target.value);
-                  }}
-                />
-              </label>
-              <button>Join Game</button>
-            </form>
+            {!playerId && (
+              <form onSubmit={handleCreatePlayer} action="">
+                <label htmlFor="">
+                  Enter Name:
+                  <input
+                    type="text"
+                    value={playerName}
+                    onChange={(e) => {
+                      setPlayerName(e.target.value);
+                    }}
+                  />
+                </label>
+                <button>Join Game</button>
+              </form>
+            )}
           </div>
         )}
 
@@ -123,7 +128,11 @@ function App() {
           </div>
         ) : null}
 
-        <button onClick={handleSetupHole}>Hole Start</button>
+        {isLobbyHost ? (
+          <button onClick={handleSetupHole}>Hole Start</button>
+        ) : (
+          <p>Waiting for host to start game</p>
+        )}
       </div>
     );
 

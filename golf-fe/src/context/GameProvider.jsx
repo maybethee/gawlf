@@ -7,6 +7,7 @@ export const GameProvider = ({ children }) => {
   const [joinedPlayers, setJoinedPlayers] = useState([]);
   const [gameState, setGameState] = useState(null);
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
+  const [currentPlayerName, setCurrentPlayerName] = useState("");
   const [drawnCard, setDrawnCard] = useState(null);
   const [discardPile, setDiscardPile] = useState([]);
   const [playerHands, setPlayerHands] = useState([]);
@@ -57,20 +58,23 @@ export const GameProvider = ({ children }) => {
     } else if (data.action === "card_discarded") {
       setDiscardPile(data.game_state.discard_pile);
       setCurrentPlayerId(data.current_player_id);
+      setCurrentPlayerName(data.current_player_name);
       setGameState(data.game_state);
     } else if (data.action === "hole_setup") {
       console.log("received action in Game.jsx");
       const hands = [];
       data.players.forEach((player) => {
-        hands.push({ id: player.id, hand: player.hand });
+        hands.push({ id: player.id, name: player.name, hand: player.hand });
       });
       setPlayerHands(hands);
       setCurrentPlayerId(data.current_player_id);
+      setCurrentPlayerName(data.current_player_name);
       setGameState(data.gameState);
       setLobbyStatus("active");
     } else if (data.action === "card_swapped") {
       console.log(data.current_player_id);
       setCurrentPlayerId(data.current_player_id);
+      setCurrentPlayerName(data.current_player_name);
       setGameState(data.game_state);
     }
   };
@@ -93,6 +97,7 @@ export const GameProvider = ({ children }) => {
         discardPile,
         playerHands,
         currentPlayerId,
+        currentPlayerName,
         performAction,
       }}
     >

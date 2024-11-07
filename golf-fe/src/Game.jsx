@@ -7,10 +7,10 @@ function Game({ gameId, playerId }) {
     discardPile,
     playerHands,
     currentPlayerId,
+    currentPlayerName,
     performAction,
   } = useGame();
 
-  // maybe change playerId to currentPlayerId
   const handleDrawCard = () => {
     console.log("Drawing card for player:", playerId);
 
@@ -36,13 +36,21 @@ function Game({ gameId, playerId }) {
   return (
     <div>
       <div>Game State: {JSON.stringify(gameState)}</div>
-      <button onClick={handleDrawCard}>Draw from Deck</button>
-      <button onClick={handleDiscardCard}>Discard</button>
-      <button onClick={handleSwapCard}>Swap Card (next player's turn)</button>
 
-      <h2 className={isPlayerTurn ? "your_turn" : "not_your_turn"}>
-        Green if your turn!
-      </h2>
+      {isPlayerTurn ? (
+        <div>
+          <button onClick={handleDrawCard}>Draw from Deck</button>
+          <button onClick={handleDiscardCard}>Discard</button>
+          <button onClick={handleSwapCard}>
+            Swap Card (next player's turn)
+          </button>
+        </div>
+      ) : (
+        // change to name
+        <h3 style={{ color: "orange" }}>
+          Waiting for {currentPlayerName}'s turn
+        </h3>
+      )}
 
       {drawnCard && (
         <div>
@@ -63,10 +71,10 @@ function Game({ gameId, playerId }) {
 
       {playerHands && (
         <div>
-          <p>Player Hands:</p>
+          <h3>Player Hands:</h3>
           {playerHands.map((playerHand) => (
             <div key={playerHand.id}>
-              <p className="playerName">Player {playerHand.id}</p>
+              <p className="playerName">{playerHand.name}</p>
               <div className="hand">
                 {playerHand.hand.map((card) => (
                   <div

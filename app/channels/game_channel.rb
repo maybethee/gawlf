@@ -48,9 +48,12 @@ class GameChannel < ApplicationCable::Channel
 
     Rails.logger.debug("current player id: #{@game.current_player_id}")
 
+    current_player_name = Player.find_by(id: @game.current_player_id).name
+
     broadcast_message = {
       action: 'card_swapped',
       current_player_id: @game.reload.current_player_id,
+      current_player_name:,
       game_state: @game.reload.game_state
     }
 
@@ -59,18 +62,21 @@ class GameChannel < ApplicationCable::Channel
 
   def discard_card(data)
     @player = Player.find(data['player_id'])
-    
+
     @game.game_state['discard_pile'] << @game.game_state['drawn_card']
     @game.save
-    
+
     next_player_id = @game.next_player.id
     @game.update!(current_player_id: next_player_id)
+
+    current_player_name = Player.find_by(id: @game.current_player_id).name
 
     broadcast_message = {
       action: 'card_discarded',
       player_id: @player.id,
       discard_pile: @game.reload.game_state['discard_pile'],
       current_player_id: @game.reload.current_player_id,
+      current_player_name:,
       game_state: @game.reload.game_state
     }
 
@@ -89,11 +95,14 @@ class GameChannel < ApplicationCable::Channel
     Rails.logger.debug("random player: #{random_player_id.inspect}")
     @game.update!(current_player_id: random_player_id)
 
+    current_player_name = Player.find_by(id: @game.current_player_id).name
+
     # Rails.logger.debug("updated game: #{@game.inspect}")
     broadcast_message = {
       action: 'hole_setup',
       players: @game.reload.players.all,
       current_player_id: @game.reload.current_player_id,
+      current_player_name:,
       game_state: @game.reload.game_state
     }
 
