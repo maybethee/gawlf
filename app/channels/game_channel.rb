@@ -109,6 +109,31 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
+  def reveal_card(data)
+    @player = Player.find(data['player_id'])
+
+    Rails.logger.debug("player hand: #{@player.hand.inspect}")
+
+    selected_card = @player.hand.find do |card|
+      card['rank'] == data['card_rank'] && card['suit'] == data['card_suit']
+    end
+
+    Rails.logger.debug("selected card: #{selected_card.inspect}")
+
+    selected_card['visibility'] = 'revealed'
+
+    @player.save
+
+    broadcast_message = {
+      action: 'card_revealed',
+      players: @game.reload.players,
+      revealed_card: selected_card,
+      game_state: @game.reload.game_state
+    }
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
   def deal_hand(player)
     # @game = Game.find(params[:game_id])
     @player = player

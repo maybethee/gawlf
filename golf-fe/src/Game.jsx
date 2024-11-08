@@ -1,4 +1,5 @@
 import { useGame } from "./context/useGame";
+import { useState, useEffect } from "react";
 
 function Game({ gameId, playerId }) {
   const {
@@ -10,6 +11,9 @@ function Game({ gameId, playerId }) {
     currentPlayerName,
     performAction,
   } = useGame();
+
+  const [initializingGame, setInitializingGame] = useState(true);
+  const [selectedCards, setSelectedCards] = useState([]);
 
   const handleDrawCard = () => {
     console.log("Drawing card for player:", playerId);
@@ -27,6 +31,59 @@ function Game({ gameId, playerId }) {
     performAction("swap_card");
   };
 
+  const handleCardClick = (card) => {
+    if (initializingGame) {
+      selectCard(card);
+    } else {
+      // rework swap card action to get necessary card data
+      console.log("swapping cards would happen now");
+      // performAction("swap_card");
+    }
+  };
+
+  const selectCard = (card) => {
+    setSelectedCards((prevCards) => {
+      if (
+        prevCards.some(
+          (selectedCard) =>
+            selectedCard.rank === card.rank && selectedCard.suit === card.suit
+        )
+      ) {
+        return prevCards;
+      }
+
+      if (prevCards.length === 2) {
+        const updatedCards = prevCards.slice(1);
+        updatedCards.push(card);
+        return updatedCards;
+      }
+
+      return [...prevCards, card];
+    });
+  };
+
+  useEffect(() => {
+    console.log("current selected cards:", selectedCards);
+  }, [selectedCards]);
+
+  const revealSelectedCards = () => {
+    if (selectedCards.length < 2) {
+      console.log("you must select 2 cards to reveal!");
+      return;
+    } else {
+      console.log("selected cards:", selectedCards);
+      console.log("revealing cards...");
+      selectedCards.forEach((card) => {
+        performAction("reveal_card", {
+          player_id: playerId,
+          card_rank: card.rank,
+          card_suit: card.suit,
+        });
+      });
+      setInitializingGame(false);
+    }
+  };
+
   const isPlayerTurn = currentPlayerId === playerId;
 
   if (!gameId) {
@@ -37,6 +94,15 @@ function Game({ gameId, playerId }) {
     <div>
       <div>Game State: {JSON.stringify(gameState)}</div>
 
+      {initializingGame && (
+        <div>
+          <h3>
+            click on two cards to select them and then click Reveal to flip them
+            over
+          </h3>
+          <button onClick={revealSelectedCards}>Reveal</button>
+        </div>
+      )}
       {isPlayerTurn ? (
         <div>
           <button onClick={handleDrawCard}>Draw from Deck</button>
@@ -80,7 +146,12 @@ function Game({ gameId, playerId }) {
                   <div
                     className="card"
                     key={`${card.rank}${card.suit}`}
-                  >{`${card.rank}${card.suit}`}</div>
+                    onClick={() => handleCardClick(card)}
+                  >
+                    {card.visibility === "hidden"
+                      ? "??"
+                      : `${card.rank}${card.suit}`}
+                  </div>
                 ))}
               </div>
             </div>

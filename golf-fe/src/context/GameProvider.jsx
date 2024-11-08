@@ -51,30 +51,51 @@ export const GameProvider = ({ children }) => {
 
     if (data.action === "player_joined") {
       console.log(data.player);
+
       setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
+      //
     } else if (data.action === "card_drawn") {
       setDrawnCard(data.card);
       setGameState(data.game_state);
+      //
     } else if (data.action === "card_discarded") {
       setDiscardPile(data.game_state.discard_pile);
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
       setGameState(data.game_state);
+      //
     } else if (data.action === "hole_setup") {
       console.log("received action in Game.jsx");
       const hands = [];
+
       data.players.forEach((player) => {
         hands.push({ id: player.id, name: player.name, hand: player.hand });
       });
+
       setPlayerHands(hands);
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
       setGameState(data.gameState);
       setLobbyStatus("active");
+      //
     } else if (data.action === "card_swapped") {
       console.log(data.current_player_id);
+
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
+      setGameState(data.game_state);
+      //
+    } else if (data.action === "card_revealed") {
+      console.log(data.revealed_card);
+
+      const hands = [];
+
+      data.players.forEach((player) => {
+        hands.push({ id: player.id, name: player.name, hand: player.hand });
+      });
+
+      setPlayerHands(hands);
+
       setGameState(data.game_state);
     }
   };

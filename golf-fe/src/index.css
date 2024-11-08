@@ -79,3 +79,11 @@ button:focus-visible {
 .not_your_turn {
   color: grey;
 }
+
+.card {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  border: 2px purple solid;
+  margin: 0.3rem;
+}
