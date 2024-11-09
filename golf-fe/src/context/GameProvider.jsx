@@ -12,6 +12,8 @@ export const GameProvider = ({ children }) => {
   const [discardPile, setDiscardPile] = useState([]);
   const [playerHands, setPlayerHands] = useState([]);
   const [lobbyStatus, setLobbyStatus] = useState("");
+  const [initializingGame, setInitializingGame] = useState(true);
+  const [selectedCards, setSelectedCards] = useState([]);
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
@@ -86,16 +88,17 @@ export const GameProvider = ({ children }) => {
       setGameState(data.game_state);
       //
     } else if (data.action === "card_revealed") {
-      console.log(data.revealed_card);
+      console.log("Revealed card data:", data.revealed_card);
+      console.log("Players data:", data.players);
 
-      const hands = [];
+      const hands = data.players.map((player) => ({
+        id: player.id,
+        name: player.name,
+        hand: player.hand,
+      }));
 
-      data.players.forEach((player) => {
-        hands.push({ id: player.id, name: player.name, hand: player.hand });
-      });
-
+      console.log("Updated hands:", hands);
       setPlayerHands(hands);
-
       setGameState(data.game_state);
     }
   };
@@ -119,6 +122,10 @@ export const GameProvider = ({ children }) => {
         playerHands,
         currentPlayerId,
         currentPlayerName,
+        initializingGame,
+        setInitializingGame,
+        selectedCards,
+        setSelectedCards,
         performAction,
       }}
     >

@@ -109,33 +109,36 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
-  def reveal_card(data)
+  def reveal_cards(data)
     @player = Player.find(data['player_id'])
 
-    Rails.logger.debug("player hand: #{@player.hand.inspect}")
+    Rails.logger.debug "Initial hand state: #{@player.hand}"
 
-    selected_card = @player.hand.find do |card|
-      card['rank'] == data['card_rank'] && card['suit'] == data['card_suit']
+    updated_hand = @player.hand.map do |hand_card|
+      if data['cards'].any? { |card| card['rank'] == hand_card['rank'] && card['suit'] == hand_card['suit'] }
+        hand_card['visibility'] = 'revealed'
+      end
+      hand_card
     end
 
-    Rails.logger.debug("selected card: #{selected_card.inspect}")
+    @player.hand = updated_hand
+    @player.save!
 
-    selected_card['visibility'] = 'revealed'
-
-    @player.save
+    Rails.logger.debug "Hand state after save: #{@player.reload.hand}"
 
     broadcast_message = {
       action: 'card_revealed',
       players: @game.reload.players,
-      revealed_card: selected_card,
+      revealed_cards: updated_hand.select { |card| card['visibility'] == 'revealed' },
       game_state: @game.reload.game_state
     }
+
+    Rails.logger.debug("broadcast message: #{broadcast_message.inspect}")
 
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
   def deal_hand(player)
-    # @game = Game.find(params[:game_id])
     @player = player
 
     6.times do

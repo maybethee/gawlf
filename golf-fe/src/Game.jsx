@@ -1,19 +1,18 @@
 import { useGame } from "./context/useGame";
-import { useState, useEffect } from "react";
+import PlayerHands from "./PlayerHands";
 
 function Game({ gameId, playerId }) {
   const {
     gameState,
     drawnCard,
     discardPile,
-    playerHands,
     currentPlayerId,
     currentPlayerName,
+    initializingGame,
+    setInitializingGame,
+    selectedCards,
     performAction,
   } = useGame();
-
-  const [initializingGame, setInitializingGame] = useState(true);
-  const [selectedCards, setSelectedCards] = useState([]);
 
   const handleDrawCard = () => {
     console.log("Drawing card for player:", playerId);
@@ -31,41 +30,6 @@ function Game({ gameId, playerId }) {
     performAction("swap_card");
   };
 
-  const handleCardClick = (card) => {
-    if (initializingGame) {
-      selectCard(card);
-    } else {
-      // rework swap card action to get necessary card data
-      console.log("swapping cards would happen now");
-      // performAction("swap_card");
-    }
-  };
-
-  const selectCard = (card) => {
-    setSelectedCards((prevCards) => {
-      if (
-        prevCards.some(
-          (selectedCard) =>
-            selectedCard.rank === card.rank && selectedCard.suit === card.suit
-        )
-      ) {
-        return prevCards;
-      }
-
-      if (prevCards.length === 2) {
-        const updatedCards = prevCards.slice(1);
-        updatedCards.push(card);
-        return updatedCards;
-      }
-
-      return [...prevCards, card];
-    });
-  };
-
-  useEffect(() => {
-    console.log("current selected cards:", selectedCards);
-  }, [selectedCards]);
-
   const revealSelectedCards = () => {
     if (selectedCards.length < 2) {
       console.log("you must select 2 cards to reveal!");
@@ -73,12 +37,9 @@ function Game({ gameId, playerId }) {
     } else {
       console.log("selected cards:", selectedCards);
       console.log("revealing cards...");
-      selectedCards.forEach((card) => {
-        performAction("reveal_card", {
-          player_id: playerId,
-          card_rank: card.rank,
-          card_suit: card.suit,
-        });
+      performAction("reveal_cards", {
+        player_id: playerId,
+        cards: selectedCards,
       });
       setInitializingGame(false);
     }
@@ -112,7 +73,6 @@ function Game({ gameId, playerId }) {
           </button>
         </div>
       ) : (
-        // change to name
         <h3 style={{ color: "orange" }}>
           Waiting for {currentPlayerName}'s turn
         </h3>
@@ -135,29 +95,7 @@ function Game({ gameId, playerId }) {
         </p>
       </div>
 
-      {playerHands && (
-        <div>
-          <h3>Player Hands:</h3>
-          {playerHands.map((playerHand) => (
-            <div key={playerHand.id}>
-              <p className="playerName">{playerHand.name}</p>
-              <div className="hand">
-                {playerHand.hand.map((card) => (
-                  <div
-                    className="card"
-                    key={`${card.rank}${card.suit}`}
-                    onClick={() => handleCardClick(card)}
-                  >
-                    {card.visibility === "hidden"
-                      ? "??"
-                      : `${card.rank}${card.suit}`}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <PlayerHands playerId={playerId} />
     </div>
   );
 }

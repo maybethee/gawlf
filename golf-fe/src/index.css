@@ -72,18 +72,15 @@ button:focus-visible {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.your_turn {
-  color: green;
-}
-
-.not_your_turn {
-  color: grey;
-}
-
-.card {
-  width: 100px;
+.card,
+.your-card {
+  width: 80px;
   height: 100px;
-  cursor: pointer;
-  border: 2px purple solid;
+  border: 3px pink solid;
   margin: 0.3rem;
+  padding: 0.3rem;
+}
+
+.your-card {
+  cursor: pointer;
 }
