@@ -1,9 +1,15 @@
 import { useGame } from "./context/useGame";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function PlayerHands({ playerId }) {
-  const { playerHands, initializingGame, setSelectedCards, performAction } =
-    useGame();
+  const {
+    playerHands,
+    initializingGame,
+    setSelectedCards,
+    currentPlayerId,
+    drawnCard,
+    performAction,
+  } = useGame();
 
   // const handleSwapCard = () => {
   //   performAction("swap_card");
@@ -17,9 +23,18 @@ function PlayerHands({ playerId }) {
     if (initializingGame) {
       selectCard(card);
     } else {
-      // rework swap card action to get necessary card data
-      console.log("swapping cards would happen now");
-      // performAction("swap_card");
+      if (currentPlayerId !== playerId) {
+        // console.log("it's not your turn!");
+        return;
+      }
+      if (!drawnCard) {
+        console.log("you must draw a card first!");
+        return;
+      } else {
+        // rework swap card action to get necessary card data
+        console.log("swapping cards");
+        performAction("swap_card", { player_id: playerId, card_to_swap: card });
+      }
     }
   };
 
@@ -52,6 +67,22 @@ function PlayerHands({ playerId }) {
   //   console.log("playerHands updated:", playerHands);
   // }, [playerHands]);
 
+  const setClassName = (playerHand) => {
+    if (initializingGame) {
+      if (playerHand.id === playerId) {
+        return "your-card";
+      } else {
+        return "card";
+      }
+    } else {
+      if (playerHand.id === playerId && playerHand.id === currentPlayerId) {
+        return "your-card";
+      } else {
+        return "card";
+      }
+    }
+  };
+
   return (
     <div>
       {playerHands && (
@@ -63,9 +94,7 @@ function PlayerHands({ playerId }) {
               <div className="hand">
                 {playerHand.hand.map((card) => (
                   <div
-                    className={
-                      playerHand.id === playerId ? "your-card" : "card"
-                    }
+                    className={setClassName(playerHand)}
                     key={`${card.rank}${card.suit}`}
                     onClick={() => handleCardClick(card, playerHand.id)}
                   >

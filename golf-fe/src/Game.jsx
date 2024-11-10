@@ -55,35 +55,10 @@ function Game({ gameId, playerId }) {
     <div>
       <div>Game State: {JSON.stringify(gameState)}</div>
 
-      {initializingGame && (
-        <div>
-          <h3>
-            click on two cards to select them and then click Reveal to flip them
-            over
-          </h3>
-          <button onClick={revealSelectedCards}>Reveal</button>
-        </div>
-      )}
-      {isPlayerTurn ? (
-        <div>
-          <button onClick={handleDrawCard}>Draw from Deck</button>
-          <button onClick={handleDiscardCard}>Discard</button>
-          <button onClick={handleSwapCard}>
-            Swap Card (next player's turn)
-          </button>
-        </div>
-      ) : (
-        <h3 style={{ color: "orange" }}>
-          Waiting for {currentPlayerName}'s turn
-        </h3>
-      )}
-
+      <p>Drawn card:</p>
       {drawnCard && (
         <div>
-          <div>
-            <p>Drawn card:</p>
-            <p>{`${drawnCard.rank}${drawnCard.suit}`}</p>
-          </div>
+          <p>{`${drawnCard.rank}${drawnCard.suit}`}</p>
         </div>
       )}
       <div>
@@ -94,6 +69,32 @@ function Game({ gameId, playerId }) {
           })}
         </p>
       </div>
+
+      {initializingGame && (
+        <div>
+          <h3>
+            click on two cards to select them and then click Reveal to flip them
+            over
+          </h3>
+          <button onClick={revealSelectedCards}>Reveal</button>
+        </div>
+      )}
+      {!initializingGame && isPlayerTurn && (
+        <div>
+          <h3>Your turn!</h3>
+          <button onClick={handleDrawCard}>Draw from Deck</button>
+          <button onClick={handleDiscardCard}>Discard</button>
+          <button onClick={handleSwapCard}>
+            Swap Card (next player's turn)
+          </button>
+        </div>
+      )}
+
+      {!isPlayerTurn && (
+        <h3 style={{ color: "orange" }}>
+          Waiting for {currentPlayerName}'s turn
+        </h3>
+      )}
 
       <PlayerHands playerId={playerId} />
     </div>

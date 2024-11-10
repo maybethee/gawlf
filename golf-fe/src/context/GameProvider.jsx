@@ -61,10 +61,13 @@ export const GameProvider = ({ children }) => {
       setGameState(data.game_state);
       //
     } else if (data.action === "card_discarded") {
+      console.log("current discard pile:", data.game_state.discard_pile);
       setDiscardPile(data.game_state.discard_pile);
+      setDrawnCard(null);
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
       setGameState(data.game_state);
+
       //
     } else if (data.action === "hole_setup") {
       console.log("received action in Game.jsx");
@@ -81,8 +84,17 @@ export const GameProvider = ({ children }) => {
       setLobbyStatus("active");
       //
     } else if (data.action === "card_swapped") {
-      console.log(data.current_player_id);
+      console.log(data);
 
+      const hands = [];
+
+      data.players.forEach((player) => {
+        hands.push({ id: player.id, name: player.name, hand: player.hand });
+      });
+
+      setPlayerHands(hands);
+      setDrawnCard(null);
+      setDiscardPile(data.game_state.discard_pile);
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
       setGameState(data.game_state);

@@ -19,29 +19,47 @@ class GameChannel < ApplicationCable::Channel
     Rails.logger.debug("GameChannel draw_card called with data: #{data}")
     logger.info "Broadcasting to game_#{params[:game_id]} with data: #{data}"
 
+    @game.reload
+
     @player = Player.find(data['player_id'])
 
     drawn_card = @game.game_state['deck'].sample
 
     Rails.logger.debug("drawn card: #{drawn_card}")
 
-    @game.game_state['drawn_card'] = drawn_card
-    @game.game_state['deck'].delete(drawn_card)
+    updated_game_state = @game.game_state.deep_dup
+    updated_game_state['drawn_card'] = drawn_card
+    updated_game_state['deck'].delete(drawn_card)
 
-    @game.save
+    @game.update!(game_state: updated_game_state)
 
     broadcast_message = {
       action: 'card_drawn',
       player_id: @player.id,
-      card: @game.reload.game_state['drawn_card'],
+      card: drawn_card,
       game_state: @game.reload.game_state
     }
 
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
-  def swap_card
-    # @game = Game.find(params[:game_id])
+  def swap_card(data)
+    @player = Player.find(data['player_id'])
+    @game.reload
+
+    updated_hand = @player.hand.map do |hand_card|
+      if data['card_to_swap']['rank'] == hand_card['rank'] && data['card_to_swap']['suit'] == hand_card['suit']
+        hand_card = @game.game_state['drawn_card']
+        hand_card['visibility'] = 'revealed'
+      end
+      hand_card
+    end
+
+    @player.hand = updated_hand
+    @player.save!
+
+    @game.game_state['discard_pile'] << data['card_to_swap']
+    @game.save
 
     next_player_id = @game.next_player.id
     @game.update!(current_player_id: next_player_id)
@@ -52,8 +70,11 @@ class GameChannel < ApplicationCable::Channel
 
     broadcast_message = {
       action: 'card_swapped',
+      players: @game.reload.players,
       current_player_id: @game.reload.current_player_id,
       current_player_name:,
+      discard_pile: @game.reload.game_state['discard_pile'],
+      updated_player_hand: @player.reload.hand,
       game_state: @game.reload.game_state
     }
 
@@ -62,15 +83,17 @@ class GameChannel < ApplicationCable::Channel
 
   def discard_card(data)
     @player = Player.find(data['player_id'])
+    @game.reload
 
-    @game.game_state['discard_pile'] << @game.game_state['drawn_card']
-    @game.save
+    updated_game_state = @game.game_state.deep_dup
+    updated_game_state['discard_pile'] << @game.game_state['drawn_card']
+
+    @game.update!(game_state: updated_game_state)
 
     next_player_id = @game.next_player.id
     @game.update!(current_player_id: next_player_id)
 
     current_player_name = Player.find_by(id: @game.current_player_id).name
-
     broadcast_message = {
       action: 'card_discarded',
       player_id: @player.id,
@@ -100,7 +123,7 @@ class GameChannel < ApplicationCable::Channel
     # Rails.logger.debug("updated game: #{@game.inspect}")
     broadcast_message = {
       action: 'hole_setup',
-      players: @game.reload.players.all,
+      players: @game.reload.players,
       current_player_id: @game.reload.current_player_id,
       current_player_name:,
       game_state: @game.reload.game_state
