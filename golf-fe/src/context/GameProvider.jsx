@@ -14,6 +14,7 @@ export const GameProvider = ({ children }) => {
   const [lobbyStatus, setLobbyStatus] = useState("");
   const [initializingGame, setInitializingGame] = useState(true);
   const [selectedCards, setSelectedCards] = useState([]);
+  const [selectedDiscardPile, setSelectedDiscardPile] = useState(null);
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export const GameProvider = ({ children }) => {
       //
     } else if (data.action === "card_drawn") {
       setDrawnCard(data.card);
+      setSelectedDiscardPile(null);
       setGameState(data.game_state);
       //
     } else if (data.action === "card_discarded") {
@@ -94,6 +96,7 @@ export const GameProvider = ({ children }) => {
 
       setPlayerHands(hands);
       setDrawnCard(null);
+      setSelectedDiscardPile(null);
       setDiscardPile(data.game_state.discard_pile);
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
@@ -138,6 +141,8 @@ export const GameProvider = ({ children }) => {
         setInitializingGame,
         selectedCards,
         setSelectedCards,
+        selectedDiscardPile,
+        setSelectedDiscardPile,
         performAction,
       }}
     >

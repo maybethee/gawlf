@@ -11,23 +11,18 @@ function Game({ gameId, playerId }) {
     initializingGame,
     setInitializingGame,
     selectedCards,
+    setSelectedDiscardPile,
     performAction,
   } = useGame();
 
   const handleDrawCard = () => {
     console.log("Drawing card for player:", playerId);
+    // if (drawnCard) {
+    //   console.log("can't draw more than one card per turn!");
+    //   return;
+    // }
 
     performAction("draw_card", { player_id: playerId });
-  };
-
-  const handleDiscardCard = () => {
-    console.log("Discarding card for player:", playerId);
-
-    performAction("discard_card", { player_id: playerId });
-  };
-
-  const handleSwapCard = () => {
-    performAction("swap_card");
   };
 
   const revealSelectedCards = () => {
@@ -45,32 +40,28 @@ function Game({ gameId, playerId }) {
     }
   };
 
+  const handleDiscardPileClick = (card = null) => {
+    if (!isPlayerTurn) {
+      console.log("wait your turn");
+      return;
+    }
+    if (drawnCard) {
+      console.log("discarding drawn card");
+      performAction("discard_card", { player_id: playerId });
+    } else {
+      setSelectedDiscardPile(card);
+    }
+  };
+
   const isPlayerTurn = currentPlayerId === playerId;
 
   if (!gameId) {
     return null;
   }
 
-  return (
-    <div>
-      <div>Game State: {JSON.stringify(gameState)}</div>
-
-      <p>Drawn card:</p>
-      {drawnCard && (
-        <div>
-          <p>{`${drawnCard.rank}${drawnCard.suit}`}</p>
-        </div>
-      )}
+  if (initializingGame) {
+    return (
       <div>
-        <p>Discard Pile:</p>
-        <p>
-          {discardPile.map((card) => {
-            return `${card.rank}${card.suit}, `;
-          })}
-        </p>
-      </div>
-
-      {initializingGame && (
         <div>
           <h3>
             click on two cards to select them and then click Reveal to flip them
@@ -78,17 +69,72 @@ function Game({ gameId, playerId }) {
           </h3>
           <button onClick={revealSelectedCards}>Reveal</button>
         </div>
-      )}
-      {!initializingGame && isPlayerTurn && (
+
         <div>
-          <h3>Your turn!</h3>
-          <button onClick={handleDrawCard}>Draw from Deck</button>
-          <button onClick={handleDiscardCard}>Discard</button>
-          <button onClick={handleSwapCard}>
-            Swap Card (next player's turn)
-          </button>
+          <p>Drawn card:</p>
+          <div className="card"></div>
         </div>
-      )}
+        <div>
+          <p>Discard Pile:</p>
+          <div className="card"></div>
+        </div>
+
+        <PlayerHands playerId={playerId} />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div>Game State: {JSON.stringify(gameState)}</div>
+
+      <div>
+        <p>Drawn card:</p>
+        <div
+          className={isPlayerTurn && !drawnCard ? "card clickable" : "card"}
+          onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
+        >
+          {drawnCard && <p>{`${drawnCard.rank}${drawnCard.suit}`}</p>}
+        </div>
+      </div>
+
+      <div>
+        <p>Discard Pile:</p>
+        <div>
+          <div
+            className={
+              discardPile.length < 1 && isPlayerTurn && drawnCard
+                ? "card clickable"
+                : "card"
+            }
+            onClick={
+              discardPile.length < 1 && isPlayerTurn && drawnCard
+                ? handleDiscardPileClick
+                : null
+            }
+          ></div>
+          {discardPile.map((card, index) => {
+            return (
+              <div
+                className={
+                  index === discardPile.length - 1 && isPlayerTurn && drawnCard
+                    ? "card clickable"
+                    : "card"
+                }
+                key={index}
+                onClick={
+                  index === discardPile.length - 1
+                    ? handleDiscardPileClick
+                    : null
+                }
+              >
+                {card.rank}
+                {card.suit}
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       {!isPlayerTurn && (
         <h3 style={{ color: "orange" }}>

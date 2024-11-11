@@ -8,12 +8,9 @@ function PlayerHands({ playerId }) {
     setSelectedCards,
     currentPlayerId,
     drawnCard,
+    selectedDiscardPile,
     performAction,
   } = useGame();
-
-  // const handleSwapCard = () => {
-  //   performAction("swap_card");
-  // };
 
   const handleCardClick = (card, handId) => {
     if (handId !== playerId) {
@@ -27,13 +24,24 @@ function PlayerHands({ playerId }) {
         // console.log("it's not your turn!");
         return;
       }
-      if (!drawnCard) {
-        console.log("you must draw a card first!");
+
+      if (!drawnCard && !selectedDiscardPile) {
+        console.log("you must select a card to swap with");
         return;
+      } else if (!drawnCard) {
+        console.log("swapping card with discard pile card");
+        performAction("swap_card", {
+          player_id: playerId,
+          card_to_swap: card,
+          swap_origin: "discard",
+        });
       } else {
-        // rework swap card action to get necessary card data
-        console.log("swapping cards");
-        performAction("swap_card", { player_id: playerId, card_to_swap: card });
+        console.log("swapping card with drawn card");
+        performAction("swap_card", {
+          player_id: playerId,
+          card_to_swap: card,
+          swap_origin: "deck",
+        });
       }
     }
   };
@@ -70,13 +78,17 @@ function PlayerHands({ playerId }) {
   const setClassName = (playerHand) => {
     if (initializingGame) {
       if (playerHand.id === playerId) {
-        return "your-card";
+        return "card clickable";
       } else {
         return "card";
       }
     } else {
-      if (playerHand.id === playerId && playerHand.id === currentPlayerId) {
-        return "your-card";
+      if (
+        playerHand.id === playerId &&
+        playerHand.id === currentPlayerId &&
+        drawnCard
+      ) {
+        return "card clickable";
       } else {
         return "card";
       }

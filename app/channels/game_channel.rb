@@ -47,12 +47,22 @@ class GameChannel < ApplicationCable::Channel
     @player = Player.find(data['player_id'])
     @game.reload
 
-    updated_hand = @player.hand.map do |hand_card|
-      if data['card_to_swap']['rank'] == hand_card['rank'] && data['card_to_swap']['suit'] == hand_card['suit']
-        hand_card = @game.game_state['drawn_card']
-        hand_card['visibility'] = 'revealed'
+    if data['swap_origin'] == 'deck'
+      updated_hand = @player.hand.map do |hand_card|
+        if data['card_to_swap']['rank'] == hand_card['rank'] && data['card_to_swap']['suit'] == hand_card['suit']
+          hand_card = @game.game_state['drawn_card']
+          hand_card['visibility'] = 'revealed'
+        end
+        hand_card
       end
-      hand_card
+    else
+      updated_hand = @player.hand.map do |hand_card|
+        if data['card_to_swap']['rank'] == hand_card['rank'] && data['card_to_swap']['suit'] == hand_card['suit']
+          hand_card = @game.game_state['discard_pile'].pop
+          hand_card['visibility'] = 'revealed'
+        end
+        hand_card
+      end
     end
 
     @player.hand = updated_hand
