@@ -44,6 +44,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def swap_card(data)
+    all_revealed = false
     @player = Player.find(data['player_id'])
     @game.reload
 
@@ -71,6 +72,9 @@ class GameChannel < ApplicationCable::Channel
     @game.game_state['discard_pile'] << data['card_to_swap']
     @game.save
 
+    # check if player's hand is all revealed
+    all_revealed = all_revealed?(@player.hand)
+
     next_player_id = @game.next_player.id
     @game.update!(current_player_id: next_player_id)
 
@@ -80,6 +84,7 @@ class GameChannel < ApplicationCable::Channel
 
     broadcast_message = {
       action: 'card_swapped',
+      all_revealed:,
       players: @game.reload.players,
       current_player_id: @game.reload.current_player_id,
       current_player_name:,
@@ -117,7 +122,12 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def setup_hole
+    @game.reload
+    @game.game_state = initial_game_state
+    @game.hole += 1
+
     @game.players.all.each do |player|
+      player['hand'] = []
       deal_hand(player)
     end
 
@@ -136,6 +146,7 @@ class GameChannel < ApplicationCable::Channel
       players: @game.reload.players,
       current_player_id: @game.reload.current_player_id,
       current_player_name:,
+      current_hole: @game.reload.hole,
       game_state: @game.reload.game_state
     }
 
@@ -181,6 +192,26 @@ class GameChannel < ApplicationCable::Channel
     end
 
     @game.save
+  end
+
+  def all_revealed?(hand)
+    hand.all? { |card| card['visibility'] == 'revealed' }
+  end
+
+  def initial_game_state
+    {
+      deck: [].tap do |cards|
+        %w[♠︎ ♣︎ ♥︎ ♦︎].each do |suit|
+          %w[A 2 3 4 5 6 7 8 9 10 J Q K].each do |rank|
+            cards << { suit:, rank:, visibility: 'hidden' }
+          end
+        end
+        cards << { suit: '*', rank: '🃏︎', visibility: 'hidden' }
+        cards << { suit: '*', rank: '🃟', visibility: 'hidden' }
+      end,
+      discard_pile: [],
+      drawn_card: {}
+    }
   end
 
   def fetch_joined_players

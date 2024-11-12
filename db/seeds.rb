@@ -41,7 +41,7 @@ game = Game.create!(
     discard_pile: [],
     drawn_card: {}
   },
-  turn: 1
+  hole: 0
 )
 
 katy = Player.create!(name: 'Katy', game:, hand: [])

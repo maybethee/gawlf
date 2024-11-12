@@ -12,15 +12,12 @@ function Game({ gameId, playerId }) {
     setInitializingGame,
     selectedCards,
     setSelectedDiscardPile,
+    roundOver,
     performAction,
   } = useGame();
 
   const handleDrawCard = () => {
     console.log("Drawing card for player:", playerId);
-    // if (drawnCard) {
-    //   console.log("can't draw more than one card per turn!");
-    //   return;
-    // }
 
     performAction("draw_card", { player_id: playerId });
   };
@@ -84,6 +81,33 @@ function Game({ gameId, playerId }) {
     );
   }
 
+  if (roundOver) {
+    return (
+      <div>
+        <h2>Round over</h2>
+        {/* dummy score table */}
+        <table>
+          <tbody>
+            <tr>
+              <th>Player 1</th>
+              <th>Player 2</th>
+              <th>Player 3</th>
+            </tr>
+            <tr>
+              <td>22</td>
+              <td>1</td>
+              <td>14</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button onClick={() => performAction("setup_hole")}>Next Hole</button>
+
+        <PlayerHands playerId={playerId} />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div>Game State: {JSON.stringify(gameState)}</div>
@@ -117,7 +141,7 @@ function Game({ gameId, playerId }) {
             return (
               <div
                 className={
-                  index === discardPile.length - 1 && isPlayerTurn && drawnCard
+                  index === discardPile.length - 1 && isPlayerTurn
                     ? "card clickable"
                     : "card"
                 }

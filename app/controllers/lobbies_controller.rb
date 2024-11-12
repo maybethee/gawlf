@@ -3,8 +3,8 @@ class LobbiesController < ApplicationController
     game = Game.create!(
       lobby_code: generate_unique_code,
       lobby_created_at: Time.current,
-      game_state: initial_game_state,
-      turn: 1
+      game_state: {},
+      hole: 0
     )
 
     render json: { message: 'Lobby created', game_id: game.id, lobby_code: game.lobby_code }
@@ -39,18 +39,5 @@ class LobbiesController < ApplicationController
     SecureRandom.hex(3)
   end
 
-  def initial_game_state
-    {
-      deck: [].tap do |cards|
-        %w[♠︎ ♣︎ ♥︎ ♦︎].each do |suit|
-          %w[A 2 3 4 5 6 7 8 9 10 J Q K].each do |rank|
-            cards << { suit:, rank:, visibility: 'hidden' }
-          end
-        end
-        2.times { cards << { suit: '*', rank: '*', visibility: 'hidden'} }
-      end,
-      discard_pile: [],
-      drawn_card: {}
-    }
-  end
+ 
 end

@@ -9,6 +9,7 @@ function PlayerHands({ playerId }) {
     currentPlayerId,
     drawnCard,
     selectedDiscardPile,
+    roundOver,
     performAction,
   } = useGame();
 
@@ -86,7 +87,7 @@ function PlayerHands({ playerId }) {
       if (
         playerHand.id === playerId &&
         playerHand.id === currentPlayerId &&
-        drawnCard
+        (drawnCard || selectedDiscardPile)
       ) {
         return "card clickable";
       } else {
@@ -94,6 +95,33 @@ function PlayerHands({ playerId }) {
       }
     }
   };
+
+  if (roundOver) {
+    return (
+      <div>
+        {playerHands && (
+          <div>
+            <h3>Player Hands:</h3>
+            {playerHands.map((playerHand) => (
+              <div key={playerHand.id}>
+                <p className="playerName">{playerHand.name}</p>
+                <div className="hand">
+                  {playerHand.hand.map((card) => (
+                    <div
+                      className="card revealed"
+                      key={`${card.rank}${card.suit}`}
+                    >
+                      {`${card.rank}${card.suit}`}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div>

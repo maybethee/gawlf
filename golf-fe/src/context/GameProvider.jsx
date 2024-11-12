@@ -15,6 +15,7 @@ export const GameProvider = ({ children }) => {
   const [initializingGame, setInitializingGame] = useState(true);
   const [selectedCards, setSelectedCards] = useState([]);
   const [selectedDiscardPile, setSelectedDiscardPile] = useState(null);
+  const [roundOver, setRoundOver] = useState(false);
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
@@ -80,9 +81,12 @@ export const GameProvider = ({ children }) => {
       });
 
       setPlayerHands(hands);
+      setDiscardPile(data.game_state.discard_pile);
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
       setGameState(data.gameState);
+      setRoundOver(false);
+      setInitializingGame(true);
       setLobbyStatus("active");
       //
     } else if (data.action === "card_swapped") {
@@ -98,6 +102,13 @@ export const GameProvider = ({ children }) => {
       setDrawnCard(null);
       setSelectedDiscardPile(null);
       setDiscardPile(data.game_state.discard_pile);
+
+      if (data.all_revealed === true) {
+        console.log("player has revealed all cards, round over!!");
+        setRoundOver(true);
+        // also set game over here if hole === 9?
+      }
+
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
       setGameState(data.game_state);
@@ -143,6 +154,7 @@ export const GameProvider = ({ children }) => {
         setSelectedCards,
         selectedDiscardPile,
         setSelectedDiscardPile,
+        roundOver,
         performAction,
       }}
     >
