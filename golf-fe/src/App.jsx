@@ -3,7 +3,6 @@ import Game from "./Game";
 import {
   createLobby,
   joinLobby,
-  lobbyStatus,
   createPlayer,
   fetchJoinedPlayers,
 } from "./api";
@@ -68,7 +67,8 @@ function App() {
     setPlayerId(data.id);
   };
 
-  const handleSetupHole = () => {
+  const handleSetupGame = () => {
+    performAction("setup_game");
     performAction("setup_hole");
   };
 
@@ -129,7 +129,7 @@ function App() {
         ) : null}
 
         {isLobbyHost ? (
-          <button onClick={handleSetupHole}>Hole Start</button>
+          <button onClick={handleSetupGame}>Play Game</button>
         ) : (
           <p>Waiting for host to start game</p>
         )}

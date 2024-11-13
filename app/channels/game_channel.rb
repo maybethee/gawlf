@@ -86,6 +86,7 @@ class GameChannel < ApplicationCable::Channel
       action: 'card_swapped',
       all_revealed:,
       players: @game.reload.players,
+      hole: @game.reload.hole,
       current_player_id: @game.reload.current_player_id,
       current_player_name:,
       discard_pile: @game.reload.game_state['discard_pile'],
@@ -121,10 +122,27 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
+  def setup_game
+    @game.reload
+    @game.hole = 0
+    @game.save!
+
+    broadcast_message = {
+      action: 'game_setup',
+      current_hole: @game.reload.hole,
+      game_state: @game.reload.game_state
+    }
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
   def setup_hole
     @game.reload
-    @game.game_state = initial_game_state
-    @game.hole += 1
+    @game.update!(game_state: initial_game_state)
+    # @game.game_state = initial_game_state
+    @game.update!(hole: @game.hole += 1)
+
+    Rails.logger.debug("game current hole: #{@game.hole}")
 
     @game.players.all.each do |player|
       player['hand'] = []
@@ -139,6 +157,8 @@ class GameChannel < ApplicationCable::Channel
     @game.update!(current_player_id: random_player_id)
 
     current_player_name = Player.find_by(id: @game.current_player_id).name
+
+    # @game.save!
 
     # Rails.logger.debug("updated game: #{@game.inspect}")
     broadcast_message = {

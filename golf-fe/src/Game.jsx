@@ -3,6 +3,7 @@ import PlayerHands from "./PlayerHands";
 
 function Game({ gameId, playerId }) {
   const {
+    setLobbyStatus,
     gameState,
     drawnCard,
     discardPile,
@@ -13,6 +14,7 @@ function Game({ gameId, playerId }) {
     selectedCards,
     setSelectedDiscardPile,
     roundOver,
+    gameOver,
     performAction,
   } = useGame();
 
@@ -60,20 +62,20 @@ function Game({ gameId, playerId }) {
     return (
       <div>
         <div>
-          <h3>
-            click on two cards to select them and then click Reveal to flip them
-            over
-          </h3>
-          <button onClick={revealSelectedCards}>Reveal</button>
-        </div>
-
-        <div>
           <p>Drawn card:</p>
           <div className="card"></div>
         </div>
         <div>
           <p>Discard Pile:</p>
           <div className="card"></div>
+        </div>
+
+        <div>
+          <h3>
+            click on two cards to select them and then click Reveal to flip them
+            over
+          </h3>
+          <button onClick={revealSelectedCards}>Reveal</button>
         </div>
 
         <PlayerHands playerId={playerId} />
@@ -101,9 +103,59 @@ function Game({ gameId, playerId }) {
           </tbody>
         </table>
 
+        <h3>Winner: Player 2</h3>
+
         <button onClick={() => performAction("setup_hole")}>Next Hole</button>
 
         <PlayerHands playerId={playerId} />
+      </div>
+    );
+  }
+
+  if (gameOver) {
+    return (
+      <div>
+        <h2>Game Over</h2>
+
+        {/* dummy score table */}
+        <table>
+          <tbody>
+            <tr>
+              <th>Hole #</th>
+              <th>Player 1</th>
+              <th>Player 2</th>
+              <th>Player 3</th>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>22</td>
+              <td>1</td>
+              <td>14</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>2</td>
+              <td>9</td>
+              <td>24</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>11</td>
+              <td>12</td>
+              <td>5</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Winner: Player 2</h3>
+
+        <button
+          onClick={() => {
+            setLobbyStatus("waiting");
+          }}
+        >
+          Lobby Menu
+        </button>
       </div>
     );
   }

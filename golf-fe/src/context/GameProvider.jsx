@@ -16,6 +16,7 @@ export const GameProvider = ({ children }) => {
   const [selectedCards, setSelectedCards] = useState([]);
   const [selectedDiscardPile, setSelectedDiscardPile] = useState(null);
   const [roundOver, setRoundOver] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
@@ -72,6 +73,8 @@ export const GameProvider = ({ children }) => {
       setGameState(data.game_state);
 
       //
+    } else if (data.action === "game_setup") {
+      setGameOver(false);
     } else if (data.action === "hole_setup") {
       console.log("received action in Game.jsx");
       const hands = [];
@@ -106,7 +109,11 @@ export const GameProvider = ({ children }) => {
       if (data.all_revealed === true) {
         console.log("player has revealed all cards, round over!!");
         setRoundOver(true);
-        // also set game over here if hole === 9?
+        if (data.hole === 1) {
+          console.log("all holes finished, game over!");
+          setRoundOver(false);
+          setGameOver(true);
+        }
       }
 
       setCurrentPlayerId(data.current_player_id);
@@ -126,6 +133,7 @@ export const GameProvider = ({ children }) => {
       console.log("Updated hands:", hands);
       setPlayerHands(hands);
       setGameState(data.game_state);
+      setSelectedCards([]);
     }
   };
 
@@ -155,6 +163,7 @@ export const GameProvider = ({ children }) => {
         selectedDiscardPile,
         setSelectedDiscardPile,
         roundOver,
+        gameOver,
         performAction,
       }}
     >
