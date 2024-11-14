@@ -139,7 +139,6 @@ class GameChannel < ApplicationCable::Channel
   def setup_hole
     @game.reload
     @game.update!(game_state: initial_game_state)
-    # @game.game_state = initial_game_state
     @game.update!(hole: @game.hole += 1)
 
     Rails.logger.debug("game current hole: #{@game.hole}")
@@ -157,8 +156,6 @@ class GameChannel < ApplicationCable::Channel
     @game.update!(current_player_id: random_player_id)
 
     current_player_name = Player.find_by(id: @game.current_player_id).name
-
-    # @game.save!
 
     # Rails.logger.debug("updated game: #{@game.inspect}")
     broadcast_message = {
@@ -212,6 +209,21 @@ class GameChannel < ApplicationCable::Channel
     end
 
     @game.save
+  end
+
+  def calculate_round_scores
+    @game.reload
+
+    round_scores = @game.calculate_scores
+
+    broadcast_message = {
+      action: 'scores_calculated',
+      scores: round_scores
+    }
+
+    Rails.logger.debug("broadcast message: #{broadcast_message.inspect}")
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
   def all_revealed?(hand)

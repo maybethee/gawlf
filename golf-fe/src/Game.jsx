@@ -5,6 +5,7 @@ function Game({ gameId, playerId }) {
   const {
     setLobbyStatus,
     gameState,
+    currentHole,
     drawnCard,
     discardPile,
     currentPlayerId,
@@ -13,6 +14,7 @@ function Game({ gameId, playerId }) {
     setInitializingGame,
     selectedCards,
     setSelectedDiscardPile,
+    roundScores,
     roundOver,
     gameOver,
     performAction,
@@ -88,17 +90,26 @@ function Game({ gameId, playerId }) {
       <div>
         <h2>Round over</h2>
         {/* dummy score table */}
+
         <table>
           <tbody>
             <tr>
-              <th>Player 1</th>
+              <th>Player</th>
+              {roundScores.map((player) => {
+                return <th key={player.id}>{player.player_name}</th>;
+              })}
+              {/* <th>Player 1</th>
               <th>Player 2</th>
-              <th>Player 3</th>
+              <th>Player 3</th> */}
             </tr>
             <tr>
-              <td>22</td>
+              <td>Score</td>
+              {roundScores.map((player) => {
+                return <td key={player.id}>{player.round_score}</td>;
+              })}
+              {/* <td>22</td>
               <td>1</td>
-              <td>14</td>
+              <td>14</td> */}
             </tr>
           </tbody>
         </table>
@@ -163,6 +174,8 @@ function Game({ gameId, playerId }) {
   return (
     <div>
       <div>Game State: {JSON.stringify(gameState)}</div>
+
+      <h3>Hole: {currentHole} / 9</h3>
 
       <div>
         <p>Drawn card:</p>

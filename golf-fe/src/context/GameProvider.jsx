@@ -6,6 +6,7 @@ export const GameProvider = ({ children }) => {
   const [gameId, setGameId] = useState(null);
   const [joinedPlayers, setJoinedPlayers] = useState([]);
   const [gameState, setGameState] = useState(null);
+  const [currentHole, setCurrentHole] = useState(null);
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [currentPlayerName, setCurrentPlayerName] = useState("");
   const [drawnCard, setDrawnCard] = useState(null);
@@ -15,6 +16,7 @@ export const GameProvider = ({ children }) => {
   const [initializingGame, setInitializingGame] = useState(true);
   const [selectedCards, setSelectedCards] = useState([]);
   const [selectedDiscardPile, setSelectedDiscardPile] = useState(null);
+  const [roundScores, setRoundScores] = useState([]);
   const [roundOver, setRoundOver] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const subscriptionRef = useRef(null);
@@ -75,6 +77,7 @@ export const GameProvider = ({ children }) => {
       //
     } else if (data.action === "game_setup") {
       setGameOver(false);
+      //
     } else if (data.action === "hole_setup") {
       console.log("received action in Game.jsx");
       const hands = [];
@@ -84,6 +87,7 @@ export const GameProvider = ({ children }) => {
       });
 
       setPlayerHands(hands);
+      setCurrentHole(data.current_hole);
       setDiscardPile(data.game_state.discard_pile);
       setCurrentPlayerId(data.current_player_id);
       setCurrentPlayerName(data.current_player_name);
@@ -108,8 +112,9 @@ export const GameProvider = ({ children }) => {
 
       if (data.all_revealed === true) {
         console.log("player has revealed all cards, round over!!");
+        performAction("calculate_round_scores");
         setRoundOver(true);
-        if (data.hole === 1) {
+        if (data.hole === 9) {
           console.log("all holes finished, game over!");
           setRoundOver(false);
           setGameOver(true);
@@ -134,6 +139,9 @@ export const GameProvider = ({ children }) => {
       setPlayerHands(hands);
       setGameState(data.game_state);
       setSelectedCards([]);
+    } else if (data.action === "scores_calculated") {
+      console.log("round scores", data.scores);
+      setRoundScores(data.scores);
     }
   };
 
@@ -151,6 +159,7 @@ export const GameProvider = ({ children }) => {
         lobbyStatus,
         setLobbyStatus,
         gameState,
+        currentHole,
         drawnCard,
         discardPile,
         playerHands,
@@ -163,6 +172,7 @@ export const GameProvider = ({ children }) => {
         selectedDiscardPile,
         setSelectedDiscardPile,
         roundOver,
+        roundScores,
         gameOver,
         performAction,
       }}
