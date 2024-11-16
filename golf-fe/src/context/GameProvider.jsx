@@ -23,7 +23,6 @@ export const GameProvider = ({ children }) => {
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
-    // Only subscribe if gameId is not null
     if (gameId) {
       subscriptionRef.current = cable.subscriptions.create(
         { channel: "GameChannel", game_id: gameId },
@@ -54,14 +53,13 @@ export const GameProvider = ({ children }) => {
     }
   }, [gameId]);
 
-  const handleReceivedData = async (data) => {
+  const handleReceivedData = (data) => {
     console.log("Received data:", data);
 
     if (data.action === "player_joined") {
-      // console.log(data.player);
+      console.log(data.player);
 
-      // setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
-      handlePlayerJoined(data);
+      setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
       //
     } else if (data.action === "card_drawn") {
       setDrawnCard(data.card);
@@ -95,53 +93,51 @@ export const GameProvider = ({ children }) => {
       setCurrentPlayerName(data.current_player_name);
       setGameState(data.gameState);
       setRoundOver(false);
+      // setGameOver(false);
       setInitializingGame(true);
       setLobbyStatus("active");
       //
     } else if (data.action === "card_swapped") {
-      // console.log(data);
+      console.log(data);
 
-      // const hands = [];
+      const hands = [];
 
-      // data.players.forEach((player) => {
-      //   hands.push({ id: player.id, name: player.name, hand: player.hand });
-      // });
+      data.players.forEach((player) => {
+        hands.push({ id: player.id, name: player.name, hand: player.hand });
+      });
 
-      // setPlayerHands(hands);
-      // setDrawnCard(null);
-      // setSelectedDiscardPile(null);
-      // setDiscardPile(data.game_state.discard_pile);
+      setPlayerHands(hands);
+      setDrawnCard(null);
+      setSelectedDiscardPile(null);
+      setDiscardPile(data.game_state.discard_pile);
 
-      // if (data.all_revealed === true) {
-      //   console.log("player has revealed all cards, round over!!");
-      //   performAction("calculate_round_scores")
-      //     .then(() => {
-      //       console.log("performAction complete, setting roundOver to true");
-      //       setRoundOver(true);
-      //     })
-      //     .catch((error) => {
-      //       console.error("Error in calculate_round_scores:", error);
-      //     });
-      //   if (data.hole === 1) {
-      //     console.log("all holes finished, game over!");
-      //     performAction("all_round_scores")
-      //       .then(() => {
-      //         console.log(
-      //           "performAction complete, setting roundOver to false and gameOver to true"
-      //         );
-      //         setRoundOver(false);
-      //         setGameOver(true);
-      //       })
-      //       .catch((error) => {
-      //         console.error("Error in all_round_scores:", error);
-      //       });
-      //   }
-      // }
+      if (data.all_revealed === true) {
+        console.log("Player has revealed all cards, round over!");
+        performAction("calculate_round_scores");
 
-      // setCurrentPlayerId(data.current_player_id);
-      // setCurrentPlayerName(data.current_player_name);
-      // setGameState(data.game_state);
-      handleCardSwapped(data);
+        setRoundOver(true);
+
+        if (data.hole === 2) {
+          console.log("All holes finished, game over!");
+          setRoundOver(false);
+
+          // delay 'all_round_scores' until 'round_scores_calculated' is done
+          const onRoundScoresCalculated = () => {
+            console.log(
+              "round_scores_calculated received, performing all_round_scores..."
+            );
+
+            performAction("all_round_scores");
+            setGameOver(true);
+          };
+
+          waitForBroadcast("round_scores_calculated", onRoundScoresCalculated);
+        }
+      }
+
+      setCurrentPlayerId(data.current_player_id);
+      setCurrentPlayerName(data.current_player_name);
+      setGameState(data.game_state);
       //
     } else if (data.action === "card_revealed") {
       console.log("Revealed card data:", data.revealed_card);
@@ -158,131 +154,29 @@ export const GameProvider = ({ children }) => {
       setGameState(data.game_state);
       setSelectedCards([]);
     } else if (data.action === "round_scores_calculated") {
-      // console.log("round scores", data.scores);
-      // setRoundScores(data.scores);
-      handleRoundScoresCalculated(data);
-    } else if (data.action === "get_all_round_scores") {
-      // console.log("all round scores:", data.all_scores);
-      // setAllRoundScores(data.all_scores);
-      handleGetAllRoundScores(data);
-    }
-  };
-
-  const handlePlayerJoined = (data) => {
-    console.log(data.player);
-    setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
-  };
-
-  // const handleCardSwapped = (data) => {
-  //   const hands = [];
-  //   data.players.forEach((player) => {
-  //     hands.push({ id: player.id, name: player.name, hand: player.hand });
-  //   });
-  //   setPlayerHands(hands);
-  //   setDrawnCard(null);
-  //   setSelectedDiscardPile(null);
-  //   setDiscardPile(data.game_state.discard_pile);
-
-  //   if (data.all_revealed === true) {
-  //     console.log("player has revealed all cards, round over!!");
-  //     performAction("calculate_round_scores")
-  //       .then(() => {
-  //         console.log("performAction complete, setting roundOver to true");
-  //         setRoundOver(true);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error in calculate_round_scores:", error);
-  //       });
-  //     if (data.hole === 1) {
-  //       console.log("all holes finished, game over!");
-  //       performAction("all_round_scores")
-  //         .then(() => {
-  //           console.log(
-  //             "performAction complete, setting roundOver to false and gameOver to true"
-  //           );
-  //           setRoundOver(false);
-  //           setGameOver(true);
-  //         })
-  //         .catch((error) => {
-  //           console.error("Error in all_round_scores:", error);
-  //         });
-  //     }
-  //   }
-
-  //   setCurrentPlayerId(data.current_player_id);
-  //   setCurrentPlayerName(data.current_player_name);
-  //   setGameState(data.game_state);
-  // };
-
-  const handleCardSwapped = async (data) => {
-    const hands = [];
-    data.players.forEach((player) => {
-      hands.push({ id: player.id, name: player.name, hand: player.hand });
-    });
-    setPlayerHands(hands);
-    setDrawnCard(null);
-    setSelectedDiscardPile(null);
-    setDiscardPile(data.game_state.discard_pile);
-
-    if (data.all_revealed === true) {
-      console.log("player has revealed all cards, round over!!");
-
-      try {
-        // Wait for calculate_round_scores to finish before proceeding
-        await performAction("calculate_round_scores");
-        console.log("performAction complete, setting roundOver to true");
-        setRoundOver(true);
-
-        // Only proceed with the next action if all holes are finished
-        if (data.hole === 1) {
-          console.log("all holes finished, game over!");
-
-          // Wait for all_round_scores to finish
-          await performAction("all_round_scores");
-          console.log(
-            "performAction complete, setting roundOver to false and gameOver to true"
-          );
-          setRoundOver(false);
-          setGameOver(true);
-        }
-      } catch (error) {
-        console.error("Error in action chain:", error);
+      console.log("round scores", data.scores);
+      setRoundScores(data.scores);
+      // trigger callback if waiting for 'round_scores_calculated'
+      if (pendingBroadcasts["round_scores_calculated"]) {
+        pendingBroadcasts["round_scores_calculated"]();
+        delete pendingBroadcasts["round_scores_calculated"];
       }
+    } else if (data.action === "get_all_round_scores") {
+      console.log("all round scores:", data.all_scores);
+      setAllRoundScores(data.all_scores);
     }
-
-    setCurrentPlayerId(data.current_player_id);
-    setCurrentPlayerName(data.current_player_name);
-    setGameState(data.game_state);
   };
 
-  const handleRoundScoresCalculated = (data) => {
-    console.log("round scores", data.scores);
-    setRoundScores(data.scores);
-  };
+  const pendingBroadcasts = {};
 
-  const handleGetAllRoundScores = (data) => {
-    console.log("all round scores:", data.all_scores);
-    setAllRoundScores(data.all_scores);
+  const waitForBroadcast = (action, callback) => {
+    pendingBroadcasts[action] = callback;
   };
 
   const performAction = (action, payload = {}) => {
-    return new Promise((resolve, reject) => {
-      if (subscriptionRef.current) {
-        subscriptionRef.current.perform(action, payload);
-        resolve();
-      } else {
-        reject(new Error("Subscription is not initialized"));
-      }
-    });
+    subscriptionRef.current?.perform(action, payload);
   };
 
-  // const performAction = (action, payload = {}) => {
-  //   return new Promise((resolve, reject) => {
-  //     subscriptionRef.current?.perform(action, payload)
-  //       ? resolve()
-  //       : reject(new Error("Action perform failed"));
-  //   });
-  // };
   return (
     <GameContext.Provider
       value={{

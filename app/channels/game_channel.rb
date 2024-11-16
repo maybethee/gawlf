@@ -1,6 +1,4 @@
 class GameChannel < ApplicationCable::Channel
-
-
   def subscribed
     Rails.logger.info("Subscription params: #{params.inspect}")
     @game = Game.find(params[:game_id])
@@ -216,7 +214,7 @@ class GameChannel < ApplicationCable::Channel
   def calculate_round_scores
     @game.reload
 
-    round_scores = @game.calculate_scores
+    round_scores = @game.calculate_scores(@game.hole)
 
     broadcast_message = {
       action: 'round_scores_calculated',

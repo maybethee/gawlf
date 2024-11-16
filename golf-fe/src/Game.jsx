@@ -108,6 +108,7 @@ function Game({ gameId, playerId }) {
           </tbody>
         </table>
 
+        {/* still need to calcualate this programmatically */}
         <h3>Winner: Player 2</h3>
 
         <button onClick={() => performAction("setup_hole")}>Next Hole</button>
@@ -121,45 +122,51 @@ function Game({ gameId, playerId }) {
     console.log("all round scores:", allRoundScores);
     return (
       <div>
-        <h2>Game Over</h2>
+        {allRoundScores.length > 0 ? (
+          <div>
+            <h2>Game Over</h2>
 
-        {/* dummy score table */}
-        <table>
-          <tbody>
-            <tr>
-              <th>Player</th>
-              {/* map over all_round_scores[0] using index as hole number */}
-              {allRoundScores[0].round_scores.map((score, index) => {
-                return <th key={index}>Hole #{index + 1}</th>;
-              })}
-              <th>Total Score</th>
-            </tr>
-
-            {allRoundScores.map((player) => {
-              return (
-                <tr key={player.id}>
-                  <td>{player.name}</td>
-
-                  {player.round_scores.map((score, index) => {
-                    return <td key={index}>{score}</td>;
+            <table>
+              <tbody>
+                <tr>
+                  <th>Player</th>
+                  {/* map over all_round_scores[0] using index as hole number */}
+                  {allRoundScores[0].round_scores.map((score, index) => {
+                    return <th key={index}>Hole #{index + 1}</th>;
                   })}
-
-                  <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
+                  <th>Total Score</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
 
-        <h3>Winner: Player 2</h3>
+                {allRoundScores.map((player) => {
+                  return (
+                    <tr key={player.player_id}>
+                      <td>{player.player_name}</td>
 
-        <button
-          onClick={() => {
-            setLobbyStatus("waiting");
-          }}
-        >
-          Lobby Menu
-        </button>
+                      {player.round_scores.map((score, index) => {
+                        return <td key={index}>{score}</td>;
+                      })}
+
+                      <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            {/* still need to calcualate this programmatically */}
+            <h3>Winner: Player 2</h3>
+
+            <button
+              onClick={() => {
+                setLobbyStatus("waiting");
+              }}
+            >
+              Lobby Menu
+            </button>
+          </div>
+        ) : (
+          <div>no data available</div>
+        )}
       </div>
     );
   }

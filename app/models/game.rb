@@ -9,7 +9,7 @@ class Game < ApplicationRecord
     'J': 10, 'Q': 10, 'K': 0, '*': -2
   }.freeze
 
-  def calculate_scores
+  def calculate_scores(hole)
     round_scores = []
     players.all.each do |player|
       scoring_array = player.hand.map do |card|
@@ -26,7 +26,7 @@ class Game < ApplicationRecord
 
       round_scores << { player_id: player.id, player_name: player.name, user_id: user&.id, round_score: score }
     end
-    update_stats(round_scores)
+    update_stats(round_scores, hole)
     round_scores
   end
 
@@ -50,7 +50,7 @@ class Game < ApplicationRecord
     end
   end
 
-  def update_stats(round_scores)
+  def update_stats(round_scores, hole)
     round_scores.each do |score_data|
       game_stat = GameStat.find_or_initialize_by(
         game_id: id,
@@ -58,7 +58,9 @@ class Game < ApplicationRecord
       )
 
       game_stat.round_scores ||= []
-      game_stat.round_scores << score_data[:round_score]
+
+      # ensure score data only gets pushed once per hole
+      game_stat.round_scores << score_data[:round_score] if game_stat.round_scores.length < hole
 
       game_stat.total_score = game_stat.round_scores.sum
 
@@ -79,12 +81,6 @@ class Game < ApplicationRecord
         round_scores: stat&.round_scores
       }
     end
-
-    # players.all.each do |player|
-    #   game_stat = GameStat.find_by(game_id: id, user_id: player.user_id)
-
-    #   total_scores_arr << game_stat.
-    # end
   end
 
   def next_player
