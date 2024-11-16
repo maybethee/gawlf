@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_12_142932) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_15_154809) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "game_stats", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "game_id", null: false
+    t.boolean "won"
+    t.integer "total_score"
+    t.jsonb "round_scores", default: []
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_game_stats_on_game_id"
+    t.index ["user_id"], name: "index_game_stats_on_user_id"
+  end
 
   create_table "games", force: :cascade do |t|
     t.jsonb "game_state"
@@ -31,7 +43,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_12_142932) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "hand", default: [], null: false
+    t.bigint "user_id"
     t.index ["game_id"], name: "index_players_on_game_id"
+    t.index ["user_id"], name: "index_players_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -46,6 +60,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_12_142932) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "game_stats", "games"
+  add_foreign_key "game_stats", "users"
   add_foreign_key "games", "players", column: "current_player_id"
   add_foreign_key "players", "games"
+  add_foreign_key "players", "users"
 end

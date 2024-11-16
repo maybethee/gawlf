@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { getCurrentUser } from "./api";
 
-function UserBtns() {
+function UserBtns({ setUser }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
       const user = await getCurrentUser();
       setIsAuthenticated(!!user);
+      setUser(user);
     };
 
     checkAuth();
-  }, []);
+  }, [setUser]);
 
   const redirectToRegister = () => {
     window.location.href = "http://localhost:3000/users/sign_up";

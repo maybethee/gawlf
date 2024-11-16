@@ -11,7 +11,7 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const createPlayer = async (playerName, gameId) => {
+export const createPlayer = async (playerName, gameId, userId) => {
   const response = await fetch(
     `http://localhost:3000/games/${gameId}/players`,
     {
@@ -20,7 +20,12 @@ export const createPlayer = async (playerName, gameId) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        player: { name: playerName, game_id: gameId, hand: [] },
+        player: {
+          name: playerName,
+          game_id: gameId,
+          user_id: userId,
+          hand: [],
+        },
       }),
     }
   );

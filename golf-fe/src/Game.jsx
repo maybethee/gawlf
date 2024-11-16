@@ -1,5 +1,6 @@
 import { useGame } from "./context/useGame";
 import PlayerHands from "./PlayerHands";
+import { useEffect } from "react";
 
 function Game({ gameId, playerId }) {
   const {
@@ -15,6 +16,7 @@ function Game({ gameId, playerId }) {
     selectedCards,
     setSelectedDiscardPile,
     roundScores,
+    allRoundScores,
     roundOver,
     gameOver,
     performAction,
@@ -89,8 +91,6 @@ function Game({ gameId, playerId }) {
     return (
       <div>
         <h2>Round over</h2>
-        {/* dummy score table */}
-
         <table>
           <tbody>
             <tr>
@@ -98,18 +98,12 @@ function Game({ gameId, playerId }) {
               {roundScores.map((player) => {
                 return <th key={player.id}>{player.player_name}</th>;
               })}
-              {/* <th>Player 1</th>
-              <th>Player 2</th>
-              <th>Player 3</th> */}
             </tr>
             <tr>
               <td>Score</td>
               {roundScores.map((player) => {
                 return <td key={player.id}>{player.round_score}</td>;
               })}
-              {/* <td>22</td>
-              <td>1</td>
-              <td>14</td> */}
             </tr>
           </tbody>
         </table>
@@ -124,6 +118,7 @@ function Game({ gameId, playerId }) {
   }
 
   if (gameOver) {
+    console.log("all round scores:", allRoundScores);
     return (
       <div>
         <h2>Game Over</h2>
@@ -132,29 +127,27 @@ function Game({ gameId, playerId }) {
         <table>
           <tbody>
             <tr>
-              <th>Hole #</th>
-              <th>Player 1</th>
-              <th>Player 2</th>
-              <th>Player 3</th>
+              <th>Player</th>
+              {/* map over all_round_scores[0] using index as hole number */}
+              {allRoundScores[0].round_scores.map((score, index) => {
+                return <th key={index}>Hole #{index + 1}</th>;
+              })}
+              <th>Total Score</th>
             </tr>
-            <tr>
-              <td>1</td>
-              <td>22</td>
-              <td>1</td>
-              <td>14</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>2</td>
-              <td>9</td>
-              <td>24</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>11</td>
-              <td>12</td>
-              <td>5</td>
-            </tr>
+
+            {allRoundScores.map((player) => {
+              return (
+                <tr key={player.id}>
+                  <td>{player.name}</td>
+
+                  {player.round_scores.map((score, index) => {
+                    return <td key={index}>{score}</td>;
+                  })}
+
+                  <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 

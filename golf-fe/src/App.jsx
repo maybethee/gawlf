@@ -8,7 +8,7 @@ import {
 } from "./api";
 import { useGame } from "./context/useGame";
 
-function App() {
+function App({ userId }) {
   const {
     gameId,
     setGameId,
@@ -26,6 +26,9 @@ function App() {
   const [isLobbyHost, setIsLobbyHost] = useState(false);
 
   useEffect(() => {
+    if (!gameId) {
+      return;
+    }
     const fetchPlayers = async () => {
       try {
         const data = await fetchJoinedPlayers(gameId);
@@ -62,7 +65,7 @@ function App() {
   const handleCreatePlayer = async (e) => {
     e.preventDefault();
 
-    const data = await createPlayer(playerName, gameId);
+    const data = await createPlayer(playerName, gameId, userId);
     console.log("player data", data);
     setPlayerId(data.id);
   };

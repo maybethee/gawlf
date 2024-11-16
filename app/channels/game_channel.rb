@@ -1,4 +1,6 @@
 class GameChannel < ApplicationCable::Channel
+
+
   def subscribed
     Rails.logger.info("Subscription params: #{params.inspect}")
     @game = Game.find(params[:game_id])
@@ -217,11 +219,24 @@ class GameChannel < ApplicationCable::Channel
     round_scores = @game.calculate_scores
 
     broadcast_message = {
-      action: 'scores_calculated',
+      action: 'round_scores_calculated',
       scores: round_scores
     }
 
     Rails.logger.debug("broadcast message: #{broadcast_message.inspect}")
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
+  def all_round_scores
+    @game.reload
+
+    all_round_scores = @game.all_round_scores
+
+    broadcast_message = {
+      action: 'get_all_round_scores',
+      all_scores: all_round_scores
+    }
 
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
@@ -261,6 +276,7 @@ class GameChannel < ApplicationCable::Channel
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
+    # Rails.logger.info "GameChannel unsubscribed for game_id #{@game.id}"
   end
 
   def update(_data)

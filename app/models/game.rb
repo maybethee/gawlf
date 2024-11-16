@@ -1,5 +1,7 @@
 class Game < ApplicationRecord
   has_many :players
+  has_many :game_stats, dependent: :destroy
+  has_many :users, through: :game_stats
 
   RANK_CONVERSION = {
     'A': 1, '2': 2, '3': 3, '4': 4, '5': 5,
@@ -12,20 +14,19 @@ class Game < ApplicationRecord
     players.all.each do |player|
       scoring_array = player.hand.map do |card|
         # need joker's suit for conversion rather than rank
-        if card['suit'] == '*'
-          card['suit']
-        else
-          card['rank']
-        end
+        card['suit'] == '*' ? card['suit'] : card['rank']
       end
 
       cancel_equal_columns(scoring_array)
-
       convert_rank_to_scores!(scoring_array)
 
       score = scoring_array.sum
-      round_scores << { player_id: player.id, player_name: player.name, round_score: score }
+
+      user = player.user
+
+      round_scores << { player_id: player.id, player_name: player.name, user_id: user&.id, round_score: score }
     end
+    update_stats(round_scores)
     round_scores
   end
 
@@ -47,6 +48,43 @@ class Game < ApplicationRecord
     array.map! do |score|
       RANK_CONVERSION.fetch(score.to_sym)
     end
+  end
+
+  def update_stats(round_scores)
+    round_scores.each do |score_data|
+      game_stat = GameStat.find_or_initialize_by(
+        game_id: id,
+        user_id: score_data[:user_id]
+      )
+
+      game_stat.round_scores ||= []
+      game_stat.round_scores << score_data[:round_score]
+
+      game_stat.total_score = game_stat.round_scores.sum
+
+      game_stat.save!
+    end
+  end
+
+  def all_round_scores
+    stats = GameStat.where(game_id: id).index_by(&:user_id)
+
+    players.includes(:user).map do |player|
+      stat = stats[player.user_id]
+
+      {
+        player_id: player.id,
+        player_name: player.name,
+        user_id: player.user_id,
+        round_scores: stat&.round_scores
+      }
+    end
+
+    # players.all.each do |player|
+    #   game_stat = GameStat.find_by(game_id: id, user_id: player.user_id)
+
+    #   total_scores_arr << game_stat.
+    # end
   end
 
   def next_player
