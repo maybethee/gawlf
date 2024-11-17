@@ -1,6 +1,5 @@
 import { useGame } from "./context/useGame";
 import PlayerHands from "./PlayerHands";
-import { useEffect } from "react";
 
 function Game({ gameId, playerId }) {
   const {
@@ -58,6 +57,22 @@ function Game({ gameId, playerId }) {
 
   const isPlayerTurn = currentPlayerId === playerId;
 
+  const sortedRoundScores =
+    roundScores.length > 0
+      ? [...roundScores].sort((a, b) => a.round_score - b.round_score)
+      : [];
+
+  const roundWinner =
+    sortedRoundScores.length > 0 ? sortedRoundScores[0].player_name : null;
+
+  const sortedTotalScores =
+    allRoundScores.length > 0
+      ? [...allRoundScores].sort((a, b) => a.total_score - b.total_score)
+      : [];
+
+  const gameWinner =
+    sortedTotalScores.length > 0 ? sortedTotalScores[0].player_name : null;
+
   if (!gameId) {
     return null;
   }
@@ -88,28 +103,30 @@ function Game({ gameId, playerId }) {
   }
 
   if (roundOver) {
+    console.log("round scores:", roundScores);
+
     return (
       <div>
         <h2>Round over</h2>
+
         <table>
           <tbody>
             <tr>
               <th>Player</th>
-              {roundScores.map((player) => {
-                return <th key={player.id}>{player.player_name}</th>;
-              })}
+              <th>Score</th>
             </tr>
-            <tr>
-              <td>Score</td>
-              {roundScores.map((player) => {
-                return <td key={player.id}>{player.round_score}</td>;
-              })}
-            </tr>
+            {roundScores.map((player) => {
+              return (
+                <tr key={player.player_id}>
+                  <th>{player.player_name}</th>
+                  <td>{player.round_score}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
-        {/* still need to calcualate this programmatically */}
-        <h3>Winner: Player 2</h3>
+        <h3>Round winner: {roundWinner}</h3>
 
         <button onClick={() => performAction("setup_hole")}>Next Hole</button>
 
@@ -130,7 +147,6 @@ function Game({ gameId, playerId }) {
               <tbody>
                 <tr>
                   <th>Player</th>
-                  {/* map over all_round_scores[0] using index as hole number */}
                   {allRoundScores[0].round_scores.map((score, index) => {
                     return <th key={index}>Hole #{index + 1}</th>;
                   })}
@@ -140,7 +156,7 @@ function Game({ gameId, playerId }) {
                 {allRoundScores.map((player) => {
                   return (
                     <tr key={player.player_id}>
-                      <td>{player.player_name}</td>
+                      <th>{player.player_name}</th>
 
                       {player.round_scores.map((score, index) => {
                         return <td key={index}>{score}</td>;
@@ -153,8 +169,16 @@ function Game({ gameId, playerId }) {
               </tbody>
             </table>
 
-            {/* still need to calcualate this programmatically */}
-            <h3>Winner: Player 2</h3>
+            <h3>Placements:</h3>
+            {sortedTotalScores.map((player, index) => {
+              return (
+                <p key={index}>
+                  {index + 1}: {player.player_name}
+                </p>
+              );
+            })}
+
+            <h3>Winner: {gameWinner}</h3>
 
             <button
               onClick={() => {
@@ -173,7 +197,7 @@ function Game({ gameId, playerId }) {
 
   return (
     <div>
-      <div>Game State: {JSON.stringify(gameState)}</div>
+      {/* <div>Game State: {JSON.stringify(gameState)}</div> */}
 
       <h3>Hole: {currentHole} / 9</h3>
 
@@ -227,7 +251,7 @@ function Game({ gameId, playerId }) {
 
       {!isPlayerTurn && (
         <h3 style={{ color: "orange" }}>
-          Waiting for {currentPlayerName}'s turn
+          Waiting for {currentPlayerName}'s turn...
         </h3>
       )}
 

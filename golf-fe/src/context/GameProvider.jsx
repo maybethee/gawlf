@@ -55,116 +55,144 @@ export const GameProvider = ({ children }) => {
 
   const handleReceivedData = (data) => {
     console.log("Received data:", data);
-
     if (data.action === "player_joined") {
-      console.log(data.player);
-
-      setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
-      //
+      handlePlayerJoined(data);
     } else if (data.action === "card_drawn") {
-      setDrawnCard(data.card);
-      setSelectedDiscardPile(null);
-      setGameState(data.game_state);
-      //
+      handleCardDrawn(data);
     } else if (data.action === "card_discarded") {
-      console.log("current discard pile:", data.game_state.discard_pile);
-      setDiscardPile(data.game_state.discard_pile);
-      setDrawnCard(null);
-      setCurrentPlayerId(data.current_player_id);
-      setCurrentPlayerName(data.current_player_name);
-      setGameState(data.game_state);
-
-      //
+      handleCardDiscarded(data);
     } else if (data.action === "game_setup") {
-      setGameOver(false);
-      //
+      handleGameSetup(data);
     } else if (data.action === "hole_setup") {
-      console.log("received action in Game.jsx");
-      const hands = [];
-
-      data.players.forEach((player) => {
-        hands.push({ id: player.id, name: player.name, hand: player.hand });
-      });
-
-      setPlayerHands(hands);
-      setCurrentHole(data.current_hole);
-      setDiscardPile(data.game_state.discard_pile);
-      setCurrentPlayerId(data.current_player_id);
-      setCurrentPlayerName(data.current_player_name);
-      setGameState(data.gameState);
-      setRoundOver(false);
-      // setGameOver(false);
-      setInitializingGame(true);
-      setLobbyStatus("active");
-      //
+      handleHoleSetup(data);
     } else if (data.action === "card_swapped") {
-      console.log(data);
-
-      const hands = [];
-
-      data.players.forEach((player) => {
-        hands.push({ id: player.id, name: player.name, hand: player.hand });
-      });
-
-      setPlayerHands(hands);
-      setDrawnCard(null);
-      setSelectedDiscardPile(null);
-      setDiscardPile(data.game_state.discard_pile);
-
-      if (data.all_revealed === true) {
-        console.log("Player has revealed all cards, round over!");
-        performAction("calculate_round_scores");
-
-        setRoundOver(true);
-
-        if (data.hole === 2) {
-          console.log("All holes finished, game over!");
-          setRoundOver(false);
-
-          // delay 'all_round_scores' until 'round_scores_calculated' is done
-          const onRoundScoresCalculated = () => {
-            console.log(
-              "round_scores_calculated received, performing all_round_scores..."
-            );
-
-            performAction("all_round_scores");
-            setGameOver(true);
-          };
-
-          waitForBroadcast("round_scores_calculated", onRoundScoresCalculated);
-        }
-      }
-
-      setCurrentPlayerId(data.current_player_id);
-      setCurrentPlayerName(data.current_player_name);
-      setGameState(data.game_state);
-      //
+      handleCardSwapped(data);
     } else if (data.action === "card_revealed") {
-      console.log("Revealed card data:", data.revealed_card);
-      console.log("Players data:", data.players);
-
-      const hands = data.players.map((player) => ({
-        id: player.id,
-        name: player.name,
-        hand: player.hand,
-      }));
-
-      console.log("Updated hands:", hands);
-      setPlayerHands(hands);
-      setGameState(data.game_state);
-      setSelectedCards([]);
+      handleCardRevealed(data);
     } else if (data.action === "round_scores_calculated") {
-      console.log("round scores", data.scores);
-      setRoundScores(data.scores);
-      // trigger callback if waiting for 'round_scores_calculated'
-      if (pendingBroadcasts["round_scores_calculated"]) {
-        pendingBroadcasts["round_scores_calculated"]();
-        delete pendingBroadcasts["round_scores_calculated"];
-      }
+      handleRoundScoresCalculated(data);
     } else if (data.action === "get_all_round_scores") {
-      console.log("all round scores:", data.all_scores);
-      setAllRoundScores(data.all_scores);
+      handleGetAllRoundScores(data);
     }
+  };
+
+  const handlePlayerJoined = (data) => {
+    console.log(data.player);
+
+    setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
+  };
+  const handleCardDrawn = (data) => {
+    setDrawnCard(data.card);
+    setSelectedDiscardPile(null);
+    setGameState(data.game_state);
+  };
+
+  const handleCardDiscarded = (data) => {
+    console.log("current discard pile:", data.game_state.discard_pile);
+    setDiscardPile(data.game_state.discard_pile);
+    setDrawnCard(null);
+    setCurrentPlayerId(data.current_player_id);
+    setCurrentPlayerName(data.current_player_name);
+    setGameState(data.game_state);
+  };
+
+  const handleGameSetup = (data) => {
+    console.log(data);
+    setGameOver(false);
+  };
+
+  const handleHoleSetup = (data) => {
+    console.log("received action in Game.jsx");
+    const hands = [];
+
+    data.players.forEach((player) => {
+      hands.push({ id: player.id, name: player.name, hand: player.hand });
+    });
+
+    setPlayerHands(hands);
+    setCurrentHole(data.current_hole);
+    setDiscardPile(data.game_state.discard_pile);
+    setCurrentPlayerId(data.current_player_id);
+    setCurrentPlayerName(data.current_player_name);
+    setGameState(data.gameState);
+    setRoundOver(false);
+    // setGameOver(false);
+    setInitializingGame(true);
+    setLobbyStatus("active");
+  };
+
+  const handleCardRevealed = (data) => {
+    console.log("Revealed card data:", data.revealed_card);
+    console.log("Players data:", data.players);
+
+    const hands = data.players.map((player) => ({
+      id: player.id,
+      name: player.name,
+      hand: player.hand,
+    }));
+
+    console.log("Updated hands:", hands);
+    setPlayerHands(hands);
+    setGameState(data.game_state);
+    setSelectedCards([]);
+  };
+
+  const handleCardSwapped = (data) => {
+    console.log(data);
+
+    const hands = [];
+
+    data.players.forEach((player) => {
+      hands.push({ id: player.id, name: player.name, hand: player.hand });
+    });
+
+    setPlayerHands(hands);
+    setDrawnCard(null);
+    setSelectedDiscardPile(null);
+    setDiscardPile(data.game_state.discard_pile);
+
+    if (data.all_revealed === true) {
+      console.log("Player has revealed all cards, round over!");
+      performAction("calculate_round_scores");
+
+      setRoundOver(true);
+
+      if (data.hole === 2) {
+        console.log("All holes finished, game over!");
+        setRoundOver(false);
+
+        // delay 'all_round_scores' until 'round_scores_calculated' is done
+        const onRoundScoresCalculated = () => {
+          console.log(
+            "round_scores_calculated received, performing all_round_scores..."
+          );
+
+          performAction("all_round_scores");
+          setGameOver(true);
+        };
+
+        waitForBroadcast("round_scores_calculated", onRoundScoresCalculated);
+      }
+    }
+
+    setCurrentPlayerId(data.current_player_id);
+    setCurrentPlayerName(data.current_player_name);
+    setGameState(data.game_state);
+  };
+
+  const handleRoundScoresCalculated = (data) => {
+    console.log("round scores", data.scores);
+    setRoundScores(data.scores);
+    // trigger callback if waiting for 'round_scores_calculated'
+    if (pendingBroadcasts["round_scores_calculated"]) {
+      pendingBroadcasts["round_scores_calculated"]();
+      delete pendingBroadcasts["round_scores_calculated"];
+    }
+  };
+
+  const handleGetAllRoundScores = (data) => {
+    console.log("all round scores:", data.all_scores);
+    setAllRoundScores(data.all_scores);
   };
 
   const pendingBroadcasts = {};

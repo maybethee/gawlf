@@ -59,10 +59,16 @@ class Game < ApplicationRecord
 
       game_stat.round_scores ||= []
 
+      Rails.logger.debug("\n\ngame stat round scores before pushing new score data: #{game_stat.round_scores}")
+
       # ensure score data only gets pushed once per hole
       game_stat.round_scores << score_data[:round_score] if game_stat.round_scores.length < hole
 
+      Rails.logger.debug("\n\ngame stat round scores after pushing new score data: #{game_stat.round_scores}")
+
       game_stat.total_score = game_stat.round_scores.sum
+
+      Rails.logger.debug("\n\nupdate stats, game stat: #{game_stat.inspect}")
 
       game_stat.save!
     end
@@ -71,17 +77,48 @@ class Game < ApplicationRecord
   def all_round_scores
     stats = GameStat.where(game_id: id).index_by(&:user_id)
 
+    # player_data =
+    
     players.includes(:user).map do |player|
-      stat = stats[player.user_id]
+      stat = stats[player.user_id]\
+
+      Rails.logger.debug("\n\nall_round_scores, player stats: #{stat.inspect}")
 
       {
         player_id: player.id,
         player_name: player.name,
         user_id: player.user_id,
-        round_scores: stat&.round_scores
+        round_scores: stat&.round_scores,
+        total_score: stat&.total_score
       }
     end
+
+    # player_data.sort_by { |data| data[:total_score] }
+
+    # Rails.logger.debug("sorted players by score: #{player_data}")
+
+    # player_data
   end
+
+  # # check if this works as expected
+  # def rank_by_final_scores
+  #   # 1. get all stats belonging to players in game
+  #   # 2. sort by total_score low-high
+  #   # 3. return ordered data as arr of objs
+  #   #
+  #   # can i do 2 & 3 at once?
+  #   stats = GameStat.where(game_id: id).index_by(&:user_id)
+
+  #   sorted_players = players.includes(:user).sort_by do |player|
+  #     stat = stats[player.user_id]
+
+  #     stat&.total_score
+  #   end
+
+  #   Rails.logger.debug("\n\nPlayers sorted by total score?: #{sorted_players}")
+
+  #   sorted_players
+  # end
 
   def next_player
     Rails.logger.debug("game's players: #{players.inspect}")
