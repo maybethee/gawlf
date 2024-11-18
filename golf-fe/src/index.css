@@ -73,11 +73,17 @@ button:focus-visible {
 }
 
 .card {
-  width: 80px;
-  height: 100px;
-  border: 3px pink solid;
+  width: 72px;
+  height: 105px;
   margin: 0.3rem;
-  padding: 0.3rem;
+  /* padding: 0.3rem; */
+  border: 3px pink solid;
+}
+
+.hidden {
+  /* border-radius: 6px; */
+  /* background: no-repeat url("./card-back.png"); */
+  background-size: cover;
 }
 
 .clickable {

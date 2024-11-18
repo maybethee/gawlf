@@ -1,7 +1,7 @@
 import { useGame } from "./context/useGame";
 import PlayerHands from "./PlayerHands";
 
-function Game({ gameId, playerId }) {
+function Game({ gameId, playerId, isLobbyHost }) {
   const {
     setLobbyStatus,
     gameState,
@@ -80,9 +80,10 @@ function Game({ gameId, playerId }) {
   if (initializingGame) {
     return (
       <div>
+        <h3>Hole: {currentHole} / 9</h3>
         <div>
           <p>Drawn card:</p>
-          <div className="card"></div>
+          <div className="card hidden"></div>
         </div>
         <div>
           <p>Discard Pile:</p>
@@ -102,12 +103,18 @@ function Game({ gameId, playerId }) {
     );
   }
 
-  if (roundOver) {
+  if (roundOver && roundScores.length > 0) {
     console.log("round scores:", roundScores);
 
     return (
       <div>
-        <h2>Round over</h2>
+        <h2>Hole {currentHole} Completed</h2>
+
+        {isLobbyHost ? (
+          <button onClick={() => performAction("setup_hole")}>Next Hole</button>
+        ) : (
+          <p>Waiting for host to start next round...</p>
+        )}
 
         <table>
           <tbody>
@@ -128,69 +135,63 @@ function Game({ gameId, playerId }) {
 
         <h3>Round winner: {roundWinner}</h3>
 
-        <button onClick={() => performAction("setup_hole")}>Next Hole</button>
-
         <PlayerHands playerId={playerId} />
       </div>
     );
   }
 
-  if (gameOver) {
+  if (gameOver && allRoundScores.length > 0) {
     console.log("all round scores:", allRoundScores);
     return (
       <div>
-        {allRoundScores.length > 0 ? (
-          <div>
-            <h2>Game Over</h2>
+        <div>
+          <h2>Game Over</h2>
 
-            <table>
-              <tbody>
-                <tr>
-                  <th>Player</th>
-                  {allRoundScores[0].round_scores.map((score, index) => {
-                    return <th key={index}>Hole #{index + 1}</th>;
-                  })}
-                  <th>Total Score</th>
-                </tr>
-
-                {allRoundScores.map((player) => {
-                  return (
-                    <tr key={player.player_id}>
-                      <th>{player.player_name}</th>
-
-                      {player.round_scores.map((score, index) => {
-                        return <td key={index}>{score}</td>;
-                      })}
-
-                      <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
-                    </tr>
-                  );
+          <table>
+            <tbody>
+              <tr>
+                <th>Player</th>
+                {allRoundScores[0].round_scores.map((score, index) => {
+                  return <th key={index}>Hole #{index + 1}</th>;
                 })}
-              </tbody>
-            </table>
+                <th>Total Score</th>
+              </tr>
 
-            <h3>Placements:</h3>
-            {sortedTotalScores.map((player, index) => {
-              return (
-                <p key={index}>
-                  {index + 1}: {player.player_name}
-                </p>
-              );
-            })}
+              {allRoundScores.map((player) => {
+                return (
+                  <tr key={player.player_id}>
+                    <th>{player.player_name}</th>
 
-            <h3>Winner: {gameWinner}</h3>
+                    {player.round_scores.map((score, index) => {
+                      return <td key={index}>{score}</td>;
+                    })}
 
-            <button
-              onClick={() => {
-                setLobbyStatus("waiting");
-              }}
-            >
-              Lobby Menu
-            </button>
-          </div>
-        ) : (
-          <div>no data available</div>
-        )}
+                    <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          <h3>Placements:</h3>
+          {sortedTotalScores.map((player, index) => {
+            return (
+              <p key={index}>
+                {index + 1}: {player.player_name}
+              </p>
+            );
+          })}
+
+          <h3>Winner: {gameWinner}</h3>
+
+          <button
+            onClick={() => {
+              setLobbyStatus("waiting");
+            }}
+          >
+            Lobby Menu
+          </button>
+        </div>
       </div>
     );
   }
@@ -204,7 +205,11 @@ function Game({ gameId, playerId }) {
       <div>
         <p>Drawn card:</p>
         <div
-          className={isPlayerTurn && !drawnCard ? "card clickable" : "card"}
+          className={
+            isPlayerTurn && !drawnCard
+              ? "card hidden clickable"
+              : "card revealed"
+          }
           onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
         >
           {drawnCard && <p>{`${drawnCard.rank}${drawnCard.suit}`}</p>}

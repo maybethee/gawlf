@@ -79,9 +79,9 @@ function PlayerHands({ playerId }) {
   const setClassName = (playerHand) => {
     if (initializingGame) {
       if (playerHand.id === playerId) {
-        return "card clickable";
+        return "card hidden clickable";
       } else {
-        return "card";
+        return "card hidden";
       }
     } else {
       if (
@@ -89,9 +89,9 @@ function PlayerHands({ playerId }) {
         playerHand.id === currentPlayerId &&
         (drawnCard || selectedDiscardPile)
       ) {
-        return "card clickable";
+        return "card hidden clickable";
       } else {
-        return "card";
+        return "card hidden";
       }
     }
   };

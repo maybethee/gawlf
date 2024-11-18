@@ -239,19 +239,6 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
-  # def final_rankings
-  #   @game.reload
-
-  #   ranking = @game.final_player_ranking
-
-  #   broadcast_message = {
-  #     action: 'get_final_rankings',
-  #     ranking:
-  #   }
-
-  #   ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
-  # end
-
   def all_revealed?(hand)
     hand.all? { |card| card['visibility'] == 'revealed' }
   end
