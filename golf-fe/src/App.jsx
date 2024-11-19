@@ -133,7 +133,7 @@ function App({ userId }) {
         <br />
         <br />
 
-        {joinedPlayers.length > 1 ? (
+        {joinedPlayers.length > 0 ? (
           <div>
             {isLobbyHost ? (
               <button onClick={handleSetupGame}>Play Game</button>

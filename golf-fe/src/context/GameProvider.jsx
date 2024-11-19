@@ -20,6 +20,8 @@ export const GameProvider = ({ children }) => {
   const [allRoundScores, setAllRoundScores] = useState([]);
   const [roundOver, setRoundOver] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [recordedTheDayThat, setRecordedTheDayThat] = useState("");
+  const [isEditing, setIsEditing] = useState(true);
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
@@ -73,6 +75,8 @@ export const GameProvider = ({ children }) => {
       handleRoundScoresCalculated(data);
     } else if (data.action === "get_all_round_scores") {
       handleGetAllRoundScores(data);
+    } else if (data.action === "day_recorded") {
+      handleTheDayThat(data);
     }
   };
 
@@ -195,6 +199,12 @@ export const GameProvider = ({ children }) => {
     setAllRoundScores(data.all_scores);
   };
 
+  const handleTheDayThat = (data) => {
+    console.log("the day that:", data.the_day_that);
+    setRecordedTheDayThat(data.the_day_that);
+    setIsEditing(false);
+  };
+
   const pendingBroadcasts = {};
 
   const waitForBroadcast = (action, callback) => {
@@ -231,6 +241,10 @@ export const GameProvider = ({ children }) => {
         roundScores,
         allRoundScores,
         gameOver,
+        recordedTheDayThat,
+        setRecordedTheDayThat,
+        isEditing,
+        setIsEditing,
         performAction,
       }}
     >

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_15_154809) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_18_142025) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -35,6 +35,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_154809) do
     t.string "status", default: "waiting"
     t.string "lobby_code"
     t.datetime "lobby_created_at"
+    t.string "the_day_that"
   end
 
   create_table "players", force: :cascade do |t|

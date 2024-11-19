@@ -44,7 +44,6 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def swap_card(data)
-    all_revealed = false
     @player = Player.find(data['player_id'])
     @game.reload
 
@@ -195,6 +194,18 @@ class GameChannel < ApplicationCable::Channel
     }
 
     Rails.logger.debug("broadcast message: #{broadcast_message.inspect}")
+
+    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  end
+
+  def record_day(data)
+    @game.reload
+    @game.update!(the_day_that: data['the_day_that'])
+
+    broadcast_message = {
+      action: 'day_recorded',
+      the_day_that: @game.reload.the_day_that
+    }
 
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end

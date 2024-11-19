@@ -1,5 +1,6 @@
 import { useGame } from "./context/useGame";
 import PlayerHands from "./PlayerHands";
+import TheDayThatForm from "./TheDayThatForm";
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
@@ -18,6 +19,9 @@ function Game({ gameId, playerId, isLobbyHost }) {
     allRoundScores,
     roundOver,
     gameOver,
+    recordedTheDayThat,
+    isEditing,
+    setIsEditing,
     performAction,
   } = useGame();
 
@@ -55,6 +59,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
     }
   };
 
+  const handleEditTheDayThat = () => {
+    setIsEditing(true);
+  };
+
   const isPlayerTurn = currentPlayerId === playerId;
 
   const sortedRoundScores =
@@ -80,6 +88,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
   if (initializingGame) {
     return (
       <div>
+        {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
+        <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
+          <button onClick={handleEditTheDayThat}>Edit</button>
+          <h2>
+            The day that{!recordedTheDayThat && "..."} {recordedTheDayThat}
+          </h2>
+        </div>
+
         <h3>Hole: {currentHole} / 9</h3>
         <div>
           <p>Drawn card:</p>
@@ -108,6 +124,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
     return (
       <div>
+        {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
+        <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
+          <button onClick={handleEditTheDayThat}>Edit</button>
+          <h2>
+            The day that{!recordedTheDayThat && "..."} {recordedTheDayThat}
+          </h2>
+        </div>
+
         <h2>Hole {currentHole} Completed</h2>
 
         {isLobbyHost ? (
@@ -145,6 +169,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
     return (
       <div>
         <div>
+          {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
+          <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
+            <button onClick={handleEditTheDayThat}>Edit</button>
+            <h2>
+              The day that{!recordedTheDayThat && "..."} {recordedTheDayThat}
+            </h2>
+          </div>
+
           <h2>Game Over</h2>
 
           <table>
@@ -199,6 +231,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
   return (
     <div>
       {/* <div>Game State: {JSON.stringify(gameState)}</div> */}
+
+      {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
+      <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
+        <button onClick={handleEditTheDayThat}>Edit</button>
+        <h2>
+          The day that{!recordedTheDayThat && "..."} {recordedTheDayThat}
+        </h2>
+      </div>
 
       <h3>Hole: {currentHole} / 9</h3>
 
