@@ -24,6 +24,7 @@ class GameChannel < ApplicationCable::Channel
     @player = Player.find(data['player_id'])
 
     drawn_card = @game.game_state['deck'].sample
+    drawn_card['visibility'] = 'revealed'
 
     Rails.logger.debug("drawn card: #{drawn_card}")
 

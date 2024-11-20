@@ -1,5 +1,5 @@
 import { useGame } from "./context/useGame";
-import { useEffect, useState } from "react";
+import Card from "./Card";
 
 function PlayerHands({ playerId }) {
   const {
@@ -15,7 +15,7 @@ function PlayerHands({ playerId }) {
 
   const handleCardClick = (card, handId) => {
     if (handId !== playerId) {
-      // console.log("you can only click cards in your own hand");
+      console.log("you can only click cards in your own hand");
       return;
     }
     if (initializingGame) {
@@ -68,34 +68,6 @@ function PlayerHands({ playerId }) {
     });
   };
 
-  // useEffect(() => {
-  //   console.log("current selected cards:", selectedCards);
-  // }, [selectedCards]);
-
-  // useEffect(() => {
-  //   console.log("playerHands updated:", playerHands);
-  // }, [playerHands]);
-
-  const setClassName = (playerHand) => {
-    if (initializingGame) {
-      if (playerHand.id === playerId) {
-        return "card hidden clickable";
-      } else {
-        return "card hidden";
-      }
-    } else {
-      if (
-        playerHand.id === playerId &&
-        playerHand.id === currentPlayerId &&
-        (drawnCard || selectedDiscardPile)
-      ) {
-        return "card hidden clickable";
-      } else {
-        return "card hidden";
-      }
-    }
-  };
-
   if (roundOver) {
     return (
       <div>
@@ -107,12 +79,11 @@ function PlayerHands({ playerId }) {
                 <p className="playerName">{playerHand.name}</p>
                 <div className="hand">
                   {playerHand.hand.map((card) => (
-                    <div
-                      className="card revealed"
+                    <Card
+                      card={card}
+                      playerHand={playerHand}
                       key={`${card.rank}${card.suit}`}
-                    >
-                      {`${card.rank}${card.suit}`}
-                    </div>
+                    />
                   ))}
                 </div>
               </div>
@@ -127,25 +98,25 @@ function PlayerHands({ playerId }) {
     <div>
       {playerHands && (
         <div>
-          <h3>Player Hands:</h3>
-          {playerHands.map((playerHand) => (
-            <div key={playerHand.id}>
-              <p className="playerName">{playerHand.name}</p>
-              <div className="hand">
-                {playerHand.hand.map((card) => (
-                  <div
-                    className={setClassName(playerHand)}
-                    key={`${card.rank}${card.suit}`}
-                    onClick={() => handleCardClick(card, playerHand.id)}
-                  >
-                    {card.visibility === "hidden"
-                      ? "??"
-                      : `${card.rank}${card.suit}`}
-                  </div>
-                ))}
+          {/* <h3>Player Hands:</h3> */}
+          <div style={{ display: "flex", columnGap: "2rem" }}>
+            {playerHands.map((playerHand) => (
+              <div key={playerHand.id}>
+                <p className="playerName">{playerHand.name}</p>
+                <div className="hand">
+                  {playerHand.hand.map((card) => (
+                    <Card
+                      card={card}
+                      playerId={playerId}
+                      playerHand={playerHand}
+                      key={`${card.rank}${card.suit}`}
+                      onClick={() => handleCardClick(card, playerHand.id)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

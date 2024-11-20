@@ -211,6 +211,15 @@ export const GameProvider = ({ children }) => {
     pendingBroadcasts[action] = callback;
   };
 
+  const displayCardContent = (card) => {
+    console.log("visible?", card.visibility);
+    if (card.visibility === "hidden") {
+      return null;
+    } else {
+      return `${card.rank}${card.suit}`;
+    }
+  };
+
   const performAction = (action, payload = {}) => {
     subscriptionRef.current?.perform(action, payload);
   };
@@ -246,6 +255,7 @@ export const GameProvider = ({ children }) => {
         isEditing,
         setIsEditing,
         performAction,
+        displayCardContent,
       }}
     >
       {children}

@@ -23,6 +23,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
     isEditing,
     setIsEditing,
     performAction,
+    displayCardContent,
   } = useGame();
 
   const handleDrawCard = () => {
@@ -81,6 +82,39 @@ function Game({ gameId, playerId, isLobbyHost }) {
   const gameWinner =
     sortedTotalScores.length > 0 ? sortedTotalScores[0].player_name : null;
 
+  const setDrawnCardClass = () => {
+    let classes = "card";
+    if (isPlayerTurn) classes += " clickable";
+
+    if (drawnCard) {
+      classes += " revealed";
+      drawnCard.suit === "♥︎" || drawnCard.suit === "♦︎"
+        ? (classes += " red")
+        : (classes += " black");
+    } else {
+      classes += " hidden";
+    }
+    return classes;
+  };
+
+  const setDiscardPileBaseClass = () => {
+    let classes = "discard-pile";
+    if (discardPile.length < 1 && isPlayerTurn && drawnCard)
+      classes += " clickable";
+
+    return classes;
+  };
+
+  const setDiscardPileCardClass = (card, index) => {
+    let classes = " card";
+    if (index === discardPile.length - 1 && isPlayerTurn)
+      classes += " clickable";
+    card.suit === "♥︎" || card.suit === "♦︎"
+      ? (classes += " red")
+      : (classes += " black");
+    return classes;
+  };
+
   if (!gameId) {
     return null;
   }
@@ -89,11 +123,17 @@ function Game({ gameId, playerId, isLobbyHost }) {
     return (
       <div>
         {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
-        <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
-          <button onClick={handleEditTheDayThat}>Edit</button>
-          <h2>
-            The day that{!recordedTheDayThat && "..."} {recordedTheDayThat}
-          </h2>
+        <div>
+          {!isEditing && (
+            <div
+              style={{ display: "flex", alignItems: "center", gap: ".6rem" }}
+            >
+              <button onClick={handleEditTheDayThat}>Edit</button>
+              <h2 className="the-day-that">
+                The day that {recordedTheDayThat}
+              </h2>
+            </div>
+          )}
         </div>
 
         <h3>Hole: {currentHole} / 9</h3>
@@ -103,7 +143,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
         </div>
         <div>
           <p>Discard Pile:</p>
-          <div className="card"></div>
+          <div className="discard-pile"></div>
         </div>
 
         <div>
@@ -126,10 +166,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
       <div>
         {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
         <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
-          <button onClick={handleEditTheDayThat}>Edit</button>
-          <h2>
-            The day that{!recordedTheDayThat && "..."} {recordedTheDayThat}
-          </h2>
+          {!isEditing && (
+            <div>
+              <button onClick={handleEditTheDayThat}>Edit</button>
+              <h2 className="the-day-that">
+                The day that {recordedTheDayThat}
+              </h2>
+            </div>
+          )}
         </div>
 
         <h2>Hole {currentHole} Completed</h2>
@@ -170,11 +214,17 @@ function Game({ gameId, playerId, isLobbyHost }) {
       <div>
         <div>
           {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
-          <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
-            <button onClick={handleEditTheDayThat}>Edit</button>
-            <h2>
-              The day that{!recordedTheDayThat && "..."} {recordedTheDayThat}
-            </h2>
+          <div>
+            {!isEditing && (
+              <div
+                style={{ display: "flex", alignItems: "center", gap: ".6rem" }}
+              >
+                <button onClick={handleEditTheDayThat}>Edit</button>
+                <h2 className="the-day-that">
+                  The day that {recordedTheDayThat}
+                </h2>
+              </div>
+            )}
           </div>
 
           <h2>Game Over</h2>
@@ -233,11 +283,13 @@ function Game({ gameId, playerId, isLobbyHost }) {
       {/* <div>Game State: {JSON.stringify(gameState)}</div> */}
 
       {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
-      <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
-        <button onClick={handleEditTheDayThat}>Edit</button>
-        <h2>
-          The day that{!recordedTheDayThat && "..."} {recordedTheDayThat}
-        </h2>
+      <div>
+        {!isEditing && (
+          <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
+            <button onClick={handleEditTheDayThat}>Edit</button>
+            <h2 className="the-day-that">The day that {recordedTheDayThat}</h2>
+          </div>
+        )}
       </div>
 
       <h3>Hole: {currentHole} / 9</h3>
@@ -245,14 +297,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
       <div>
         <p>Drawn card:</p>
         <div
-          className={
-            isPlayerTurn && !drawnCard
-              ? "card hidden clickable"
-              : "card revealed"
-          }
+          className={setDrawnCardClass()}
           onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
         >
-          {drawnCard && <p>{`${drawnCard.rank}${drawnCard.suit}`}</p>}
+          {drawnCard && (
+            <div className="card-content-container">
+              <p>{displayCardContent(drawnCard)}</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -260,11 +312,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
         <p>Discard Pile:</p>
         <div>
           <div
-            className={
-              discardPile.length < 1 && isPlayerTurn && drawnCard
-                ? "card clickable"
-                : "card"
-            }
+            className={setDiscardPileBaseClass()}
             onClick={
               discardPile.length < 1 && isPlayerTurn && drawnCard
                 ? handleDiscardPileClick
@@ -274,11 +322,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
           {discardPile.map((card, index) => {
             return (
               <div
-                className={
-                  index === discardPile.length - 1 && isPlayerTurn
-                    ? "card clickable"
-                    : "card"
-                }
+                className={setDiscardPileCardClass(card, index)}
                 key={index}
                 onClick={
                   index === discardPile.length - 1
@@ -286,8 +330,12 @@ function Game({ gameId, playerId, isLobbyHost }) {
                     : null
                 }
               >
-                {card.rank}
-                {card.suit}
+                <div className="card-content-container">
+                  <p>
+                    {card.rank}
+                    {card.suit}
+                  </p>
+                </div>
               </div>
             );
           })}
