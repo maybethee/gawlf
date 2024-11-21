@@ -70,6 +70,7 @@ class Game < ApplicationRecord
 
       Rails.logger.debug("\n\nupdate stats, game stat: #{game_stat.inspect}")
 
+      # add reload??
       game_stat.save!
     end
   end
@@ -77,10 +78,8 @@ class Game < ApplicationRecord
   def all_round_scores
     stats = GameStat.where(game_id: id).index_by(&:user_id)
 
-    # player_data =
-    
     players.includes(:user).map do |player|
-      stat = stats[player.user_id]\
+      stat = stats[player.user_id]
 
       Rails.logger.debug("\n\nall_round_scores, player stats: #{stat.inspect}")
 
@@ -92,33 +91,7 @@ class Game < ApplicationRecord
         total_score: stat&.total_score
       }
     end
-
-    # player_data.sort_by { |data| data[:total_score] }
-
-    # Rails.logger.debug("sorted players by score: #{player_data}")
-
-    # player_data
   end
-
-  # # check if this works as expected
-  # def rank_by_final_scores
-  #   # 1. get all stats belonging to players in game
-  #   # 2. sort by total_score low-high
-  #   # 3. return ordered data as arr of objs
-  #   #
-  #   # can i do 2 & 3 at once?
-  #   stats = GameStat.where(game_id: id).index_by(&:user_id)
-
-  #   sorted_players = players.includes(:user).sort_by do |player|
-  #     stat = stats[player.user_id]
-
-  #     stat&.total_score
-  #   end
-
-  #   Rails.logger.debug("\n\nPlayers sorted by total score?: #{sorted_players}")
-
-  #   sorted_players
-  # end
 
   def next_player
     Rails.logger.debug("game's players: #{players.inspect}")

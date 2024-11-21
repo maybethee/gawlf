@@ -8,6 +8,7 @@ export const GameProvider = ({ children }) => {
   const [gameState, setGameState] = useState(null);
   const [currentHole, setCurrentHole] = useState(null);
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
+  const [prevFirstPlayer, setPrevFirstPlayer] = useState(null);
   const [currentPlayerName, setCurrentPlayerName] = useState("");
   const [drawnCard, setDrawnCard] = useState(null);
   const [discardPile, setDiscardPile] = useState([]);
@@ -25,7 +26,7 @@ export const GameProvider = ({ children }) => {
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
-    if (gameId) {
+    if (gameId && !subscriptionRef.current) {
       subscriptionRef.current = cable.subscriptions.create(
         { channel: "GameChannel", game_id: gameId },
         {
@@ -117,6 +118,7 @@ export const GameProvider = ({ children }) => {
     setCurrentHole(data.current_hole);
     setDiscardPile(data.game_state.discard_pile);
     setCurrentPlayerId(data.current_player_id);
+    setPrevFirstPlayer(data.current_player_id);
     setCurrentPlayerName(data.current_player_name);
     setGameState(data.gameState);
     setRoundOver(false);
@@ -161,7 +163,7 @@ export const GameProvider = ({ children }) => {
 
       setRoundOver(true);
 
-      if (data.hole === 2) {
+      if (data.hole === 8) {
         console.log("All holes finished, game over!");
         setRoundOver(false);
 
@@ -240,6 +242,7 @@ export const GameProvider = ({ children }) => {
         playerHands,
         currentPlayerId,
         currentPlayerName,
+        prevFirstPlayer,
         initializingGame,
         setInitializingGame,
         selectedCards,

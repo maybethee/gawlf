@@ -7,12 +7,14 @@ function Root() {
   const [user, setUser] = useState(null);
 
   return (
-    <StrictMode>
+    // <StrictMode>
+    <>
       <UserBtns setUser={setUser} />
       <GameProvider>
         <App userId={user?.id} />
       </GameProvider>
-    </StrictMode>
+    </>
+    // </StrictMode>
   );
 }
 

@@ -11,6 +11,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
     discardPile,
     currentPlayerId,
     currentPlayerName,
+    prevFirstPlayer,
     initializingGame,
     setInitializingGame,
     selectedCards,
@@ -179,7 +180,15 @@ function Game({ gameId, playerId, isLobbyHost }) {
         <h2>Hole {currentHole} Completed</h2>
 
         {isLobbyHost ? (
-          <button onClick={() => performAction("setup_hole")}>Next Hole</button>
+          <button
+            onClick={() =>
+              performAction("setup_hole", {
+                prev_first_player_id: prevFirstPlayer,
+              })
+            }
+          >
+            Next Hole
+          </button>
         ) : (
           <p>Waiting for host to start next round...</p>
         )}

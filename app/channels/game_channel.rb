@@ -136,7 +136,7 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
-  def setup_hole
+  def setup_hole(data)
     @game.reload
     @game.update!(game_state: initial_game_state)
     @game.update!(hole: @game.hole += 1)
@@ -149,11 +149,16 @@ class GameChannel < ApplicationCable::Channel
     end
 
     # eventually, have some sort of way for players to decide who goes first manually? and if none chosen then pick random?
+    first_player_id = if @game.hole > 1
+                        prev_first_player_id = data['prev_first_player_id']
+                        @game.update!(current_player_id: prev_first_player_id)
+                        @game.reload.next_player.id
+                      else
+                        @game.players.pluck(:id).sample
+                      end
 
-    random_player_id = @game.players.pluck(:id).sample
-
-    Rails.logger.debug("random player: #{random_player_id.inspect}")
-    @game.update!(current_player_id: random_player_id)
+    Rails.logger.debug("random player: #{first_player_id.inspect}")
+    @game.update!(current_player_id: first_player_id)
 
     current_player_name = Player.find_by(id: @game.current_player_id).name
 
