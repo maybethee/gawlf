@@ -72,7 +72,7 @@ function App({ userId }) {
 
   const handleSetupGame = () => {
     performAction("setup_game");
-    performAction("setup_hole");
+    // performAction("setup_hole");
   };
 
   if (!lobbyStatus)

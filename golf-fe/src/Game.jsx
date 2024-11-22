@@ -5,7 +5,7 @@ import TheDayThatForm from "./TheDayThatForm";
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
     setLobbyStatus,
-    gameState,
+    // gameState,
     currentHole,
     drawnCard,
     discardPile,

@@ -26,6 +26,18 @@ export const GameProvider = ({ children }) => {
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
+    console.log("gameId changed to:", gameId);
+
+    if (gameId) {
+      if (subscriptionRef.current) {
+        console.log(
+          "Cleaning up existing subscription before creating a new one"
+        );
+        subscriptionRef.current.unsubscribe();
+        subscriptionRef.current = null;
+      }
+    }
+
     if (gameId && !subscriptionRef.current) {
       subscriptionRef.current = cable.subscriptions.create(
         { channel: "GameChannel", game_id: gameId },
@@ -58,6 +70,7 @@ export const GameProvider = ({ children }) => {
 
   const handleReceivedData = (data) => {
     console.log("Received data:", data);
+
     if (data.action === "player_joined") {
       handlePlayerJoined(data);
     } else if (data.action === "card_drawn") {
@@ -72,10 +85,6 @@ export const GameProvider = ({ children }) => {
       handleCardSwapped(data);
     } else if (data.action === "card_revealed") {
       handleCardRevealed(data);
-    } else if (data.action === "round_scores_calculated") {
-      handleRoundScoresCalculated(data);
-    } else if (data.action === "get_all_round_scores") {
-      handleGetAllRoundScores(data);
     } else if (data.action === "day_recorded") {
       handleTheDayThat(data);
     }
@@ -104,6 +113,7 @@ export const GameProvider = ({ children }) => {
   const handleGameSetup = (data) => {
     console.log(data);
     setGameOver(false);
+    performAction("setup_hole");
   };
 
   const handleHoleSetup = (data) => {
@@ -144,8 +154,6 @@ export const GameProvider = ({ children }) => {
   };
 
   const handleCardSwapped = (data) => {
-    console.log(data);
-
     const hands = [];
 
     data.players.forEach((player) => {
@@ -157,27 +165,18 @@ export const GameProvider = ({ children }) => {
     setSelectedDiscardPile(null);
     setDiscardPile(data.game_state.discard_pile);
 
-    if (data.all_revealed === true) {
+    if (data.curr_round_scores) {
       console.log("Player has revealed all cards, round over!");
-      performAction("calculate_round_scores");
-
+      console.log("round scores", data.curr_round_scores);
+      setRoundScores(data.curr_round_scores);
       setRoundOver(true);
 
-      if (data.hole === 8) {
+      if (data.hole === 4) {
         console.log("All holes finished, game over!");
         setRoundOver(false);
-
-        // delay 'all_round_scores' until 'round_scores_calculated' is done
-        const onRoundScoresCalculated = () => {
-          console.log(
-            "round_scores_calculated received, performing all_round_scores..."
-          );
-
-          performAction("all_round_scores");
-          setGameOver(true);
-        };
-
-        waitForBroadcast("round_scores_calculated", onRoundScoresCalculated);
+        console.log("all round scores:", data.all_round_scores);
+        setAllRoundScores(data.all_round_scores);
+        setGameOver(true);
       }
     }
 
@@ -186,35 +185,14 @@ export const GameProvider = ({ children }) => {
     setGameState(data.game_state);
   };
 
-  const handleRoundScoresCalculated = (data) => {
-    console.log("round scores", data.scores);
-    setRoundScores(data.scores);
-    // trigger callback if waiting for 'round_scores_calculated'
-    if (pendingBroadcasts["round_scores_calculated"]) {
-      pendingBroadcasts["round_scores_calculated"]();
-      delete pendingBroadcasts["round_scores_calculated"];
-    }
-  };
-
-  const handleGetAllRoundScores = (data) => {
-    console.log("all round scores:", data.all_scores);
-    setAllRoundScores(data.all_scores);
-  };
-
   const handleTheDayThat = (data) => {
     console.log("the day that:", data.the_day_that);
     setRecordedTheDayThat(data.the_day_that);
     setIsEditing(false);
   };
 
-  const pendingBroadcasts = {};
-
-  const waitForBroadcast = (action, callback) => {
-    pendingBroadcasts[action] = callback;
-  };
-
   const displayCardContent = (card) => {
-    console.log("visible?", card.visibility);
+    // console.log("visible?", card.visibility);
     if (card.visibility === "hidden") {
       return null;
     } else {

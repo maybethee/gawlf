@@ -72,9 +72,27 @@ class GameChannel < ApplicationCable::Channel
     @game.game_state['discard_pile'] << data['card_to_swap']
     @game.save
 
-    # check if player's hand is all revealed
-    all_revealed = all_revealed?(@player.hand)
+    curr_round_scores = nil
+    all_round_scores = nil
+    # end round if player's hand is all revealed
+    if all_revealed?(@player.hand)
+      curr_round_scores = @game.calculate_scores(@game.hole)
+      Rails.logger.debug("round scores calculated: #{curr_round_scores}")
+      Rails.logger.debug('now updating stats...')
+      @game.update_stats(curr_round_scores, @game.hole)
+      # finalize game if last hole
+      if @game.reload.hole == 4
+        all_round_scores = @game.all_round_scores
+        all_round_scores
+      else
+        curr_round_scores
+      end
+    end
 
+    Rails.logger.debug("\n\nCurr round scores? #{curr_round_scores}")
+    Rails.logger.debug("\n\nAll round scores? #{all_round_scores}")
+
+    # see if i need to ignore this at round/game end or if it's fine to leave it
     next_player_id = @game.next_player.id
     @game.update!(current_player_id: next_player_id)
 
@@ -84,14 +102,15 @@ class GameChannel < ApplicationCable::Channel
 
     broadcast_message = {
       action: 'card_swapped',
-      all_revealed:,
       players: @game.reload.players,
       hole: @game.reload.hole,
       current_player_id: @game.reload.current_player_id,
       current_player_name:,
       discard_pile: @game.reload.game_state['discard_pile'],
       updated_player_hand: @player.reload.hand,
-      game_state: @game.reload.game_state
+      game_state: @game.reload.game_state,
+      curr_round_scores:,
+      all_round_scores:
     }
 
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
@@ -226,34 +245,6 @@ class GameChannel < ApplicationCable::Channel
     end
 
     @game.save
-  end
-
-  def calculate_round_scores
-    @game.reload
-
-    round_scores = @game.calculate_scores(@game.hole)
-
-    broadcast_message = {
-      action: 'round_scores_calculated',
-      scores: round_scores
-    }
-
-    Rails.logger.debug("broadcast message: #{broadcast_message.inspect}")
-
-    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
-  end
-
-  def all_round_scores
-    @game.reload
-
-    all_round_scores = @game.all_round_scores
-
-    broadcast_message = {
-      action: 'get_all_round_scores',
-      all_scores: all_round_scores
-    }
-
-    ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
   def all_revealed?(hand)
