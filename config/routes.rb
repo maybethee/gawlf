@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get '/create_lobby', to: 'lobbies#create'
   post '/join_lobby', to: 'lobbies#join'
   post '/lobby_status', to: 'lobbies#status'
+  post '/guest_users', to: 'guest_users#create'
 
   namespace :api do
     namespace :v1 do

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { getCurrentUser } from "./api";
+import { getCurrentUser, createGuest } from "./api";
 
 function UserBtns({ setUser }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [guestCreated, setGuestCreated] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -12,7 +13,7 @@ function UserBtns({ setUser }) {
     };
 
     checkAuth();
-  }, [setUser]);
+  }, [setUser, guestCreated]);
 
   const redirectToRegister = () => {
     window.location.href = "http://localhost:3000/users/sign_up";
@@ -20,6 +21,15 @@ function UserBtns({ setUser }) {
 
   const redirectToLogin = () => {
     window.location.href = "http://localhost:3000/users/sign_in";
+  };
+
+  const handleGuestLogin = async () => {
+    try {
+      await createGuest();
+      setGuestCreated(true);
+    } catch (error) {
+      console.error("Error creating geust:", error);
+    }
   };
 
   return (
@@ -30,6 +40,7 @@ function UserBtns({ setUser }) {
         <div>
           <button onClick={redirectToRegister}>Register</button>
           <button onClick={redirectToLogin}>Login</button>
+          <button onClick={handleGuestLogin}>Play as Guest</button>
         </div>
       )}
     </div>

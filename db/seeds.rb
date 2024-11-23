@@ -25,27 +25,27 @@ ActiveRecord::Base.connection.reset_pk_sequence!('users')
 # user2.encrypted_password = 'pass'
 # user2.save!
 
-User.create!(email: 'charlie@gmail.com', password: 'password', password_confirmation: 'password')
-User.create!(email: 'tofu@gmail.com', password: 'password', password_confirmation: 'password')
+User.create!(username: 'charlie', email: nil, password: 'password', password_confirmation: 'password')
+User.create!(username: 'tofu', email: nil, password: 'password', password_confirmation: 'password')
 
-game = Game.create!(
-  game_state: {
-    deck: [].tap do |cards|
-      %w[♠︎ ♣︎ ♥︎ ♦︎].each do |suit|
-        %w[A 2 3 4 5 6 7 8 9 10 J Q K].each do |rank|
-          cards << { suit:, rank: }
-        end
-      end
-      2.times { cards << { suit: '*', rank: '*' } }
-    end,
-    discard_pile: [],
-    drawn_card: {}
-  },
-  hole: 0
-)
+# game = Game.create!(
+#   game_state: {
+#     deck: [].tap do |cards|
+#       %w[♠︎ ♣︎ ♥︎ ♦︎].each do |suit|
+#         %w[A 2 3 4 5 6 7 8 9 10 J Q K].each do |rank|
+#           cards << { suit:, rank: }
+#         end
+#       end
+#       2.times { cards << { suit: '*', rank: '*' } }
+#     end,
+#     discard_pile: [],
+#     drawn_card: {}
+#   },
+#   hole: 0
+# )
 
-katy = Player.create!(name: 'Katy', game:, hand: [])
-cobb = Player.create!(name: 'Cobb', game:, hand: [])
+# katy = Player.create!(name: 'Katy', game:, hand: [])
+# cobb = Player.create!(name: 'Cobb', game:, hand: [])
 
-game.update!(current_player_id: katy.id)
-puts 'Seeded game and players'
+# game.update!(current_player_id: katy.id)
+# puts 'Seeded game and players'

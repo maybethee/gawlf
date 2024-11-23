@@ -19,6 +19,7 @@ export const createPlayer = async (playerName, gameId, userId) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         player: {
           name: playerName,
@@ -31,6 +32,20 @@ export const createPlayer = async (playerName, gameId, userId) => {
   );
   const data = await response.json();
   console.log("created player:", data);
+
+  return data;
+};
+
+export const createGuest = async () => {
+  const response = await fetch(`http://localhost:3000/guest_users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const data = await response.json();
+  console.log("created guest user:", data);
 
   return data;
 };
