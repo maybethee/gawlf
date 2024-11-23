@@ -70,6 +70,9 @@ class GameChannel < ApplicationCable::Channel
     @player.save!
 
     @game.game_state['discard_pile'] << data['card_to_swap']
+
+    reconstitute_deck if @game.game_state['deck'].empty?
+
     @game.save
 
     curr_round_scores = nil
@@ -124,6 +127,8 @@ class GameChannel < ApplicationCable::Channel
     updated_game_state['discard_pile'] << @game.game_state['drawn_card']
 
     @game.update!(game_state: updated_game_state)
+
+    reconstitute_deck if @game.game_state['deck'].empty?
 
     next_player_id = @game.next_player.id
     @game.update!(current_player_id: next_player_id)
@@ -265,6 +270,34 @@ class GameChannel < ApplicationCable::Channel
       discard_pile: [],
       drawn_card: {}
     }
+
+    # small test deck
+    # {
+    #   deck: [].tap do |cards|
+    #     %w[♠︎ ♣︎ ♥︎ ♦︎].each do |suit|
+    #       %w[A 2 3].each do |rank|
+    #         cards << { suit:, rank:, visibility: 'hidden' }
+    #       end
+    #     end
+    #   end,
+    #   discard_pile: [],
+    #   drawn_card: {}
+    # }
+  end
+
+  def reconstitute_deck
+    @game.reload
+
+    reconstituted_deck = @game.game_state['discard_pile']
+    reconstituted_deck.each { |card| card['visibility'] = 'hidden' }
+
+    updated_game_state = @game.game_state.deep_dup
+    updated_game_state['discard_pile'] = []
+    updated_game_state['deck'] = reconstituted_deck
+
+    Rails.logger.debug("game_stats after reconstituting from discard pile: #{updated_game_state['deck'].inspect}")
+
+    @game.update!(game_state: updated_game_state)
   end
 
   def fetch_joined_players

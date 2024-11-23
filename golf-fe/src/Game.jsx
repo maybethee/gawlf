@@ -319,7 +319,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
       <div>
         <p>Discard Pile:</p>
-        <div>
+        <div style={{ display: "flex" }}>
           <div
             className={setDiscardPileBaseClass()}
             onClick={
@@ -338,6 +338,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
                     ? handleDiscardPileClick
                     : null
                 }
+                style={{ marginLeft: "-30px", borderColor: "orange" }}
               >
                 <div className="card-content-container">
                   <p>
