@@ -277,7 +277,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
           <button
             onClick={() => {
-              setLobbyStatus("waiting");
+              setLobbyStatus("");
             }}
           >
             Lobby Menu

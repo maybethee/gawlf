@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     resources :players, only: %i[index create]
   end
 
+  resources :users, only: [:show]
+
   get '/current_user', to: 'sessions#show'
   get '/create_lobby', to: 'lobbies#create'
   post '/join_lobby', to: 'lobbies#join'

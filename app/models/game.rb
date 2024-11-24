@@ -27,7 +27,6 @@ class Game < ApplicationRecord
 
       round_scores << { player_id: player.id, player_name: player.name, user_id: user&.id, round_score: score }
     end
-    # update_stats(round_scores, hole)
     round_scores
   end
 
@@ -53,7 +52,7 @@ class Game < ApplicationRecord
 
   def update_stats(round_scores, hole)
     Rails.logger.debug("\n\nPassed round scores: #{round_scores}")
-    # Rails.logger.debug "Associations for player #{player.id}: game_stat=#{player.game_stats.pluck(:id)}"
+
     round_scores.each do |score_data|
       game_stat = GameStat.find_or_initialize_by(
         game_id: id,
@@ -72,31 +71,19 @@ class Game < ApplicationRecord
 
       game_stat.total_score = game_stat.round_scores.sum
 
-      # Rails.logger.debug("\n\ngame stat round scores after pushing new score data: #{game_stat.round_scores}")
-
-      Rails.logger.debug("GameStat after update: #{game_stat.inspect}")
-
-      # add reload??
       game_stat.save!
 
       Rails.logger.debug("GameStat after save: #{game_stat.reload.inspect}")
-
-      # Rails.logger.debug("\n\ngame stat round scores after save: #{game_stat.round_scores}")
     end
   end
 
   def all_round_scores
     stats = GameStat.where(game_id: id).index_by(&:user_id)
     Rails.logger.debug("Stats retrieved: #{stats.values.map(&:inspect)}")
-    stats.each_value(&:reload)
-    Rails.logger.debug("Stats after reload: #{stats.values.map(&:inspect)}")
 
     players.includes(:user).map do |player|
       stat = stats[player.user_id]
-          Rails.logger.debug("Player: #{player.name}, Stats: #{stat.inspect}")
-
-
-      # Rails.logger.debug("\n\nall_round_scores, player stats: #{stat.inspect}")
+      Rails.logger.debug("Player #{player.name}, User ID: #{player.user_id}, stat: #{stat.inspect}")
 
       {
         player_id: player.id,
@@ -106,6 +93,26 @@ class Game < ApplicationRecord
         total_score: stat&.total_score
       }
     end
+  end
+
+  def update_summary
+    stats = GameStat.where(game_id: id).includes(:user).order(total_score: :asc)
+
+    players_summary = stats.map.with_index(1) do |game_stat, index|
+      {
+        user_id: game_stat.user_id,
+        total_score: game_stat.total_score,
+        round_scores: game_stat.round_scores,
+        placement: index
+      }
+    end
+
+    winner_id = players_summary.first[:user_id]
+
+    update!(summary: {
+              players: players_summary,
+              winner_id:
+            })
   end
 
   def next_player

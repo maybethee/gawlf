@@ -11,6 +11,19 @@ export const getCurrentUser = async () => {
   }
 };
 
+export const getUserDataFromBackend = async (userId) => {
+  const response = await fetch(`http://localhost:3000/users/${userId}`, {
+    credentials: "include",
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    return data;
+  } else {
+    return null;
+  }
+};
+
 export const createPlayer = async (playerName, gameId, userId) => {
   const response = await fetch(
     `http://localhost:3000/games/${gameId}/players`,
@@ -79,6 +92,7 @@ export const joinLobby = async (lobbyCode) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify({ lobby_code: lobbyCode }),
   });
   const data = await response.json();

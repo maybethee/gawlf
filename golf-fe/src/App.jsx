@@ -7,6 +7,7 @@ import {
   fetchJoinedPlayers,
 } from "./api";
 import { useGame } from "./context/useGame";
+import Profile from "./Profile";
 
 function App({ userId }) {
   const {
@@ -24,6 +25,7 @@ function App({ userId }) {
   const [lobbyCode, setLobbyCode] = useState("");
   const [lobbyCodeInput, setLobbyCodeInput] = useState("");
   const [isLobbyHost, setIsLobbyHost] = useState(false);
+  const [viewingProfile, setViewingProfile] = useState(false);
 
   useEffect(() => {
     if (!gameId) {
@@ -77,22 +79,44 @@ function App({ userId }) {
   if (!lobbyStatus)
     return (
       <div>
-        <div>
-          <button onClick={handleCreateLobby}>Create Lobby</button>
-          <form onSubmit={handleJoinLobby} action="">
-            <label htmlFor="">
-              Lobby Code:
-              <input
-                type="text"
-                value={lobbyCodeInput}
-                onChange={(e) => {
-                  setLobbyCodeInput(e.target.value);
-                }}
-              />
-            </label>
-            <button>Join Lobby</button>
-          </form>
-        </div>
+        {viewingProfile ? (
+          <div>
+            <Profile userId={userId} />
+            <button
+              onClick={() => {
+                setViewingProfile(false);
+              }}
+            >
+              Back to menu
+            </button>
+          </div>
+        ) : (
+          <div>
+            <button
+              onClick={() => {
+                setViewingProfile(true);
+              }}
+            >
+              Profile
+            </button>
+            <br />
+            <br />
+            <button onClick={handleCreateLobby}>Create Lobby</button>
+            <form onSubmit={handleJoinLobby} action="">
+              <label htmlFor="">
+                Lobby Code:
+                <input
+                  type="text"
+                  value={lobbyCodeInput}
+                  onChange={(e) => {
+                    setLobbyCodeInput(e.target.value);
+                  }}
+                />
+              </label>
+              <button>Join Lobby</button>
+            </form>
+          </div>
+        )}
       </div>
     );
 

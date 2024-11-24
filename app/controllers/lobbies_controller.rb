@@ -1,4 +1,6 @@
 class LobbiesController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:create, :join, :status, :update_status]
+
   def create
     game = Game.create!(
       lobby_code: generate_unique_code,
@@ -38,6 +40,4 @@ class LobbiesController < ApplicationController
   def generate_unique_code
     SecureRandom.hex(3)
   end
-
- 
 end
