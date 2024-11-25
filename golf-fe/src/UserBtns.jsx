@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getCurrentUser, createGuest } from "./api";
+import styles from "./UserBtns.module.css";
 
 function UserBtns({ setUser }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -37,7 +38,7 @@ function UserBtns({ setUser }) {
       {isAuthenticated ? (
         <p>Logged in!</p>
       ) : (
-        <div>
+        <div className={styles.container}>
           <button onClick={redirectToRegister}>Register</button>
           <button onClick={redirectToLogin}>Login</button>
           <button onClick={handleGuestLogin}>Play as Guest</button>

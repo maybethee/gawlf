@@ -1,0 +1,6 @@
+.main_container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-flow: row;
+}

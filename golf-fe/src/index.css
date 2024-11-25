@@ -53,10 +53,13 @@ table {
 }
 
 body {
-  display: flex;
-  background-color: rgb(16, 16, 16);
-  color: #fff;
+  /* display: flex; */
+  /* background-color: rgb(16, 16, 16); */
+  color: #440321;
   width: 100%;
+  justify-content: flex-end;
+  background-color: rgb(204, 179, 20);
+  /* column-gap: 1rem; */
   /* justify-content: center; */
 }
 
@@ -94,13 +97,15 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #292929;
+  background-color: #00000000;
   cursor: pointer;
+  border-width: 5px;
+  border-color: #32051a;
   transition: border-color 0.25s;
-  color: white;
+  color: #32051a;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #3e011d;
 }
 button:focus,
 button:focus-visible {

@@ -1,0 +1,6 @@
+.container {
+  width: 100%;
+  display: flex;
+  column-gap: 0.5rem;
+  margin: 1rem 1rem 0 0;
+}

@@ -8,6 +8,7 @@ import {
 } from "./api";
 import { useGame } from "./context/useGame";
 import Profile from "./Profile";
+import styles from "./App.module.css";
 
 function App({ userId }) {
   const {
@@ -79,6 +80,7 @@ function App({ userId }) {
   if (!lobbyStatus)
     return (
       <div>
+        <h1 className={styles.title}>GOLF</h1>
         {viewingProfile ? (
           <div>
             <Profile userId={userId} />
@@ -91,30 +93,45 @@ function App({ userId }) {
             </button>
           </div>
         ) : (
-          <div>
-            <button
-              onClick={() => {
-                setViewingProfile(true);
-              }}
-            >
-              Profile
-            </button>
-            <br />
-            <br />
-            <button onClick={handleCreateLobby}>Create Lobby</button>
-            <form onSubmit={handleJoinLobby} action="">
-              <label htmlFor="">
-                Lobby Code:
-                <input
-                  type="text"
-                  value={lobbyCodeInput}
-                  onChange={(e) => {
-                    setLobbyCodeInput(e.target.value);
-                  }}
-                />
-              </label>
-              <button>Join Lobby</button>
-            </form>
+          <div className={styles.home_container}>
+            <div className={styles.home_row_1}>
+              <button
+                onClick={() => {
+                  setViewingProfile(true);
+                }}
+              >
+                Profile
+              </button>
+            </div>
+            <div className={styles.home_row_2}>
+              <div className={styles.lobby_create_row}>
+                <button
+                  className={styles.create_lobby_btn}
+                  onClick={handleCreateLobby}
+                >
+                  Create Lobby
+                </button>
+              </div>
+              <div className={styles.lobby_form_row}>
+                <form
+                  onSubmit={handleJoinLobby}
+                  action=""
+                  className={styles.join_lobby_form}
+                >
+                  <label htmlFor="">
+                    Lobby Code:{" "}
+                    <input
+                      type="text"
+                      value={lobbyCodeInput}
+                      onChange={(e) => {
+                        setLobbyCodeInput(e.target.value);
+                      }}
+                    />
+                  </label>
+                  <button>Join Lobby</button>
+                </form>
+              </div>
+            </div>
           </div>
         )}
       </div>
