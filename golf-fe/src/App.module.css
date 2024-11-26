@@ -1,4 +1,11 @@
-.home_container {
+.home_page_container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-flow: row;
+}
+
+.home_btns_container {
   height: 100vh;
   padding: 1.5rem;
   margin-right: 3rem;
@@ -9,7 +16,7 @@
   box-sizing: border-box;
 }
 
-.home_container button {
+.home_btns_container button {
   display: inline-flex;
   align-items: center;
   height: 90px;
@@ -17,12 +24,12 @@
   transition: background-color 0.2s, color 0.2s;
 }
 
-.home_container button:hover {
-  color: rgb(204, 179, 20);
-  background-color: #440321;
+.home_btns_container button:hover {
+  color: #fceb9dff;
+  background-color: #03256cff;
 }
 
-.home_container button:focus,
+.home_btns_container button:focus,
 button:focus-visible {
   outline: 5px auto -webkit-focus-ring-color;
 }
@@ -45,17 +52,32 @@ button:focus-visible {
 .join_lobby_form {
   display: flex;
   align-items: center;
-  column-gap: 1rem;
+  column-gap: 2rem;
+}
+
+.input_container {
+  position: relative;
+  display: block;
+}
+
+.input_container::before {
+  content: "Lobby Code:";
+  position: absolute;
+  top: -2rem;
+  left: 0;
+  font-size: 1.2rem;
 }
 
 .join_lobby_form input {
+  position: relative;
+  font-size: 1.4rem;
   box-shadow: none;
-  height: 30px;
+  height: 70px;
   border-radius: 6px;
-  padding: 5px;
+  padding: 5px 15px;
   background-color: rgba(0, 0, 0, 0);
-  border: #440321 solid 5px;
-  color: #440321;
+  border: #03256cff solid 5px;
+  color: #03256cff;
 }
 
 .join_lobby_form input:focus {

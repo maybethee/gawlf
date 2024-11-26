@@ -1,28 +1,14 @@
 import { useState, useEffect } from "react";
-import Game from "./Game";
-import {
-  createLobby,
-  joinLobby,
-  createPlayer,
-  fetchJoinedPlayers,
-} from "./api";
+import { createLobby, joinLobby, fetchJoinedPlayers } from "./api";
 import { useGame } from "./context/useGame";
 import Profile from "./Profile";
 import styles from "./App.module.css";
+import Lobby from "./Lobby";
 
 function App({ userId }) {
-  const {
-    gameId,
-    setGameId,
-    joinedPlayers,
-    setJoinedPlayers,
-    lobbyStatus,
-    setLobbyStatus,
-    performAction,
-  } = useGame();
+  const { gameId, setGameId, setJoinedPlayers, lobbyStatus, setLobbyStatus } =
+    useGame();
 
-  const [playerName, setPlayerName] = useState("");
-  const [playerId, setPlayerId] = useState(null);
   const [lobbyCode, setLobbyCode] = useState("");
   const [lobbyCodeInput, setLobbyCodeInput] = useState("");
   const [isLobbyHost, setIsLobbyHost] = useState(false);
@@ -65,21 +51,9 @@ function App({ userId }) {
     setLobbyStatus("waiting");
   };
 
-  const handleCreatePlayer = async (e) => {
-    e.preventDefault();
-
-    const data = await createPlayer(playerName, gameId, userId);
-    console.log("player data", data);
-    setPlayerId(data.id);
-  };
-
-  const handleSetupGame = () => {
-    performAction("setup_game");
-  };
-
   if (!lobbyStatus)
     return (
-      <div>
+      <div className={styles.home_page_container}>
         <h1 className={styles.title}>GOLF</h1>
         {viewingProfile ? (
           <div>
@@ -93,7 +67,7 @@ function App({ userId }) {
             </button>
           </div>
         ) : (
-          <div className={styles.home_container}>
+          <div className={styles.home_btns_container}>
             <div className={styles.home_row_1}>
               <button
                 onClick={() => {
@@ -118,16 +92,20 @@ function App({ userId }) {
                   action=""
                   className={styles.join_lobby_form}
                 >
-                  <label htmlFor="">
-                    Lobby Code:{" "}
-                    <input
-                      type="text"
-                      value={lobbyCodeInput}
-                      onChange={(e) => {
-                        setLobbyCodeInput(e.target.value);
-                      }}
-                    />
-                  </label>
+                  <div className={styles.join_lobby_form_input_container}>
+                    <label style={{ display: "none" }} htmlFor="">
+                      Lobby Code:{" "}
+                    </label>
+                    <div className={styles.input_container}>
+                      <input
+                        type="text"
+                        value={lobbyCodeInput}
+                        onChange={(e) => {
+                          setLobbyCodeInput(e.target.value);
+                        }}
+                      />
+                    </div>
+                  </div>
                   <button>Join Lobby</button>
                 </form>
               </div>
@@ -137,62 +115,8 @@ function App({ userId }) {
       </div>
     );
 
-  if (lobbyStatus === "waiting")
-    return (
-      <div>
-        <h2>{lobbyCode}</h2>
-        <p>Share this code to let others join this game</p>
-
-        {!playerId && (
-          <form onSubmit={handleCreatePlayer} action="">
-            <label htmlFor="">
-              Enter Name:
-              <input
-                type="text"
-                value={playerName}
-                onChange={(e) => {
-                  setPlayerName(e.target.value);
-                }}
-              />
-            </label>
-            <button>Join Game</button>
-          </form>
-        )}
-        <br />
-        <br />
-        <h3>Players in Game:</h3>
-        {joinedPlayers.length ? (
-          <ul>
-            {joinedPlayers.map((player) => {
-              return <li key={player.name}>{player.name}</li>;
-            })}
-          </ul>
-        ) : (
-          <p>Waiting for players...</p>
-        )}
-        <br />
-        <br />
-
-        {joinedPlayers.length > 0 ? (
-          <div>
-            {isLobbyHost ? (
-              <button onClick={handleSetupGame}>Play Game</button>
-            ) : (
-              <p>Waiting for host to start game</p>
-            )}
-          </div>
-        ) : (
-          <div>
-            <p>minimum of 2 players required to play</p>
-          </div>
-        )}
-      </div>
-    );
-
   return (
-    <div style={{ marginLeft: "3rem" }}>
-      <Game gameId={gameId} playerId={playerId} isLobbyHost={isLobbyHost} />
-    </div>
+    <Lobby lobbyCode={lobbyCode} isLobbyHost={isLobbyHost} userId={userId} />
   );
 }
 

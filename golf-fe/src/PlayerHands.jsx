@@ -14,6 +14,8 @@ function PlayerHands({ playerId }) {
   } = useGame();
 
   const handleCardClick = (card, handId) => {
+    console.log("hand id:", handId);
+    console.log("playerId:", playerId);
     if (handId !== playerId) {
       console.log("you can only click cards in your own hand");
       return;
