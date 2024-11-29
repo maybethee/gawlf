@@ -34,11 +34,11 @@ function UserBtns({ setUser }) {
   };
 
   return (
-    <div>
+    <div className={styles.container}>
       {isAuthenticated ? (
         <p>Logged in!</p>
       ) : (
-        <div className={styles.container}>
+        <div className={styles.btns_container}>
           <button onClick={redirectToRegister}>Register</button>
           <button onClick={redirectToLogin}>Login</button>
           <button onClick={handleGuestLogin}>Play as Guest</button>

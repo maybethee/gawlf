@@ -1,0 +1,93 @@
+.lobby_content_container {
+  margin: 1.5rem 0 0 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.top_row {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.bottom_row {
+  text-align: center;
+
+  display: flex;
+  flex-flow: column;
+  row-gap: 4rem;
+  padding-bottom: 5rem;
+}
+
+.bottom_row button {
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.bottom_row button:hover {
+  color: #fceb9dff;
+  background-color: #03256cff;
+}
+
+.bottom_row button:focus,
+button:focus-visible {
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+.no_players_p {
+  align-self: center;
+}
+
+.lobby_content_container h2 {
+  font-size: 2.4rem;
+}
+
+.lobby_content_container h3 {
+  font-size: 1.7rem;
+  margin-top: 3rem;
+  font-weight: 800;
+}
+
+.lobby_content_container ul {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  row-gap: 1rem;
+  width: 400px;
+}
+
+.faded_p {
+  color: rgba(3, 36, 108, 0.75);
+}
+
+.join_game_form {
+  display: flex;
+  align-items: center;
+  column-gap: 2rem;
+  margin: 5rem 0 0 0;
+}
+
+.input_container {
+  position: relative;
+  display: block;
+}
+
+.input_container::before {
+  content: "Enter Name:";
+  position: absolute;
+  top: -1.4rem;
+  left: 0;
+  font-size: 1.2rem;
+}
+
+.join_game_form input {
+  position: relative;
+  font-size: 1.4rem;
+  box-shadow: none;
+  height: 35px;
+  width: 200px;
+  padding: 5px 15px;
+}

@@ -47,53 +47,68 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
 
   if (lobbyStatus !== "active")
     return (
-      <div className={styles.lobby_container}>
-        <h2>{lobbyCode}</h2>
-        <p>Share this code to let others join this game</p>
+      <div className={styles.lobby_content_container}>
+        <div className={styles.top_row}>
+          <h2>Room Code: {lobbyCode.toUpperCase()}</h2>
+          <p className={styles.faded_p}>
+            Share this code to let others join this game
+          </p>
 
-        {!playerId && (
-          <form onSubmit={handleCreatePlayer} action="">
-            <label htmlFor="">
-              Enter Name:
-              <input
-                type="text"
-                value={playerName}
-                onChange={(e) => {
-                  setPlayerName(e.target.value);
-                }}
-              />
-            </label>
-            <button>Join Game</button>
-          </form>
-        )}
-        <br />
-        <br />
-        <h3>Players in Game:</h3>
-        {joinedPlayers.length ? (
-          <ul>
-            {joinedPlayers.map((player) => {
-              return <li key={player.name}>{player.name}</li>;
-            })}
-          </ul>
-        ) : (
-          <p>Waiting for players...</p>
-        )}
-        <br />
-        <br />
+          {!playerId && (
+            <form
+              className={styles.join_game_form}
+              onSubmit={handleCreatePlayer}
+              action=""
+            >
+              <label className="visually-hidden" htmlFor="">
+                Enter Name:
+              </label>
+              <div className={styles.input_container}>
+                <input
+                  className={styles.join_game_input}
+                  type="text"
+                  value={playerName}
+                  onChange={(e) => {
+                    setPlayerName(e.target.value);
+                  }}
+                />
+              </div>
+              <button>Join Game</button>
+            </form>
+          )}
+        </div>
 
-        {joinedPlayers.length > 0 ? (
-          <div>
-            {isLobbyHost ? (
-              <button onClick={handleSetupGame}>Play Game</button>
-            ) : (
-              <p>Waiting for host to start game</p>
-            )}
-          </div>
-        ) : (
-          <div>
-            <p>minimum of 2 players required to play</p>
-          </div>
-        )}
+        <div className={styles.bottom_row}>
+          <h3>Players</h3>
+          {joinedPlayers.length ? (
+            <ul>
+              {joinedPlayers.map((player) => {
+                return <li key={player.name}>⛳ {player.name}</li>;
+              })}
+              <li>⛳</li>
+            </ul>
+          ) : (
+            <p className={`${styles.faded_p} ${styles.no_players_p}`}>
+              Waiting for players...
+            </p>
+          )}
+
+          {joinedPlayers.length > 0 ? (
+            <div>
+              {isLobbyHost ? (
+                <button className={styles.play_btn} onClick={handleSetupGame}>
+                  Play Game
+                </button>
+              ) : (
+                <p>Waiting for host to start game</p>
+              )}
+            </div>
+          ) : (
+            <div>
+              <p>minimum of 2 players required to play</p>
+            </div>
+          )}
+        </div>
       </div>
     );
 

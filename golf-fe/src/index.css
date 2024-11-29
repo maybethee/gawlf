@@ -23,6 +23,7 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 /* prettier-ignore */
 article, aside, details, figcaption, figure, 
@@ -54,11 +55,21 @@ table {
 
 body {
   /* width: 100%; */
-  /* display: flex; */
-  /* flex-flow: row; */
-  /* justify-content: flex-end; */
+  height: 100%;
   color: #03256cff;
   background-color: #fceb9dff;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 h1 {
@@ -88,6 +99,21 @@ p {
   padding: 0.3rem;
 }
 
+input {
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0);
+  border: #03256cff solid 5px;
+  color: #03256cff;
+  border-radius: 6px;
+}
+
+input:focus {
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -95,15 +121,10 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #00000000;
+  background-color: rgba(0, 0, 0, 0);
   cursor: pointer;
-  border-width: 5px;
-  border-color: #03256cff;
-  transition: border-color 0.25s;
+  border: 5px solid #03256cff;
   color: #03256cff;
-}
-button:hover {
-  border-color: #1768acff;
 }
 button:focus,
 button:focus-visible {
@@ -121,14 +142,10 @@ button:focus-visible {
   width: 60px;
   height: 88px;
   margin: 0.3rem;
-  /* padding: 0.3rem; */
-  /* border: 3px pink solid; */
 }
 
 .card-content-container {
-  /* margin: 0.2rem 0.2rem 0 0; */
   margin-top: 0.2rem;
-  /* text-align: center; */
 }
 
 .discard-pile {
@@ -155,7 +172,6 @@ button:focus-visible {
 }
 
 .hidden {
-  /* padding: 0.4rem; */
   border-color: beige;
   background: no-repeat url("./card-back-10.png");
   background-size: cover;

@@ -71,20 +71,18 @@ button:focus-visible {
 .join_lobby_form input {
   position: relative;
   font-size: 1.4rem;
-  box-shadow: none;
   height: 70px;
-  border-radius: 6px;
   padding: 5px 15px;
-  background-color: rgba(0, 0, 0, 0);
-  border: #03256cff solid 5px;
-  color: #03256cff;
 }
 
 .join_lobby_form input:focus {
   box-shadow: 0 0 12px #b5730182;
+}
 
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+.lobby_page_container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
 }

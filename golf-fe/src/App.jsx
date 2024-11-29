@@ -44,7 +44,7 @@ function App({ userId }) {
   const handleJoinLobby = async (e) => {
     e.preventDefault();
 
-    const data = await joinLobby(lobbyCodeInput);
+    const data = await joinLobby(lobbyCodeInput.toLowerCase());
     console.log("lobby data:", data);
     setGameId(data.game_id);
     setLobbyCode(lobbyCodeInput);
@@ -93,7 +93,7 @@ function App({ userId }) {
                   className={styles.join_lobby_form}
                 >
                   <div className={styles.join_lobby_form_input_container}>
-                    <label style={{ display: "none" }} htmlFor="">
+                    <label className="visually-hidden" htmlFor="">
                       Lobby Code:{" "}
                     </label>
                     <div className={styles.input_container}>
@@ -116,7 +116,9 @@ function App({ userId }) {
     );
 
   return (
-    <Lobby lobbyCode={lobbyCode} isLobbyHost={isLobbyHost} userId={userId} />
+    <div className={styles.lobby_page_container}>
+      <Lobby lobbyCode={lobbyCode} isLobbyHost={isLobbyHost} userId={userId} />
+    </div>
   );
 }
 
