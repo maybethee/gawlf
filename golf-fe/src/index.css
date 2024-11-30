@@ -134,14 +134,15 @@ button:focus-visible {
 .hand {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  max-width: 35%;
+
+  /* max-width: 35%; */
 }
 
 .card,
 .discard-pile {
-  width: 60px;
-  height: 88px;
-  margin: 0.3rem;
+  width: 66px;
+  height: 96px;
+  margin: 0.25rem;
 }
 
 .card-content-container {
@@ -149,8 +150,8 @@ button:focus-visible {
 }
 
 .discard-pile {
-  border: rgb(107, 45, 45) 4px solid;
-  background-color: rgb(27, 26, 26);
+  /* border: rgb(107, 45, 45) 4px solid; */
+  /* background-color: rgb(27, 26, 26); */
 }
 
 .red {

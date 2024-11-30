@@ -113,6 +113,7 @@ export const GameProvider = ({ children }) => {
   const handleGameSetup = (data) => {
     console.log(data);
     setGameOver(false);
+    setLobbyStatus("active");
     performAction("setup_hole");
   };
 
@@ -134,7 +135,6 @@ export const GameProvider = ({ children }) => {
     setRoundOver(false);
     // setGameOver(false);
     setInitializingGame(true);
-    setLobbyStatus("active");
   };
 
   const handleCardRevealed = (data) => {

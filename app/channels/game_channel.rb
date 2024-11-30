@@ -260,7 +260,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def initial_game_state
-    {
+    initial_state = {
       deck: [].tap do |cards|
         %w[♠︎ ♣︎ ♥︎ ♦︎].each do |suit|
           %w[A 2 3 4 5 6 7 8 9 10 J Q K].each do |rank|
@@ -274,6 +274,14 @@ class GameChannel < ApplicationCable::Channel
       drawn_card: {}
     }
 
+    first_discard = initial_state[:deck].sample
+    first_discard[:visibility] = 'revealed'
+
+    initial_state[:discard_pile] << first_discard
+    initial_state[:deck].delete(first_discard)
+
+    initial_state
+
     # small test deck
     # {
     #   deck: [].tap do |cards|
@@ -286,6 +294,15 @@ class GameChannel < ApplicationCable::Channel
     #   discard_pile: [],
     #   drawn_card: {}
     # }
+    #
+    # first_discard = initial_state[:deck].sample
+    # first_discard[:visibility] = 'revealed'
+
+    # initial_state[:discard_pile] << first_discard
+    # initial_state[:deck].delete(first_discard)
+
+    # initial_state
+
   end
 
   def reconstitute_deck

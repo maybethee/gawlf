@@ -113,7 +113,7 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
     );
 
   return (
-    <div style={{ marginLeft: "3rem" }}>
+    <div style={{ marginLeft: "3rem", height: "100%" }}>
       <Game gameId={gameId} playerId={playerId} isLobbyHost={isLobbyHost} />
     </div>
   );

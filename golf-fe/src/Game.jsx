@@ -5,7 +5,6 @@ import TheDayThatForm from "./TheDayThatForm";
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
     setLobbyStatus,
-    // gameState,
     currentHole,
     drawnCard,
     discardPile,
@@ -98,17 +97,17 @@ function Game({ gameId, playerId, isLobbyHost }) {
     return classes;
   };
 
-  const setDiscardPileBaseClass = () => {
-    let classes = "discard-pile";
-    if (discardPile.length < 1 && isPlayerTurn && drawnCard)
-      classes += " clickable";
+  // const setDiscardPileBaseClass = () => {
+  //   let classes = "discard-pile";
+  //   if (discardPile.length < 1 && isPlayerTurn && drawnCard)
+  //     classes += " clickable";
 
-    return classes;
-  };
+  //   return classes;
+  // };
 
   const setDiscardPileCardClass = (card, index) => {
     let classes = " card";
-    if (index === discardPile.length - 1 && isPlayerTurn)
+    if (index === discardPile.length - 1 && isPlayerTurn && !initializingGame)
       classes += " clickable";
     card.suit === "♥︎" || card.suit === "♦︎"
       ? (classes += " red")
@@ -144,7 +143,27 @@ function Game({ gameId, playerId, isLobbyHost }) {
         </div>
         <div>
           <p>Discard Pile:</p>
-          <div className="discard-pile"></div>
+
+          {discardPile.map((card, index) => {
+            return (
+              <div
+                className={setDiscardPileCardClass(card, index)}
+                key={index}
+                onClick={
+                  index === discardPile.length - 1
+                    ? handleDiscardPileClick
+                    : null
+                }
+              >
+                <div className="card-content-container">
+                  <p>
+                    {card.rank}
+                    {card.suit}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <div>
@@ -320,14 +339,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
       <div>
         <p>Discard Pile:</p>
         <div style={{ display: "flex" }}>
-          <div
+          {/* <div
             className={setDiscardPileBaseClass()}
             onClick={
               discardPile.length < 1 && isPlayerTurn && drawnCard
                 ? handleDiscardPileClick
                 : null
             }
-          ></div>
+          ></div> */}
           {discardPile.map((card, index) => {
             return (
               <div
@@ -338,7 +357,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
                     ? handleDiscardPileClick
                     : null
                 }
-                style={{ marginLeft: "-30px", borderColor: "orange" }}
+                // style={{ marginLeft: "-30px", borderColor: "orange" }}
               >
                 <div className="card-content-container">
                   <p>
