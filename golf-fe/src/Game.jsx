@@ -1,6 +1,7 @@
 import { useGame } from "./context/useGame";
 import PlayerHands from "./PlayerHands";
 import TheDayThatForm from "./TheDayThatForm";
+import styles from "./Game.module.css";
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
@@ -121,51 +122,24 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
   if (initializingGame) {
     return (
-      <div>
-        {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
-        <div>
-          {!isEditing && (
-            <div
-              style={{ display: "flex", alignItems: "center", gap: ".6rem" }}
-            >
-              <button onClick={handleEditTheDayThat}>Edit</button>
-              <h2 className="the-day-that">
-                The day that {recordedTheDayThat}
-              </h2>
-            </div>
-          )}
+      <div className={styles.game_container}>
+        <div className={styles.the_day_that_container}>
+          {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
+          <div>
+            {!isEditing && (
+              <div
+                style={{ display: "flex", alignItems: "center", gap: ".6rem" }}
+              >
+                <button onClick={handleEditTheDayThat}>Edit</button>
+                <h2 className="the-day-that">
+                  The day that {recordedTheDayThat}
+                </h2>
+              </div>
+            )}
+          </div>
         </div>
 
         <h3>Hole: {currentHole} / 9</h3>
-        <div>
-          <p>Drawn card:</p>
-          <div className="card hidden"></div>
-        </div>
-        <div>
-          <p>Discard Pile:</p>
-
-          {discardPile.map((card, index) => {
-            return (
-              <div
-                className={setDiscardPileCardClass(card, index)}
-                key={index}
-                onClick={
-                  index === discardPile.length - 1
-                    ? handleDiscardPileClick
-                    : null
-                }
-              >
-                <div className="card-content-container">
-                  <p>
-                    {card.rank}
-                    {card.suit}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
         <div>
           <h3>
             click on two cards to select them and then click Reveal to flip them
@@ -173,7 +147,36 @@ function Game({ gameId, playerId, isLobbyHost }) {
           </h3>
           <button onClick={revealSelectedCards}>Reveal</button>
         </div>
+        <div className={styles.draw_and_discard_piles}>
+          <div>
+            {/* <p>Drawn card:</p> */}
+            <div className="card hidden"></div>
+          </div>
+          <div>
+            {/* <p>Discard Pile:</p> */}
 
+            {discardPile.map((card, index) => {
+              return (
+                <div
+                  className={setDiscardPileCardClass(card, index)}
+                  key={index}
+                  onClick={
+                    index === discardPile.length - 1
+                      ? handleDiscardPileClick
+                      : null
+                  }
+                >
+                  <div className={styles.card_content_container}>
+                    <p>
+                      {card.rank}
+                      {card.suit}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
         <PlayerHands playerId={playerId} />
       </div>
     );

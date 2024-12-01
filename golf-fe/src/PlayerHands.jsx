@@ -1,5 +1,6 @@
 import { useGame } from "./context/useGame";
 import Card from "./Card";
+import styles from "./PlayerHands.module.css";
 
 function PlayerHands({ playerId }) {
   const {
@@ -70,6 +71,28 @@ function PlayerHands({ playerId }) {
     });
   };
 
+  const parentWidth = 700;
+  const parentHeight = 500;
+  const radius = Math.min(parentWidth, parentHeight);
+
+  const positions = (numChildren) => {
+    const isOdd = numChildren % 2 !== 0;
+    const rotationOffset = isOdd ? -Math.PI / 2 : Math.PI / numChildren;
+    const centerX = parentWidth / 2;
+    const centerY = parentHeight / 2;
+    return Array.from({ length: numChildren }, (_, index) => {
+      const angle = (2 * Math.PI * index) / numChildren + rotationOffset;
+      const x = centerX + radius * Math.cos(angle);
+      const y =
+        centerY + radius * Math.sin(angle) * (parentHeight / parentWidth);
+      console.log(`Child ${index}: x=${x}, y=${y}, angle=${angle}`);
+
+      return { left: x, top: y };
+    });
+  };
+
+  const childPositions = positions(playerHands.length);
+
   if (roundOver) {
     return (
       <div>
@@ -100,10 +123,23 @@ function PlayerHands({ playerId }) {
     <div>
       {playerHands && (
         <div>
-          {/* <h3>Player Hands:</h3> */}
-          <div style={{ display: "flex", columnGap: "2rem" }}>
-            {playerHands.map((playerHand) => (
-              <div key={playerHand.id}>
+          <div
+            className={styles.parent}
+            style={{
+              width: `${parentWidth}px`,
+              height: `${parentHeight}px`,
+            }}
+          >
+            {playerHands.map((playerHand, index) => (
+              <div
+                key={playerHand.id}
+                className={styles.child}
+                style={{
+                  position: "absolute",
+                  left: `${childPositions[index].left}px`,
+                  top: `${childPositions[index].top}px`,
+                }}
+              >
                 <p className="playerName">{playerHand.name}</p>
                 <div className="hand">
                   {playerHand.hand.map((card) => (

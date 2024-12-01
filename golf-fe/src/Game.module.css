@@ -1,0 +1,16 @@
+.game_container {
+  height: 100%;
+  position: relative;
+}
+
+.draw_and_discard_piles {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card_content_container {
+  margin-top: 0.2rem;
+}

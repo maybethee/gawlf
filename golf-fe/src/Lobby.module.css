@@ -24,6 +24,8 @@
 }
 
 .bottom_row button {
+  font-size: 1.4rem;
+  font-weight: 600;
   transition: background-color 0.2s, color 0.2s;
 }
 
@@ -42,16 +44,17 @@ button:focus-visible {
 }
 
 .lobby_content_container h2 {
-  font-size: 2.4rem;
+  font-size: 3.4rem;
 }
 
 .lobby_content_container h3 {
-  font-size: 1.7rem;
+  font-size: 2.8rem;
   margin-top: 3rem;
   font-weight: 800;
 }
 
 .lobby_content_container ul {
+  font-size: 1.2rem;
   display: flex;
   flex-flow: column;
   align-items: flex-start;
@@ -60,6 +63,7 @@ button:focus-visible {
 }
 
 .faded_p {
+  font-size: 1.1rem;
   color: rgba(3, 36, 108, 0.75);
 }
 
