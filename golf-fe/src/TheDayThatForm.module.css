@@ -1,0 +1,19 @@
+.form_container {
+  margin-top: 0.3rem;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  column-gap: 0.3rem;
+}
+
+.form button {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.form button:hover {
+  color: #fbe9d2;
+  background-color: #f87171;
+}

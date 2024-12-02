@@ -25,8 +25,8 @@
 }
 
 .home_btns_container button:hover {
-  color: #fceb9dff;
-  background-color: #03256cff;
+  color: #fbe9d2;
+  background-color: #e11d48;
 }
 
 .home_btns_container button:focus,
@@ -80,7 +80,7 @@ button:focus-visible {
 }
 
 .lobby_page_container {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   display: flex;
   flex-flow: column;

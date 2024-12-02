@@ -49,7 +49,10 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
     return (
       <div className={styles.lobby_content_container}>
         <div className={styles.top_row}>
-          <h2>Room Code: {lobbyCode.toUpperCase()}</h2>
+          <div className={styles.room_code_container}>
+            <h2>Room Code: </h2>
+            <h2>{lobbyCode.toUpperCase()}</h2>
+          </div>
           <p className={styles.faded_p}>
             Share this code to let others join this game
           </p>
@@ -113,7 +116,7 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
     );
 
   return (
-    <div style={{ marginLeft: "3rem", height: "100%" }}>
+    <div className={styles.game_page_container}>
       <Game gameId={gameId} playerId={playerId} isLobbyHost={isLobbyHost} />
     </div>
   );

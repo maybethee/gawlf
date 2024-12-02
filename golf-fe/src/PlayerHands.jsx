@@ -6,6 +6,8 @@ function PlayerHands({ playerId }) {
   const {
     playerHands,
     initializingGame,
+    setInitializingGame,
+    selectedCards,
     setSelectedCards,
     currentPlayerId,
     drawnCard,
@@ -71,9 +73,24 @@ function PlayerHands({ playerId }) {
     });
   };
 
+  const revealSelectedCards = () => {
+    if (selectedCards.length < 2) {
+      console.log("you must select 2 cards to reveal!");
+      return;
+    } else {
+      console.log("selected cards:", selectedCards);
+      console.log("revealing cards...");
+      performAction("reveal_cards", {
+        player_id: playerId,
+        cards: selectedCards,
+      });
+      setInitializingGame(false);
+    }
+  };
+
   const parentWidth = 700;
-  const parentHeight = 500;
-  const radius = Math.min(parentWidth, parentHeight);
+  const parentHeight = 700;
+  const radius = (Math.min(parentWidth, parentHeight) / 2) * 0.8;
 
   const positions = (numChildren) => {
     const isOdd = numChildren % 2 !== 0;
@@ -83,9 +100,8 @@ function PlayerHands({ playerId }) {
     return Array.from({ length: numChildren }, (_, index) => {
       const angle = (2 * Math.PI * index) / numChildren + rotationOffset;
       const x = centerX + radius * Math.cos(angle);
-      const y =
-        centerY + radius * Math.sin(angle) * (parentHeight / parentWidth);
-      console.log(`Child ${index}: x=${x}, y=${y}, angle=${angle}`);
+      const y = centerY + radius * Math.sin(angle);
+      // console.log(`Child ${index}: x=${x}, y=${y}, angle=${angle}`);
 
       return { left: x, top: y };
     });
@@ -120,9 +136,9 @@ function PlayerHands({ playerId }) {
   }
 
   return (
-    <div>
+    <div className={styles.player_hands_container}>
       {playerHands && (
-        <div>
+        <div className={styles.player_hand_area}>
           <div
             className={styles.parent}
             style={{
@@ -140,7 +156,12 @@ function PlayerHands({ playerId }) {
                   top: `${childPositions[index].top}px`,
                 }}
               >
-                <p className="playerName">{playerHand.name}</p>
+                <div className={styles.hand_header}>
+                  <p className="playerName">{playerHand.name}</p>
+                  {initializingGame && playerHand.id === playerId && (
+                    <button onClick={revealSelectedCards}>Reveal</button>
+                  )}
+                </div>
                 <div className="hand">
                   {playerHand.hand.map((card) => (
                     <Card

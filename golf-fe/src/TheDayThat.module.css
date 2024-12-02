@@ -1,0 +1,24 @@
+.the_day_that_container {
+  border: solid 2px black;
+}
+
+.the_day_that_display {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.the_day_that_display button {
+  padding: 3px;
+  background-color: #f87171;
+}
+
+.the_day_that_display button:hover {
+  background-color: #f15b5b;
+  border-color: #f15b5b;
+}
+
+.the_day_that {
+  font-weight: 400;
+  font-style: italic;
+}

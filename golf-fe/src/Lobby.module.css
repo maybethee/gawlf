@@ -14,6 +14,15 @@
   align-items: center;
 }
 
+.room_code_container {
+  display: flex;
+  column-gap: 0.3rem;
+}
+
+.room_code_container h2:last-child {
+  color: #f87171;
+}
+
 .bottom_row {
   text-align: center;
 
@@ -24,37 +33,39 @@
 }
 
 .bottom_row button {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 600;
   transition: background-color 0.2s, color 0.2s;
 }
 
 .bottom_row button:hover {
-  color: #fceb9dff;
-  background-color: #03256cff;
+  /* color: #fceb9dff;
+  background-color: #03256cff; */
+  color: #fbe9d2;
+  background-color: #e11d48;
 }
 
-.bottom_row button:focus,
+/* .bottom_row button:focus,
 button:focus-visible {
   outline: 5px auto -webkit-focus-ring-color;
-}
+} */
 
 .no_players_p {
   align-self: center;
 }
 
 .lobby_content_container h2 {
-  font-size: 3.4rem;
+  font-size: 2.4rem;
 }
 
 .lobby_content_container h3 {
-  font-size: 2.8rem;
+  font-size: 1.8rem;
   margin-top: 3rem;
   font-weight: 800;
 }
 
 .lobby_content_container ul {
-  font-size: 1.2rem;
+  font-size: 1rem;
   display: flex;
   flex-flow: column;
   align-items: flex-start;
@@ -63,8 +74,8 @@ button:focus-visible {
 }
 
 .faded_p {
-  font-size: 1.1rem;
-  color: rgba(3, 36, 108, 0.75);
+  font-size: 1rem;
+  color: rgba(248, 113, 113, 0.8);
 }
 
 .join_game_form {
@@ -94,4 +105,9 @@ button:focus-visible {
   height: 35px;
   width: 200px;
   padding: 5px 15px;
+}
+
+.game_page_container {
+  height: 100%;
+  width: 100%;
 }

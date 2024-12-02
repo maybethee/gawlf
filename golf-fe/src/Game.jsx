@@ -1,6 +1,6 @@
 import { useGame } from "./context/useGame";
 import PlayerHands from "./PlayerHands";
-import TheDayThatForm from "./TheDayThatForm";
+import TheDayThat from "./TheDayThat";
 import styles from "./Game.module.css";
 
 function Game({ gameId, playerId, isLobbyHost }) {
@@ -20,9 +20,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
     allRoundScores,
     roundOver,
     gameOver,
-    recordedTheDayThat,
-    isEditing,
-    setIsEditing,
     performAction,
     displayCardContent,
   } = useGame();
@@ -61,10 +58,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
     }
   };
 
-  const handleEditTheDayThat = () => {
-    setIsEditing(true);
-  };
-
   const isPlayerTurn = currentPlayerId === playerId;
 
   const sortedRoundScores =
@@ -98,14 +91,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
     return classes;
   };
 
-  // const setDiscardPileBaseClass = () => {
-  //   let classes = "discard-pile";
-  //   if (discardPile.length < 1 && isPlayerTurn && drawnCard)
-  //     classes += " clickable";
-
-  //   return classes;
-  // };
-
   const setDiscardPileCardClass = (card, index) => {
     let classes = " card";
     if (index === discardPile.length - 1 && isPlayerTurn && !initializingGame)
@@ -123,58 +108,36 @@ function Game({ gameId, playerId, isLobbyHost }) {
   if (initializingGame) {
     return (
       <div className={styles.game_container}>
-        <div className={styles.the_day_that_container}>
-          {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
-          <div>
-            {!isEditing && (
-              <div
-                style={{ display: "flex", alignItems: "center", gap: ".6rem" }}
-              >
-                <button onClick={handleEditTheDayThat}>Edit</button>
-                <h2 className="the-day-that">
-                  The day that {recordedTheDayThat}
-                </h2>
-              </div>
-            )}
-          </div>
-        </div>
+        <TheDayThat />
 
-        <h3>Hole: {currentHole} / 9</h3>
-        <div>
-          <h3>
-            click on two cards to select them and then click Reveal to flip them
-            over
-          </h3>
-          <button onClick={revealSelectedCards}>Reveal</button>
-        </div>
-        <div className={styles.draw_and_discard_piles}>
-          <div>
-            {/* <p>Drawn card:</p> */}
-            <div className="card hidden"></div>
-          </div>
-          <div>
-            {/* <p>Discard Pile:</p> */}
-
-            {discardPile.map((card, index) => {
-              return (
-                <div
-                  className={setDiscardPileCardClass(card, index)}
-                  key={index}
-                  onClick={
-                    index === discardPile.length - 1
-                      ? handleDiscardPileClick
-                      : null
-                  }
-                >
-                  <div className={styles.card_content_container}>
-                    <p>
-                      {card.rank}
-                      {card.suit}
-                    </p>
+        <h2>Hole: {currentHole} / 9</h2>
+        <div className={styles.draw_and_discard_piles_container}>
+          <div className={styles.draw_and_discard_piles}>
+            <div>
+              <div className="card hidden"></div>
+            </div>
+            <div>
+              {discardPile.map((card, index) => {
+                return (
+                  <div
+                    className={setDiscardPileCardClass(card, index)}
+                    key={index}
+                    onClick={
+                      index === discardPile.length - 1
+                        ? handleDiscardPileClick
+                        : null
+                    }
+                  >
+                    <div className={styles.card_content_container}>
+                      <p>
+                        {card.rank}
+                        {card.suit}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
         <PlayerHands playerId={playerId} />
@@ -187,17 +150,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
     return (
       <div>
-        {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
-        <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
-          {!isEditing && (
-            <div>
-              <button onClick={handleEditTheDayThat}>Edit</button>
-              <h2 className="the-day-that">
-                The day that {recordedTheDayThat}
-              </h2>
-            </div>
-          )}
-        </div>
+        <TheDayThat />
 
         <h2>Hole {currentHole} Completed</h2>
 
@@ -244,19 +197,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
     return (
       <div>
         <div>
-          {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
-          <div>
-            {!isEditing && (
-              <div
-                style={{ display: "flex", alignItems: "center", gap: ".6rem" }}
-              >
-                <button onClick={handleEditTheDayThat}>Edit</button>
-                <h2 className="the-day-that">
-                  The day that {recordedTheDayThat}
-                </h2>
-              </div>
-            )}
-          </div>
+          <TheDayThat />
 
           <h2>Game Over</h2>
 
@@ -264,7 +205,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
             <tbody>
               <tr>
                 <th>Player</th>
-                {allRoundScores[0].round_scores.map((score, index) => {
+                {allRoundScores[0].round_scores.map((_, index) => {
                   return <th key={index}>Hole #{index + 1}</th>;
                 })}
                 <th>Total Score</th>
@@ -310,75 +251,59 @@ function Game({ gameId, playerId, isLobbyHost }) {
   }
 
   return (
-    <div>
-      {/* <div>Game State: {JSON.stringify(gameState)}</div> */}
+    <div className={styles.game_container}>
+      <TheDayThat />
 
-      {isEditing && <TheDayThatForm initialText={recordedTheDayThat} />}
-      <div>
-        {!isEditing && (
-          <div style={{ display: "flex", alignItems: "center", gap: ".6rem" }}>
-            <button onClick={handleEditTheDayThat}>Edit</button>
-            <h2 className="the-day-that">The day that {recordedTheDayThat}</h2>
-          </div>
-        )}
-      </div>
+      <h2>Hole: {currentHole} / 9</h2>
 
-      <h3>Hole: {currentHole} / 9</h3>
-
-      <div>
-        <p>Drawn card:</p>
-        <div
-          className={setDrawnCardClass()}
-          onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
-        >
-          {drawnCard && (
-            <div className="card-content-container">
-              <p>{displayCardContent(drawnCard)}</p>
-            </div>
+      <div className={styles.draw_and_discard_piles_container}>
+        <div>
+          {!isPlayerTurn && (
+            <h3 style={{ color: "orange" }}>
+              Waiting for {currentPlayerName}'s turn...
+            </h3>
           )}
         </div>
-      </div>
-
-      <div>
-        <p>Discard Pile:</p>
-        <div style={{ display: "flex" }}>
-          {/* <div
-            className={setDiscardPileBaseClass()}
-            onClick={
-              discardPile.length < 1 && isPlayerTurn && drawnCard
-                ? handleDiscardPileClick
-                : null
-            }
-          ></div> */}
-          {discardPile.map((card, index) => {
-            return (
-              <div
-                className={setDiscardPileCardClass(card, index)}
-                key={index}
-                onClick={
-                  index === discardPile.length - 1
-                    ? handleDiscardPileClick
-                    : null
-                }
-                // style={{ marginLeft: "-30px", borderColor: "orange" }}
-              >
+        <div className={styles.draw_and_discard_piles}>
+          <div>
+            <div
+              className={setDrawnCardClass()}
+              onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
+            >
+              {drawnCard && (
                 <div className="card-content-container">
-                  <p>
-                    {card.rank}
-                    {card.suit}
-                  </p>
+                  <p>{displayCardContent(drawnCard)}</p>
                 </div>
-              </div>
-            );
-          })}
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div style={{ display: "flex" }}>
+              {discardPile.map((card, index) => {
+                return (
+                  <div
+                    className={setDiscardPileCardClass(card, index)}
+                    key={index}
+                    onClick={
+                      index === discardPile.length - 1
+                        ? handleDiscardPileClick
+                        : null
+                    }
+                  >
+                    <div className="card-content-container">
+                      <p>
+                        {card.rank}
+                        {card.suit}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
-
-      {!isPlayerTurn && (
-        <h3 style={{ color: "orange" }}>
-          Waiting for {currentPlayerName}'s turn...
-        </h3>
-      )}
 
       <PlayerHands playerId={playerId} />
     </div>

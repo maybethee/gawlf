@@ -56,8 +56,11 @@ table {
 body {
   /* width: 100%; */
   height: 100%;
-  color: #03256cff;
-  background-color: #fceb9dff;
+  width: 100%;
+  /* color: #03256cff; */
+  /* background-color: #fceb9dff; */
+  color: #374151;
+  background-color: #fbe9d2;
 }
 
 .visually-hidden {
@@ -73,38 +76,35 @@ body {
 }
 
 h1 {
-  font-size: 3.2rem;
+  font-size: 2.2rem;
 }
 
 h2 {
-  font-size: 1.9rem;
+  font-size: 1.2rem;
   margin: 0.5rem 0;
   font-weight: bold;
 }
 
 h3 {
-  font-size: 1.3rem;
-}
-
-.the-day-that {
-  font-weight: 400;
-  font-style: italic;
-  color: blanchedalmond;
+  font-size: 1.1rem;
 }
 
 h1,
 h2,
 h3,
 p {
-  padding: 0.3rem;
+  padding: 0.2rem;
 }
 
 input {
   box-shadow: none;
   background-color: rgba(0, 0, 0, 0);
-  border: #03256cff solid 5px;
-  color: #03256cff;
+  /* border: #03256cff solid 5px; */
+  /* color: #03256cff; */
+  border: #f87171 solid 5px;
+  color: #374151;
   border-radius: 6px;
+  padding: 5px;
 }
 
 input:focus {
@@ -123,8 +123,10 @@ button {
   font-family: inherit;
   background-color: rgba(0, 0, 0, 0);
   cursor: pointer;
-  border: 5px solid #03256cff;
-  color: #03256cff;
+  /* border: 5px solid #03256cff;
+  color: #03256cff; */
+  border: #f87171 solid 5px;
+  color: #f87171;
 }
 button:focus,
 button:focus-visible {
@@ -134,14 +136,12 @@ button:focus-visible {
 .hand {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-
-  /* max-width: 35%; */
 }
 
 .card,
 .discard-pile {
-  width: 66px;
-  height: 96px;
+  width: 48px;
+  height: 70px;
   margin: 0.25rem;
 }
 
