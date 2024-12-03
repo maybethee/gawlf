@@ -1,18 +1,14 @@
 .player_hands_container {
   width: 100%;
   height: 100%;
-  background-color: #e2d2bd;
+  background: no-repeat url("./bg-7-a.jpg");
+  background-size: 2000px;
 }
 .parent {
   position: absolute;
   top: 54%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* padding: 1rem; */
-  /* background-color: rgba(225, 29, 71, 0.546);
-  box-shadow: 0px 0px 40px 20px #e11d47a9; */
-  /* background-color: #e2d2bd;
-  box-shadow: 0px 0px 40px 20px #e2d2bd; */
   border-radius: 10%;
   display: flex;
   align-items: center;
@@ -21,27 +17,36 @@
 
 .child {
   font-weight: 400;
-  /* padding: 0.8rem; */
-
-  /* border: 2px solid blue; */
   border-radius: 50%;
   transform: translate(-50%, -50%);
 }
 
 .hand_header {
+  margin-bottom: 0.2rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   font-size: 0.9rem;
+  font-weight: bolder;
+}
+
+.hand_header p {
+  background: #e2d2bd;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
 }
 
 .hand_header button {
-  padding: 0.4rem;
+  padding: 0.3rem;
+  border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 800;
   border: none;
+  color: #374151;
+  background-color: #f87171;
 }
 
 .hand_header button:hover {
-  color: #e11d47;
+  background-color: #e11d47;
 }

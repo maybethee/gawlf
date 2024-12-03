@@ -27,3 +27,14 @@
 .card_content_container {
   margin-top: 0.2rem;
 }
+
+.turn_message {
+  margin-bottom: 0.3rem;
+  background-color: #f87171;
+  color: #374151;
+  padding: 0.3rem;
+  border-radius: 4px;
+  /* background-color: #f87171; */
+  font-weight: bolder;
+  box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
+}

@@ -39,16 +39,9 @@
 }
 
 .bottom_row button:hover {
-  /* color: #fceb9dff;
-  background-color: #03256cff; */
   color: #fbe9d2;
   background-color: #e11d48;
 }
-
-/* .bottom_row button:focus,
-button:focus-visible {
-  outline: 5px auto -webkit-focus-ring-color;
-} */
 
 .no_players_p {
   align-self: center;

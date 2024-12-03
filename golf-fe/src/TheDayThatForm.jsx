@@ -31,7 +31,7 @@ function TheDayThatForm({ initialText }) {
             setTheDayThat(e.target.value);
           }}
         />
-        <button>Submit</button>
+        <button>Update</button>
       </form>
     </div>
   );

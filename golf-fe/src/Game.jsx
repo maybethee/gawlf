@@ -13,8 +13,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
     currentPlayerName,
     prevFirstPlayer,
     initializingGame,
-    setInitializingGame,
-    selectedCards,
     setSelectedDiscardPile,
     roundScores,
     allRoundScores,
@@ -28,21 +26,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
     console.log("Drawing card for player:", playerId);
 
     performAction("draw_card", { player_id: playerId });
-  };
-
-  const revealSelectedCards = () => {
-    if (selectedCards.length < 2) {
-      console.log("you must select 2 cards to reveal!");
-      return;
-    } else {
-      console.log("selected cards:", selectedCards);
-      console.log("revealing cards...");
-      performAction("reveal_cards", {
-        player_id: playerId,
-        cards: selectedCards,
-      });
-      setInitializingGame(false);
-    }
   };
 
   const handleDiscardPileClick = (card = null) => {
@@ -259,7 +242,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
       <div className={styles.draw_and_discard_piles_container}>
         <div>
           {!isPlayerTurn && (
-            <h3 style={{ color: "orange" }}>
+            <h3 className={styles.turn_message}>
               Waiting for {currentPlayerName}'s turn...
             </h3>
           )}
