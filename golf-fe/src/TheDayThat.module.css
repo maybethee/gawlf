@@ -14,8 +14,8 @@
 }
 
 .the_day_that_display button:hover {
-  background-color: #f15b5b;
   border-color: #f15b5b;
+  background-color: #f15b5b;
 }
 
 .the_day_that {

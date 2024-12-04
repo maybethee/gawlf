@@ -1,6 +1,7 @@
 import { useGame } from "./context/useGame";
 import Card from "./Card";
 import styles from "./PlayerHands.module.css";
+import { Eye } from "lucide-react";
 
 function PlayerHands({ playerId }) {
   const {
@@ -111,14 +112,13 @@ function PlayerHands({ playerId }) {
 
   if (roundOver) {
     return (
-      <div>
+      <div className={styles.results_player_hands_container}>
         {playerHands && (
-          <div>
-            <h3>Player Hands:</h3>
+          <div className={styles.results_player_hands}>
             {playerHands.map((playerHand) => (
               <div key={playerHand.id}>
-                <p className="playerName">{playerHand.name}</p>
-                <div className="hand">
+                <p>{playerHand.name}</p>
+                <div className={styles.hand}>
                   {playerHand.hand.map((card) => (
                     <Card
                       card={card}
@@ -157,12 +157,14 @@ function PlayerHands({ playerId }) {
                 }}
               >
                 <div className={styles.hand_header}>
-                  <p className="playerName">{playerHand.name}</p>
+                  <p>{playerHand.name}</p>
                   {initializingGame && playerHand.id === playerId && (
-                    <button onClick={revealSelectedCards}>Reveal</button>
+                    <button onClick={revealSelectedCards}>
+                      {<Eye color="#fbe9d2" />}
+                    </button>
                   )}
                 </div>
-                <div className="hand">
+                <div className={styles.hand}>
                   {playerHand.hand.map((card) => (
                     <Card
                       card={card}

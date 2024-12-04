@@ -11,13 +11,6 @@
 .form button {
   font-size: 0.7rem;
   font-weight: 600;
-  background-color: #f87171;
   border-width: 3px;
   padding: 8px;
-  color: #fbe9d2;
-}
-
-.form button:hover {
-  background-color: #ff5454;
-  color: #fbe9d2;
 }

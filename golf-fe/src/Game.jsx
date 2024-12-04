@@ -132,13 +132,41 @@ function Game({ gameId, playerId, isLobbyHost }) {
     console.log("round scores:", roundScores);
 
     return (
-      <div>
+      <div className={styles.game_container}>
         <TheDayThat />
 
-        <h2>Hole {currentHole} Completed</h2>
+        <h2 className={styles.hole_completed}>Hole {currentHole} Completed</h2>
+
+        <div className={styles.results_container}>
+          <div className={styles.left_col}>
+            <h3 className={styles.round_winner}>Round winner: {roundWinner}</h3>
+
+            <table>
+              <tbody>
+                <tr>
+                  <th>Player</th>
+                  <th>Score</th>
+                </tr>
+                {roundScores.map((player) => {
+                  return (
+                    <tr key={player.player_id}>
+                      <th>{player.player_name}</th>
+                      <td>{player.round_score}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className={styles.right_col}>
+            <PlayerHands playerId={playerId} />
+          </div>
+        </div>
 
         {isLobbyHost ? (
           <button
+            className={styles.next_hole_btn}
             onClick={() =>
               performAction("setup_hole", {
                 prev_first_player_id: prevFirstPlayer,
@@ -148,29 +176,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
             Next Hole
           </button>
         ) : (
-          <p>Waiting for host to start next round...</p>
+          <p className={styles.information}>
+            Waiting for host to start next round...
+          </p>
         )}
-
-        <table>
-          <tbody>
-            <tr>
-              <th>Player</th>
-              <th>Score</th>
-            </tr>
-            {roundScores.map((player) => {
-              return (
-                <tr key={player.player_id}>
-                  <th>{player.player_name}</th>
-                  <td>{player.round_score}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        <h3>Round winner: {roundWinner}</h3>
-
-        <PlayerHands playerId={playerId} />
       </div>
     );
   }
@@ -178,57 +187,60 @@ function Game({ gameId, playerId, isLobbyHost }) {
   if (gameOver && allRoundScores.length > 0) {
     console.log("all round scores:", allRoundScores);
     return (
-      <div>
-        <div>
-          <TheDayThat />
+      <div className={styles.game_container}>
+        <TheDayThat />
 
-          <h2>Game Over</h2>
+        <h2 className={styles.game_over}>Game Over</h2>
 
-          <table>
-            <tbody>
-              <tr>
-                <th>Player</th>
-                {allRoundScores[0].round_scores.map((_, index) => {
-                  return <th key={index}>Hole #{index + 1}</th>;
-                })}
-                <th>Total Score</th>
-              </tr>
-
-              {allRoundScores.map((player) => {
-                return (
-                  <tr key={player.player_id}>
-                    <th>{player.player_name}</th>
-
-                    {player.round_scores.map((score, index) => {
-                      return <td key={index}>{score}</td>;
-                    })}
-
-                    <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
-                  </tr>
-                );
+        <table>
+          <tbody>
+            <tr>
+              <th>Player</th>
+              {allRoundScores[0].round_scores.map((_, index) => {
+                return <th key={index}>Hole #{index + 1}</th>;
               })}
-            </tbody>
-          </table>
+              <th>Score</th>
+            </tr>
 
-          <h3>Placements:</h3>
-          {sortedTotalScores.map((player, index) => {
-            return (
-              <p key={index}>
-                {index + 1}: {player.player_name}
-              </p>
-            );
-          })}
+            {allRoundScores.map((player) => {
+              return (
+                <tr key={player.player_id}>
+                  <th>{player.player_name}</th>
 
-          <h3>Winner: {gameWinner}</h3>
+                  {player.round_scores.map((score, index) => {
+                    return <td key={index}>{score}</td>;
+                  })}
 
-          <button
-            onClick={() => {
-              setLobbyStatus("");
-            }}
-          >
-            Lobby Menu
-          </button>
+                  <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        <div className={styles.placements_container}>
+          <h3>Placements</h3>
+          <div className={styles.placements}>
+            {sortedTotalScores.map((player, index) => {
+              return (
+                <p key={index}>
+                  {index + 1}: {player.player_name}
+                </p>
+              );
+            })}
+          </div>
+
+          <h3 className={styles.winner}>Winner:</h3>
+          <h3 className={styles.winner_name}>{gameWinner}</h3>
         </div>
+
+        <button
+          onClick={() => {
+            setLobbyStatus("");
+          }}
+        >
+          Main Menu
+        </button>
       </div>
     );
   }

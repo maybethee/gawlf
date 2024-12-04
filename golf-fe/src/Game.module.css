@@ -1,11 +1,20 @@
 .game_container {
   height: 100%;
-  /* width: 100vw; */
+  margin-top: 1rem;
   position: relative;
   display: flex;
   flex-flow: column;
   align-items: center;
 }
+
+/* .game_container button {
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.game_container button:hover {
+  background-color: #f87171;
+  color: #fbe9d2;
+} */
 
 .draw_and_discard_piles_container {
   display: flex;
@@ -37,4 +46,94 @@
   /* background-color: #f87171; */
   font-weight: bolder;
   box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.hole_completed {
+  margin-top: 2rem;
+}
+
+.next_hole_btn,
+.information {
+  margin-top: 2rem;
+  /* margin-bottom: 2rem; */
+}
+
+.results_container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 7rem;
+  margin: 2rem 3rem 3rem 3rem;
+}
+
+.information {
+  animation: cycle-color 1.8s infinite;
+}
+
+.game_over {
+  margin: 2.5rem 0 2rem 0;
+  /* font-size: 2rem; */
+}
+
+.hole_completed,
+.game_over {
+  font-size: 2rem;
+}
+
+.placements_container {
+  width: 200px;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  row-gap: 0.8rem;
+  margin: 2rem 0 3rem 0;
+}
+.placements_container h3 {
+  font-weight: 700;
+}
+.placements_container h3:first-child {
+  text-decoration: underline;
+}
+
+.placements {
+  display: flex;
+  flex-flow: column;
+  row-gap: 0.2rem;
+}
+
+.winner {
+  margin-top: 1rem;
+}
+.winner_name {
+  font-size: 2.1rem;
+  color: #f87171;
+}
+
+@keyframes cycle-color {
+  0% {
+    color: #374151;
+  }
+  15% {
+    color: #374151e0;
+  }
+  25% {
+    color: #374151b3;
+  }
+  35% {
+    color: #3741518f;
+  }
+  50% {
+    color: #37415164;
+  }
+  65% {
+    color: #3741518f;
+  }
+  75% {
+    color: #374151b3;
+  }
+  85% {
+    color: #374151e0;
+  }
+  100% {
+    color: #374151;
+  }
 }

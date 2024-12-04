@@ -7,7 +7,7 @@
 
 .home_btns_container {
   height: 100vh;
-  padding: 1.5rem;
+  padding: 3rem 1.5rem;
   margin-right: 3rem;
   display: flex;
   flex-flow: column wrap;
@@ -21,12 +21,15 @@
   align-items: center;
   height: 90px;
   font-size: 1.5rem;
+  border-color: #f87171;
   transition: background-color 0.2s, color 0.2s;
 }
 
 .home_btns_container button:hover {
-  color: #fbe9d2;
-  background-color: #e11d48;
+  /* background-color: #ef1f4c; */
+
+  color: #f87171;
+  background-color: #fbe9d2;
 }
 
 .home_btns_container button:focus,
@@ -42,11 +45,11 @@ button:focus-visible {
 }
 
 .home_row_2 {
-  height: 400px;
+  height: 250px;
   display: flex;
   flex-flow: column;
   align-items: flex-end;
-  justify-content: space-evenly;
+  justify-content: space-between;
 }
 
 .join_lobby_form {
@@ -76,7 +79,7 @@ button:focus-visible {
 }
 
 .join_lobby_form input:focus {
-  box-shadow: 0 0 12px #b5730182;
+  box-shadow: 0 0 12px #f87171;
 }
 
 .lobby_page_container {

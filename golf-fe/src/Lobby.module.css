@@ -35,13 +35,14 @@
 .bottom_row button {
   font-size: 1.2rem;
   font-weight: 600;
-  transition: background-color 0.2s, color 0.2s;
+  /* border-color: #f87171;
+  transition: background-color 0.2s, color 0.2s; */
 }
 
-.bottom_row button:hover {
+/* .bottom_row button:hover {
   color: #fbe9d2;
-  background-color: #e11d48;
-}
+  background-color: #f87171;
+} */
 
 .no_players_p {
   align-self: center;
@@ -68,7 +69,11 @@
 
 .faded_p {
   font-size: 1rem;
-  color: rgba(248, 113, 113, 0.8);
+  color: #f87171;
+}
+
+.no_players_p {
+  animation: cycle-color 1.8s infinite;
 }
 
 .join_game_form {
@@ -103,4 +108,34 @@
 .game_page_container {
   height: 100%;
   width: 100%;
+}
+
+@keyframes cycle-color {
+  0% {
+    color: #f87171;
+  }
+  15% {
+    color: #f87171e1;
+  }
+  25% {
+    color: #f87171ae;
+  }
+  35% {
+    color: #f8717192;
+  }
+  50% {
+    color: #f8717175;
+  }
+  65% {
+    color: #f8717192;
+  }
+  75% {
+    color: #f87171ae;
+  }
+  85% {
+    color: #f87171e1;
+  }
+  100% {
+    color: #f87171;
+  }
 }
