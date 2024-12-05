@@ -104,6 +104,7 @@ export const GameProvider = ({ children }) => {
   const handleCardDiscarded = (data) => {
     console.log("current discard pile:", data.game_state.discard_pile);
     setDiscardPile(data.game_state.discard_pile);
+    setSelectedDiscardPile(null);
     setDrawnCard(null);
     setCurrentPlayerId(data.current_player_id);
     setCurrentPlayerName(data.current_player_name);
@@ -141,26 +142,30 @@ export const GameProvider = ({ children }) => {
     console.log("Revealed card data:", data.revealed_card);
     console.log("Players data:", data.players);
 
-    const hands = data.players.map((player) => ({
-      id: player.id,
-      name: player.name,
-      hand: player.hand,
-    }));
+    const updatedPlayer = data.player;
 
-    console.log("Updated hands:", hands);
-    setPlayerHands(hands);
+    const { id: playerId, hand: updatedHand } = updatedPlayer;
+
+    setPlayerHands((prevHands) =>
+      prevHands.map((hand) =>
+        hand.id === playerId ? { ...hand, hand: updatedHand } : hand
+      )
+    );
+
     setGameState(data.game_state);
-    setSelectedCards([]);
   };
 
   const handleCardSwapped = (data) => {
-    const hands = [];
+    const updatedPlayer = data.player;
 
-    data.players.forEach((player) => {
-      hands.push({ id: player.id, name: player.name, hand: player.hand });
-    });
+    const { id: playerId, hand: updatedHand } = updatedPlayer;
 
-    setPlayerHands(hands);
+    setPlayerHands((prevHands) =>
+      prevHands.map((hand) =>
+        hand.id === playerId ? { ...hand, hand: updatedHand } : hand
+      )
+    );
+
     setDrawnCard(null);
     setSelectedDiscardPile(null);
     setDiscardPile(data.game_state.discard_pile);

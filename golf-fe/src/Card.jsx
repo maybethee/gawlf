@@ -7,6 +7,7 @@ function Card({ playerHand, card, playerId, onClick }) {
     displayCardContent,
     currentPlayerId,
     drawnCard,
+    selectedCards,
     selectedDiscardPile,
   } = useGame();
 
@@ -30,9 +31,17 @@ function Card({ playerHand, card, playerId, onClick }) {
       classes += " clickable";
     }
 
-    card.suit === "♥︎" || card.suit === "♦︎"
-      ? (classes += " red")
-      : (classes += " black");
+    if (selectedCards.includes(card)) {
+      classes += " selected";
+    }
+
+    if (card.suit === "☆") {
+      classes += " joker";
+    } else {
+      card.suit === "♥︎" || card.suit === "♦︎"
+        ? (classes += " red")
+        : (classes += " black");
+    }
 
     return classes;
   };

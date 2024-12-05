@@ -109,6 +109,7 @@ class GameChannel < ApplicationCable::Channel
     broadcast_message = {
       action: 'card_swapped',
       players: @game.reload.players,
+      player: @player.reload,
       hole: @game.reload.hole,
       current_player_id: @game.reload.current_player_id,
       current_player_name:,
@@ -222,6 +223,7 @@ class GameChannel < ApplicationCable::Channel
     broadcast_message = {
       action: 'card_revealed',
       players: @game.reload.players,
+      player: @player.reload,
       revealed_cards: updated_hand.select { |card| card['visibility'] == 'revealed' },
       game_state: @game.reload.game_state
     }
@@ -267,8 +269,8 @@ class GameChannel < ApplicationCable::Channel
             cards << { suit:, rank:, visibility: 'hidden' }
           end
         end
-        cards << { suit: '*', rank: '🃏︎', visibility: 'hidden' }
-        cards << { suit: '*', rank: '🃟', visibility: 'hidden' }
+        cards << { suit: '☆', rank: '★', visibility: 'hidden' }
+        cards << { suit: '☆', rank: '★', visibility: 'hidden' }
       end,
       discard_pile: [],
       drawn_card: {}

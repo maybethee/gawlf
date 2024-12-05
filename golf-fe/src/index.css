@@ -159,6 +159,19 @@ button:focus-visible {
   /* background-color: rgb(27, 26, 26); */
 }
 
+.hidden-history {
+  margin-left: -60px;
+  transition: margin-left 0.3s;
+}
+
+.selected {
+  outline: 3px solid rgb(221, 255, 0);
+}
+
+.clickable:hover {
+  outline: 3px solid rgb(221, 255, 0);
+}
+
 .red {
   color: red;
 }
@@ -168,14 +181,21 @@ button:focus-visible {
   color: black;
 }
 
+.joker {
+  color: #f87171;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
 .card {
+  transition: margin-left 0.3s;
   background-color: rgb(254, 236, 236);
   border-width: 4px;
   border-style: solid;
   border-color: rgb(254, 236, 236);
   display: flex;
   justify-content: flex-end;
-  box-shadow: 8px 8px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: -8px 8px 5px 0px rgba(0, 0, 0, 0.75);
 }
 
 .hidden {

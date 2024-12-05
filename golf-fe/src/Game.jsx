@@ -2,6 +2,7 @@ import { useGame } from "./context/useGame";
 import PlayerHands from "./PlayerHands";
 import TheDayThat from "./TheDayThat";
 import styles from "./Game.module.css";
+import { useState } from "react";
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
@@ -13,6 +14,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
     currentPlayerName,
     prevFirstPlayer,
     initializingGame,
+    selectedDiscardPile,
     setSelectedDiscardPile,
     roundScores,
     allRoundScores,
@@ -21,6 +23,8 @@ function Game({ gameId, playerId, isLobbyHost }) {
     performAction,
     displayCardContent,
   } = useGame();
+
+  const [checkingHistory, setCheckingHistory] = useState(false);
 
   const handleDrawCard = () => {
     console.log("Drawing card for player:", playerId);
@@ -64,10 +68,15 @@ function Game({ gameId, playerId, isLobbyHost }) {
     if (isPlayerTurn) classes += " clickable";
 
     if (drawnCard) {
-      classes += " revealed";
-      drawnCard.suit === "♥︎" || drawnCard.suit === "♦︎"
-        ? (classes += " red")
-        : (classes += " black");
+      classes += " revealed selected";
+
+      if (drawnCard.suit === "☆") {
+        classes += " joker";
+      } else {
+        drawnCard.suit === "♥︎" || drawnCard.suit === "♦︎"
+          ? (classes += " red")
+          : (classes += " black");
+      }
     } else {
       classes += " hidden";
     }
@@ -75,12 +84,23 @@ function Game({ gameId, playerId, isLobbyHost }) {
   };
 
   const setDiscardPileCardClass = (card, index) => {
-    let classes = " card";
+    let classes = "card hidden-history";
     if (index === discardPile.length - 1 && isPlayerTurn && !initializingGame)
       classes += " clickable";
-    card.suit === "♥︎" || card.suit === "♦︎"
-      ? (classes += " red")
-      : (classes += " black");
+    if (selectedDiscardPile) {
+      classes += " selected";
+    }
+    if (checkingHistory) {
+      classes = classes.replace(/\bhidden-history\b/, "").trim();
+    }
+    if (card.suit === "☆") {
+      classes += " joker";
+    } else {
+      card.suit === "♥︎" || card.suit === "♦︎"
+        ? (classes += " red")
+        : (classes += " black");
+    }
+
     return classes;
   };
 
@@ -275,6 +295,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
           <div>
             <div style={{ display: "flex" }}>
+              <div className="card"></div>
               {discardPile.map((card, index) => {
                 return (
                   <div
@@ -295,6 +316,16 @@ function Game({ gameId, playerId, isLobbyHost }) {
                   </div>
                 );
               })}
+              <button
+                style={{
+                  transform: checkingHistory ? "rotate(-180deg)" : "",
+                  transition: "transform .35s",
+                }}
+                className={styles.history_btn}
+                onClick={() => setCheckingHistory(!checkingHistory)}
+              >
+                🞂
+              </button>
             </div>
           </div>
         </div>
