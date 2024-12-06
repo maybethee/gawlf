@@ -269,8 +269,8 @@ class GameChannel < ApplicationCable::Channel
             cards << { suit:, rank:, visibility: 'hidden' }
           end
         end
-        cards << { suit: '☆', rank: '★', visibility: 'hidden' }
-        cards << { suit: '☆', rank: '★', visibility: 'hidden' }
+        cards << { suit: '★', rank: '★', visibility: 'hidden' }
+        cards << { suit: '★', rank: '★', visibility: 'hidden' }
       end,
       discard_pile: [],
       drawn_card: {}
@@ -304,20 +304,21 @@ class GameChannel < ApplicationCable::Channel
     # initial_state[:deck].delete(first_discard)
 
     # initial_state
-
   end
 
   def reconstitute_deck
     @game.reload
 
+    remaining_discarded_card = @game.game_state['discard_pile'].pop
+
     reconstituted_deck = @game.game_state['discard_pile']
     reconstituted_deck.each { |card| card['visibility'] = 'hidden' }
 
     updated_game_state = @game.game_state.deep_dup
-    updated_game_state['discard_pile'] = []
+    updated_game_state['discard_pile'] = [remaining_discarded_card]
     updated_game_state['deck'] = reconstituted_deck
 
-    Rails.logger.debug("game_stats after reconstituting from discard pile: #{updated_game_state['deck'].inspect}")
+    # Rails.logger.debug("\n\n\n\ngame_state after reconstituting from discard pile: #{updated_game_state.inspect}")
 
     @game.update!(game_state: updated_game_state)
   end

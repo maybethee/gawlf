@@ -15,7 +15,7 @@ class Game < ApplicationRecord
       Rails.logger.debug("\n\ncalculate scores, working on player: #{player.inspect}")
       scoring_array = player.hand.map do |card|
         # need joker's suit for conversion rather than rank
-        card['suit'] == '☆' ? card['suit'] : card['rank']
+        card['suit'] == '★' ? card['suit'] : card['rank']
       end
 
       cancel_equal_columns(scoring_array)
@@ -35,7 +35,7 @@ class Game < ApplicationRecord
 
     column_pairs.each do |pair|
       # ignore column with two jokers
-      if array[pair[0]] == array[pair[1]] && array[pair[0]]['suit'] != '☆'
+      if array[pair[0]] == array[pair[1]] && array[pair[0]]['suit'] != '★'
         # convert to 'K' for conversion hash compatibility
         array[pair[0]] = 'K'
         array[pair[1]] = 'K'

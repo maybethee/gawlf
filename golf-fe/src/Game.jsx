@@ -114,12 +114,16 @@ function Game({ gameId, playerId, isLobbyHost }) {
         <TheDayThat />
 
         <h2>Hole: {currentHole} / 9</h2>
-        <div className={styles.draw_and_discard_piles_container}>
+        <div
+          style={{ left: "50%" }}
+          className={styles.draw_and_discard_piles_container}
+        >
           <div className={styles.draw_and_discard_piles}>
             <div>
               <div className="card hidden"></div>
             </div>
-            <div>
+            <div style={{ display: "flex" }}>
+              <div className="card"></div>
               {discardPile.map((card, index) => {
                 return (
                   <div
@@ -271,7 +275,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
       <h2>Hole: {currentHole} / 9</h2>
 
-      <div className={styles.draw_and_discard_piles_container}>
+      <div
+        style={{ left: "51%" }}
+        className={styles.draw_and_discard_piles_container}
+      >
         <div>
           {!isPlayerTurn && (
             <h3 className={styles.turn_message}>
@@ -294,7 +301,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
           </div>
 
           <div>
-            <div style={{ display: "flex" }}>
+            <div className={styles.discard_pile_container}>
               <div className="card"></div>
               {discardPile.map((card, index) => {
                 return (

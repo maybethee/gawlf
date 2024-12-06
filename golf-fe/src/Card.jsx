@@ -35,7 +35,7 @@ function Card({ playerHand, card, playerId, onClick }) {
       classes += " selected";
     }
 
-    if (card.suit === "☆") {
+    if (card.suit === "★") {
       classes += " joker";
     } else {
       card.suit === "♥︎" || card.suit === "♦︎"
