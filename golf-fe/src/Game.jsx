@@ -2,7 +2,8 @@ import { useGame } from "./context/useGame";
 import PlayerHands from "./PlayerHands";
 import TheDayThat from "./TheDayThat";
 import styles from "./Game.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import CardBackSelect from "./CardBackSelect";
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
@@ -104,50 +105,79 @@ function Game({ gameId, playerId, isLobbyHost }) {
     return classes;
   };
 
+  const backgrounds = {
+    none: "/assets/default-img.jpg",
+    trans: "/assets/bg-1.jpg",
+    wood: "/assets/bg-2.jpg",
+    leaves: "/assets/bg-3.jpg",
+    pool: "/assets/bg-4.jpg",
+    cow: "/assets/bg-5.jpg",
+    marble: "/assets/bg-6.jpg",
+    blues: "/assets/bg-7.jpg",
+    giraffe: "/assets/bg-8.jpg",
+  };
+
+  const [backgroundUrl, setBackgroundUrl] = useState("default-image.jpg");
+
+  const updateBackgroundImage = (newUrl) => {
+    console.log("background updated (Game.jsx) to", newUrl);
+    setBackgroundUrl(newUrl);
+  };
+
+  useEffect(() => {
+    console.log("Updated background URL:", backgroundUrl);
+  }, [backgroundUrl]);
+
   if (!gameId) {
     return null;
   }
 
   if (initializingGame) {
     return (
-      <div className={styles.game_container}>
-        <TheDayThat />
+      <div className={styles.game_page}>
+        <CardBackSelect
+          updateBackground={updateBackgroundImage}
+          backgrounds={backgrounds}
+        />
+        <div className={styles.game_container}>
+          <TheDayThat />
 
-        <h2>Hole: {currentHole} / 9</h2>
-        <div
-          style={{ left: "50%" }}
-          className={styles.draw_and_discard_piles_container}
-        >
-          <div className={styles.draw_and_discard_piles}>
-            <div>
-              <div className="card hidden"></div>
-            </div>
-            <div style={{ display: "flex" }}>
-              <div className="card"></div>
-              {discardPile.map((card, index) => {
-                return (
-                  <div
-                    className={setDiscardPileCardClass(card, index)}
-                    key={index}
-                    onClick={
-                      index === discardPile.length - 1
-                        ? handleDiscardPileClick
-                        : null
-                    }
-                  >
-                    <div className={styles.card_content_container}>
-                      <p>
-                        {card.rank}
-                        {card.suit}
-                      </p>
+          <h2>Hole: {currentHole} / 9</h2>
+          <div
+            style={{ left: "50%" }}
+            className={styles.draw_and_discard_piles_container}
+          >
+            <div className={styles.draw_and_discard_piles}>
+              <div>
+                <div className="card hidden"></div>
+              </div>
+              <div style={{ display: "flex" }}>
+                <div className="card"></div>
+                {discardPile.map((card, index) => {
+                  return (
+                    <div
+                      className={setDiscardPileCardClass(card, index)}
+                      key={index}
+                      onClick={
+                        index === discardPile.length - 1
+                          ? handleDiscardPileClick
+                          : null
+                      }
+                    >
+                      <div className={styles.card_content_container}>
+                        <p>
+                          {card.rank}
+                          {card.suit}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
+          <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
         </div>
-        <PlayerHands playerId={playerId} />
       </div>
     );
   }
@@ -184,7 +214,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
           </div>
 
           <div className={styles.right_col}>
-            <PlayerHands playerId={playerId} />
+            <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
           </div>
         </div>
 
@@ -270,75 +300,81 @@ function Game({ gameId, playerId, isLobbyHost }) {
   }
 
   return (
-    <div className={styles.game_container}>
-      <TheDayThat />
+    <div className={styles.game_page}>
+      <CardBackSelect
+        updateBackground={updateBackgroundImage}
+        backgrounds={backgrounds}
+      />
+      <div className={styles.game_container}>
+        <TheDayThat />
 
-      <h2>Hole: {currentHole} / 9</h2>
+        <h2>Hole: {currentHole} / 9</h2>
 
-      <div
-        style={{ left: "51%" }}
-        className={styles.draw_and_discard_piles_container}
-      >
-        <div>
-          {!isPlayerTurn && (
-            <h3 className={styles.turn_message}>
-              Waiting for {currentPlayerName}'s turn...
-            </h3>
-          )}
-        </div>
-        <div className={styles.draw_and_discard_piles}>
+        <div
+          style={{ left: "51%" }}
+          className={styles.draw_and_discard_piles_container}
+        >
           <div>
-            <div
-              className={setDrawnCardClass()}
-              onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
-            >
-              {drawnCard && (
-                <div className="card-content-container">
-                  <p>{displayCardContent(drawnCard)}</p>
-                </div>
-              )}
-            </div>
+            {!isPlayerTurn && (
+              <h3 className={styles.turn_message}>
+                Waiting for {currentPlayerName}'s turn...
+              </h3>
+            )}
           </div>
-
-          <div>
-            <div className={styles.discard_pile_container}>
-              <div className="card"></div>
-              {discardPile.map((card, index) => {
-                return (
-                  <div
-                    className={setDiscardPileCardClass(card, index)}
-                    key={index}
-                    onClick={
-                      index === discardPile.length - 1
-                        ? handleDiscardPileClick
-                        : null
-                    }
-                  >
-                    <div className="card-content-container">
-                      <p>
-                        {card.rank}
-                        {card.suit}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-              <button
-                style={{
-                  transform: checkingHistory ? "rotate(-180deg)" : "",
-                  transition: "transform .35s",
-                }}
-                className={styles.history_btn}
-                onClick={() => setCheckingHistory(!checkingHistory)}
+          <div className={styles.draw_and_discard_piles}>
+            <div>
+              <div
+                className={setDrawnCardClass()}
+                onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
               >
-                🞂
-              </button>
+                {drawnCard && (
+                  <div className="card-content-container">
+                    <p>{displayCardContent(drawnCard)}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <div className={styles.discard_pile_container}>
+                <div className="card"></div>
+                {discardPile.map((card, index) => {
+                  return (
+                    <div
+                      className={setDiscardPileCardClass(card, index)}
+                      key={index}
+                      onClick={
+                        index === discardPile.length - 1
+                          ? handleDiscardPileClick
+                          : null
+                      }
+                    >
+                      <div className="card-content-container">
+                        <p>
+                          {card.rank}
+                          {card.suit}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+                <button
+                  style={{
+                    transform: checkingHistory ? "rotate(-180deg)" : "",
+                    transition: "transform .35s",
+                  }}
+                  className={styles.history_btn}
+                  onClick={() => setCheckingHistory(!checkingHistory)}
+                >
+                  🞂
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <PlayerHands playerId={playerId} />
+        <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+      </div>
     </div>
   );
 }

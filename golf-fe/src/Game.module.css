@@ -1,3 +1,7 @@
+.game_page {
+  height: 100%;
+}
+
 .game_container {
   height: 100%;
   position: relative;
@@ -36,7 +40,7 @@
   overflow-y: hidden;
   top: 56%;
   transform: translate(-50%, -50%);
-  z-index: 999;
+  z-index: 993;
 }
 
 .draw_and_discard_piles {

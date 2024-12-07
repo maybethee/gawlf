@@ -54,7 +54,7 @@ function App({ userId }) {
   if (!lobbyStatus)
     return (
       <div className={styles.home_page_container}>
-        <h1 className={styles.title}>GOLF</h1>
+        <h1 className={styles.title}>Golf</h1>
         {viewingProfile ? (
           <div>
             <Profile userId={userId} />

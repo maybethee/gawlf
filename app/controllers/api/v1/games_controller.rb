@@ -38,11 +38,6 @@ class Api::V1::GamesController < ApplicationController
     @game.destroy!
   end
 
-  # def draw_card
-  #   ActionCable.server.broadcast("game_#{params[:game_id]}",
-  #                                { action: 'draw_card', game_id: params[:game_id], player_id: params[:player_id] })
-  # end
-
   private
 
   # Use callbacks to share common setup or constraints between actions.

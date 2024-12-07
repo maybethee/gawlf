@@ -3,7 +3,7 @@ import Card from "./Card";
 import styles from "./PlayerHands.module.css";
 import { Eye } from "lucide-react";
 
-function PlayerHands({ playerId }) {
+function PlayerHands({ playerId, backgroundUrl }) {
   const {
     playerHands,
     initializingGame,
@@ -136,7 +136,17 @@ function PlayerHands({ playerId }) {
   }
 
   return (
-    <div className={styles.player_hands_container}>
+    <div
+      key={backgroundUrl}
+      style={{
+        background: `no-repeat url(${backgroundUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: "100%",
+        width: "100%",
+      }}
+      className={styles.player_hands_container}
+    >
       {playerHands && (
         <div className={styles.player_hand_area}>
           <div
