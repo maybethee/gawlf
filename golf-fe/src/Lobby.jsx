@@ -15,6 +15,7 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
 
   const [playerName, setPlayerName] = useState("");
   const [playerId, setPlayerId] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!gameId) {
@@ -35,6 +36,13 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
 
   const handleCreatePlayer = async (e) => {
     e.preventDefault();
+
+    if (playerName.trim().length < 1 || playerName.trim().length > 10) {
+      setError("Name must be between 1 and 10 characters.");
+      return;
+    }
+
+    setError("");
 
     const data = await createPlayer(playerName, gameId, userId);
     console.log("player data", data);
@@ -75,6 +83,7 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
                     setPlayerName(e.target.value);
                   }}
                 />
+                {error && <p className="error">{error}</p>}
               </div>
               <button>Join Game</button>
             </form>

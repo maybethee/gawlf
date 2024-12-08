@@ -14,3 +14,13 @@
   border-width: 3px;
   padding: 8px;
 }
+
+.the_day_error {
+  color: red;
+  padding: 0;
+  position: absolute;
+  top: -6px;
+  transform: translateX(-50%, -50%);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}

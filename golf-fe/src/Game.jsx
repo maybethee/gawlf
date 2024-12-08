@@ -3,7 +3,8 @@ import PlayerHands from "./PlayerHands";
 import TheDayThat from "./TheDayThat";
 import styles from "./Game.module.css";
 import { useState, useEffect } from "react";
-import CardBackSelect from "./CardBackSelect";
+import UIOptions from "./UIOptions";
+import { ArrowBigRightDash, Play } from "lucide-react";
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
@@ -71,7 +72,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
     if (drawnCard) {
       classes += " revealed selected";
 
-      if (drawnCard.suit === "☆") {
+      if (drawnCard.suit === "★") {
         classes += " joker";
       } else {
         drawnCard.suit === "♥︎" || drawnCard.suit === "♦︎"
@@ -88,13 +89,13 @@ function Game({ gameId, playerId, isLobbyHost }) {
     let classes = "card hidden-history";
     if (index === discardPile.length - 1 && isPlayerTurn && !initializingGame)
       classes += " clickable";
-    if (selectedDiscardPile) {
+    if (selectedDiscardPile && index === discardPile.length - 1) {
       classes += " selected";
     }
     if (checkingHistory) {
       classes = classes.replace(/\bhidden-history\b/, "").trim();
     }
-    if (card.suit === "☆") {
+    if (card.suit === "★") {
       classes += " joker";
     } else {
       card.suit === "♥︎" || card.suit === "♦︎"
@@ -106,18 +107,19 @@ function Game({ gameId, playerId, isLobbyHost }) {
   };
 
   const backgrounds = {
-    none: "/assets/default-img.jpg",
-    trans: "/assets/bg-1.jpg",
     wood: "/assets/bg-2.jpg",
+    paint: "/assets/bg-1.jpg",
     leaves: "/assets/bg-3.jpg",
     pool: "/assets/bg-4.jpg",
     cow: "/assets/bg-5.jpg",
     marble: "/assets/bg-6.jpg",
-    blues: "/assets/bg-7.jpg",
     giraffe: "/assets/bg-8.jpg",
+    flower: "/assets/bg-9.jpg",
+    clover: "/assets/bg-10.jpg",
+    sunrise: "/assets/bg-11.jpg",
   };
 
-  const [backgroundUrl, setBackgroundUrl] = useState("default-image.jpg");
+  const [backgroundUrl, setBackgroundUrl] = useState("/assets/bg-2.jpg");
 
   const updateBackgroundImage = (newUrl) => {
     console.log("background updated (Game.jsx) to", newUrl);
@@ -135,7 +137,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
   if (initializingGame) {
     return (
       <div className={styles.game_page}>
-        <CardBackSelect
+        <UIOptions
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
         />
@@ -186,54 +188,60 @@ function Game({ gameId, playerId, isLobbyHost }) {
     console.log("round scores:", roundScores);
 
     return (
-      <div className={styles.game_container}>
-        <TheDayThat />
+      <div className={styles.game_page}>
+        <div className={styles.game_container}>
+          <TheDayThat />
 
-        <h2 className={styles.hole_completed}>Hole {currentHole} Completed</h2>
+          <h2 className={styles.hole_completed}>
+            Hole {currentHole} Completed
+          </h2>
 
-        <div className={styles.results_container}>
-          <div className={styles.left_col}>
-            <h3 className={styles.round_winner}>Round winner: {roundWinner}</h3>
+          <div className={styles.results_container}>
+            <div className={styles.left_col}>
+              <h3 className={styles.round_winner}>
+                Round winner: {roundWinner}
+              </h3>
 
-            <table>
-              <tbody>
-                <tr>
-                  <th>Player</th>
-                  <th>Score</th>
-                </tr>
-                {roundScores.map((player) => {
-                  return (
-                    <tr key={player.player_id}>
-                      <th>{player.player_name}</th>
-                      <td>{player.round_score}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Player</th>
+                    <th>Score</th>
+                  </tr>
+                  {roundScores.map((player) => {
+                    return (
+                      <tr key={player.player_id}>
+                        <th>{player.player_name}</th>
+                        <td>{player.round_score}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className={styles.right_col}>
+              <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+            </div>
           </div>
 
-          <div className={styles.right_col}>
-            <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
-          </div>
+          {isLobbyHost ? (
+            <button
+              className={styles.next_hole_btn}
+              onClick={() =>
+                performAction("setup_hole", {
+                  prev_first_player_id: prevFirstPlayer,
+                })
+              }
+            >
+              Next Hole
+            </button>
+          ) : (
+            <p className={styles.information}>
+              Waiting for host to start next round...
+            </p>
+          )}
         </div>
-
-        {isLobbyHost ? (
-          <button
-            className={styles.next_hole_btn}
-            onClick={() =>
-              performAction("setup_hole", {
-                prev_first_player_id: prevFirstPlayer,
-              })
-            }
-          >
-            Next Hole
-          </button>
-        ) : (
-          <p className={styles.information}>
-            Waiting for host to start next round...
-          </p>
-        )}
       </div>
     );
   }
@@ -241,67 +249,69 @@ function Game({ gameId, playerId, isLobbyHost }) {
   if (gameOver && allRoundScores.length > 0) {
     console.log("all round scores:", allRoundScores);
     return (
-      <div className={styles.game_container}>
-        <TheDayThat />
+      <div className={styles.game_page}>
+        <div className={styles.game_container}>
+          <TheDayThat />
 
-        <h2 className={styles.game_over}>Game Over</h2>
+          <h2 className={styles.game_over}>Game Over</h2>
 
-        <table>
-          <tbody>
-            <tr>
-              <th>Player</th>
-              {allRoundScores[0].round_scores.map((_, index) => {
-                return <th key={index}>Hole #{index + 1}</th>;
+          <table>
+            <tbody>
+              <tr>
+                <th>Player</th>
+                {allRoundScores[0].round_scores.map((_, index) => {
+                  return <th key={index}>Hole #{index + 1}</th>;
+                })}
+                <th>Score</th>
+              </tr>
+
+              {allRoundScores.map((player) => {
+                return (
+                  <tr key={player.player_id}>
+                    <th>{player.player_name}</th>
+
+                    {player.round_scores.map((score, index) => {
+                      return <td key={index}>{score}</td>;
+                    })}
+
+                    <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
+                  </tr>
+                );
               })}
-              <th>Score</th>
-            </tr>
+            </tbody>
+          </table>
 
-            {allRoundScores.map((player) => {
-              return (
-                <tr key={player.player_id}>
-                  <th>{player.player_name}</th>
+          <div className={styles.placements_container}>
+            <h3>Placements</h3>
+            <div className={styles.placements}>
+              {sortedTotalScores.map((player, index) => {
+                return (
+                  <p key={index}>
+                    {index + 1}: {player.player_name}
+                  </p>
+                );
+              })}
+            </div>
 
-                  {player.round_scores.map((score, index) => {
-                    return <td key={index}>{score}</td>;
-                  })}
-
-                  <td>{player.round_scores.reduce((a, b) => a + b, 0)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        <div className={styles.placements_container}>
-          <h3>Placements</h3>
-          <div className={styles.placements}>
-            {sortedTotalScores.map((player, index) => {
-              return (
-                <p key={index}>
-                  {index + 1}: {player.player_name}
-                </p>
-              );
-            })}
+            <h3 className={styles.winner}>Winner:</h3>
+            <h3 className={styles.winner_name}>{gameWinner}</h3>
           </div>
 
-          <h3 className={styles.winner}>Winner:</h3>
-          <h3 className={styles.winner_name}>{gameWinner}</h3>
+          <button
+            onClick={() => {
+              setLobbyStatus("");
+            }}
+          >
+            Main Menu
+          </button>
         </div>
-
-        <button
-          onClick={() => {
-            setLobbyStatus("");
-          }}
-        >
-          Main Menu
-        </button>
       </div>
     );
   }
 
   return (
     <div className={styles.game_page}>
-      <CardBackSelect
+      <UIOptions
         updateBackground={updateBackgroundImage}
         backgrounds={backgrounds}
       />
@@ -366,13 +376,15 @@ function Game({ gameId, playerId, isLobbyHost }) {
                   className={styles.history_btn}
                   onClick={() => setCheckingHistory(!checkingHistory)}
                 >
-                  🞂
+                  <Play
+                    style={{ stroke: "black", fill: "#fbe9d2" }}
+                    size={36}
+                  />
                 </button>
               </div>
             </div>
           </div>
         </div>
-
         <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
       </div>
     </div>

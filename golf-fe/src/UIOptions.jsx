@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { ArrowRightToLine, ArrowLeftFromLine } from "lucide-react";
+import styles from "./UIOptions.module.css";
 
-function CardBackSelect({ updateBackground, backgrounds }) {
+function UIOptions({ updateBackground, backgrounds }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectionToggle, setSelectionToggle] = useState(true);
-  const [cardBackUrl, setCardBackUrl] = useState("/assets/card-back-1.png");
+  const [cardBackUrl, setCardBackUrl] = useState("/assets/card-back-9.jpg");
 
   const toggleDrawer = () => {
     setIsOpen((prev) => !prev);
@@ -23,17 +25,15 @@ function CardBackSelect({ updateBackground, backgrounds }) {
   }, [cardBackUrl]);
 
   const cardBacks = {
+    traditional: "/assets/card-back-9.jpg",
     squiggle: "/assets/card-back-1.png",
     abstract: "/assets/card-back-2.jpg",
-    oil: "/assets/card-back-3.jpg",
     fabric: "/assets/card-back-4.jpg",
-    pheasant: "/assets/card-back-5.jpg",
+    blobs: "/assets/card-back-5.jpg",
     waterfall: "/assets/card-back-6.jpg",
     geometric: "/assets/card-back-7.jpg",
     halftone: "/assets/card-back-8.png",
-    fox: "/assets/card-back-9.jpg",
     odo: "/assets/card-back-10.png",
-    armor: "/assets/card-back-11.jpg",
   };
 
   const handleCardBackChange = (key) => {
@@ -42,23 +42,29 @@ function CardBackSelect({ updateBackground, backgrounds }) {
   };
 
   return (
-    <div className={`drawer-container ${isOpen ? "open" : "closed"}`}>
-      <div className="card-back-drawer">
-        <button
-          className={`${selectionToggle ? "selected-category" : ""}`}
-          onClick={() => setSelectionToggle(true)}
-        >
-          Card Backs
-        </button>
-        <button
-          className={`${!selectionToggle ? "selected-category" : ""}`}
-          onClick={() => setSelectionToggle(false)}
-        >
-          Backgrounds
-        </button>
+    <div
+      className={`${styles.drawer_container} ${
+        isOpen ? styles.open : styles.closed
+      }`}
+    >
+      <div className={styles.selection_drawer}>
+        <div className={styles.category_btns}>
+          <button
+            className={selectionToggle ? styles.selected_category : ""}
+            onClick={() => setSelectionToggle(true)}
+          >
+            Card Backs
+          </button>
+          <button
+            className={!selectionToggle ? styles.selected_category : ""}
+            onClick={() => setSelectionToggle(false)}
+          >
+            Backgrounds
+          </button>
+        </div>
 
         {selectionToggle ? (
-          <div className="options-selection">
+          <div className={styles.options_selection}>
             <ul>
               {Object.keys(cardBacks).map((key) => (
                 <li key={key}>
@@ -70,7 +76,7 @@ function CardBackSelect({ updateBackground, backgrounds }) {
             </ul>
           </div>
         ) : (
-          <div className="options-selection">
+          <div className={styles.options_selection}>
             <ul>
               {Object.keys(backgrounds).map((key) => (
                 <li key={key}>
@@ -83,11 +89,15 @@ function CardBackSelect({ updateBackground, backgrounds }) {
           </div>
         )}
       </div>
-      <div className="tab" onClick={toggleDrawer}>
-        {isOpen ? ">" : "<"}
+      <div className={styles.tab} onClick={toggleDrawer}>
+        {isOpen ? (
+          <ArrowRightToLine size={32} strokeWidth={2} />
+        ) : (
+          <ArrowLeftFromLine size={32} strokeWidth={2} />
+        )}
       </div>
     </div>
   );
 }
 
-export default CardBackSelect;
+export default UIOptions;

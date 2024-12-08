@@ -5,6 +5,7 @@ import styles from "./TheDayThatForm.module.css";
 function TheDayThatForm({ initialText }) {
   const { performAction } = useGame();
   const [theDayThat, setTheDayThat] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setTheDayThat(initialText);
@@ -13,9 +14,12 @@ function TheDayThatForm({ initialText }) {
   const handleRecordDay = (e) => {
     e.preventDefault();
 
-    if (!theDayThat) {
+    if (theDayThat.trim() === "") {
+      setError("The Day cannot be empty.");
       return;
     }
+
+    setError("");
 
     performAction("record_day", { the_day_that: theDayThat });
   };
@@ -33,6 +37,7 @@ function TheDayThatForm({ initialText }) {
         />
         <button>Update</button>
       </form>
+      {error && <p className={styles.the_day_error}>{error}</p>}
     </div>
   );
 }

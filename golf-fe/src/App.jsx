@@ -13,6 +13,7 @@ function App({ userId }) {
   const [lobbyCodeInput, setLobbyCodeInput] = useState("");
   const [isLobbyHost, setIsLobbyHost] = useState(false);
   const [viewingProfile, setViewingProfile] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!gameId) {
@@ -43,6 +44,13 @@ function App({ userId }) {
 
   const handleJoinLobby = async (e) => {
     e.preventDefault();
+
+    if (lobbyCodeInput.trim() === "") {
+      setError("Lobby code cannot be empty.");
+      return;
+    }
+
+    setError("");
 
     const data = await joinLobby(lobbyCodeInput.toLowerCase());
     console.log("lobby data:", data);
@@ -105,6 +113,7 @@ function App({ userId }) {
                         }}
                       />
                     </div>
+                    {error && <p className="error">{error}</p>}
                   </div>
                   <button>Join Lobby</button>
                 </form>

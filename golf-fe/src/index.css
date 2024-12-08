@@ -135,9 +135,6 @@ button:hover {
   background-color: #fbe9d2;
 }
 
-/* button:hover {
-} */
-
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -154,22 +151,17 @@ button:focus-visible {
   margin-top: 0.2rem;
 }
 
-/* .discard-pile { */
-/* border: rgb(107, 45, 45) 4px solid; */
-/* background-color: rgb(27, 26, 26); */
-/* } */
-
 .hidden-history {
   margin-left: -60px;
   transition: margin-left 0.3s;
 }
 
 .selected {
-  outline: 3px solid rgb(221, 255, 0);
+  outline: 3px solid rgb(0, 255, 255);
 }
 
 .clickable:hover {
-  outline: 3px solid rgb(221, 255, 0);
+  outline: 3px solid rgb(0, 255, 255);
 }
 
 .red {
@@ -201,11 +193,7 @@ button:focus-visible {
 .hidden {
   border-color: beige;
   background: var(--card-back, url("/assets/card-back-1.png"));
-  /* background: no-repeat url("./card-back-10.png"); */
   background-size: cover;
-  /* background-position: center;
-  height: 100%;
-  width: 100%; */
 }
 
 .card,
@@ -217,72 +205,6 @@ button:focus-visible {
 
 .clickable {
   cursor: pointer;
-}
-
-.drawer-wrapper {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100%;
-  z-index: 1000;
-}
-
-.drawer-wrapper.open {
-  transform: translateX(0);
-}
-
-.drawer-container {
-  position: fixed;
-  top: 10%;
-  right: 0;
-  height: 80%;
-  width: 500px;
-  /* border: solid; */
-  /* border-radius: 12px; */
-  transform: translateX(100%);
-  transition: transform 0.3s ease-in-out;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-}
-
-.card-back-drawer {
-  flex: 1;
-  height: 100%;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
-  background-color: aquamarine;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.options-selection {
-  padding: 0.4rem;
-}
-
-.drawer-container.open {
-  transform: translateX(0);
-}
-
-.tab {
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 100px;
-  background-color: black;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
-  z-index: 1001;
-  transition: transform 0.3s ease-in-out;
-}
-
-.selected-category {
-  box-shadow: inset 0px 0px 4px 4px rgba(0, 0, 0, 0.8);
 }
 
 table {
@@ -299,4 +221,11 @@ td {
 th {
   background-color: #374151;
   color: #fbe9d2;
+}
+
+.error {
+  color: red;
+  position: absolute;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
 }
