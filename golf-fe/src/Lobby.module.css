@@ -39,11 +39,6 @@
   transition: background-color 0.2s, color 0.2s; */
 }
 
-/* .bottom_row button:hover {
-  color: #fbe9d2;
-  background-color: #f87171;
-} */
-
 .no_players_p {
   align-self: center;
 }
@@ -73,6 +68,7 @@
 }
 
 .no_players_p {
+  font-style: italic;
   animation: cycle-color 1.8s infinite;
 }
 
@@ -94,11 +90,12 @@
   top: -1.4rem;
   left: 0;
   font-size: 1.2rem;
+  font-weight: 500;
 }
 
 .join_game_form input {
   position: relative;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   box-shadow: none;
   height: 35px;
   width: 200px;

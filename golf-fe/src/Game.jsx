@@ -198,9 +198,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
           <div className={styles.results_container}>
             <div className={styles.left_col}>
-              <h3 className={styles.round_winner}>
-                Round winner: {roundWinner}
-              </h3>
+              <h3 className={styles.round_winner}>Winner: {roundWinner}</h3>
 
               <table>
                 <tbody>

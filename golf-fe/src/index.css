@@ -54,6 +54,7 @@ table {
 }
 
 body {
+  font-family: "Nunito Sans", sans-serif;
   height: 100%;
   width: 100%;
   /* color: #03256cff; */
@@ -75,13 +76,18 @@ body {
 }
 
 h1 {
+  font-family: "Nunito", serif;
+  font-weight: 900;
+  font-style: italic;
   font-size: 2.2rem;
 }
 
 h2 {
+  font-family: "Nunito Sans", sans-serif;
   font-size: 1.2rem;
   margin: 0.5rem 0;
-  font-weight: bold;
+  /* font-weight: bold; */
+  font-weight: 800;
 }
 
 h3 {
@@ -93,6 +99,10 @@ h2,
 h3,
 p {
   padding: 0.2rem;
+}
+
+h3 {
+  font-weight: 600;
 }
 
 input {
@@ -116,8 +126,8 @@ input:focus {
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
   /* background-color: rgba(0, 0, 0, 0); */
@@ -187,7 +197,7 @@ button:focus-visible {
   border-color: rgb(254, 236, 236);
   display: flex;
   justify-content: flex-end;
-  box-shadow: -8px 8px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: -8px 8px 5px 0px rgba(0, 0, 0, 0.75), 0 0 0 1px black;
 }
 
 .hidden {

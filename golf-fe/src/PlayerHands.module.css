@@ -15,6 +15,10 @@
   transform: translate(-50%, -50%);
 }
 
+.player_hands_container {
+  background: no-repeat url("/");
+}
+
 .hand {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -31,6 +35,8 @@
 }
 
 .hand_header p {
+  font-family: "Nunito", serif;
+  /* font-size: 1rem; */
   background: #e2d2bd;
   padding: 5px;
   border-radius: 8px;

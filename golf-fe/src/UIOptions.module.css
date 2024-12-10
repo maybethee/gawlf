@@ -56,7 +56,10 @@
   display: flex;
   flex-flow: row;
   column-gap: 1rem;
-  font-size: 1.1rem;
+}
+
+.category_btns button {
+  font-size: 1.2em;
 }
 
 .selected_category {
@@ -77,5 +80,5 @@
 }
 
 .options_selection ul button {
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
