@@ -112,12 +112,24 @@ function PlayerHands({ playerId, backgroundUrl }) {
 
   if (roundOver) {
     return (
-      <div className={styles.results_player_hands_container}>
+      <div
+        key={backgroundUrl}
+        style={{
+          background: `no-repeat url(${backgroundUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%",
+        }}
+        className={styles.results_player_hands_container}
+      >
         {playerHands && (
           <div className={styles.results_player_hands}>
             {playerHands.map((playerHand) => (
               <div key={playerHand.id}>
-                <p>{playerHand.name}</p>
+                <div className={styles.hand_header}>
+                  <p>{playerHand.name}</p>
+                </div>
                 <div className={styles.hand}>
                   {playerHand.hand.map((card) => (
                     <Card
@@ -167,7 +179,13 @@ function PlayerHands({ playerId, backgroundUrl }) {
                 }}
               >
                 <div className={styles.hand_header}>
-                  <p>{playerHand.name}</p>
+                  <p
+                    style={{
+                      color: playerHand.id === playerId ? "#e11d47" : "#374151",
+                    }}
+                  >
+                    {playerHand.name}
+                  </p>
                   {initializingGame && playerHand.id === playerId && (
                     <button onClick={revealSelectedCards}>
                       {<Eye color="#fbe9d2" />}

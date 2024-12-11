@@ -78,6 +78,7 @@ function App({ userId }) {
           <div className={styles.home_btns_container}>
             <div className={styles.home_row_1}>
               <button
+                disabled
                 onClick={() => {
                   setViewingProfile(true);
                 }}

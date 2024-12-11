@@ -15,10 +15,6 @@
   transform: translate(-50%, -50%);
 }
 
-.player_hands_container {
-  background: no-repeat url("/");
-}
-
 .hand {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -36,7 +32,6 @@
 
 .hand_header p {
   font-family: "Nunito", serif;
-  /* font-size: 1rem; */
   background: #e2d2bd;
   padding: 5px;
   border-radius: 8px;
@@ -65,6 +60,10 @@
 .hand_header button:active {
   /* background-color: #fc8888; */
   box-shadow: inset 3px 3px 2px 2px rgba(0, 0, 0, 0.75);
+}
+
+.results_player_hands_container {
+  padding: 1rem;
 }
 
 .results_player_hands {

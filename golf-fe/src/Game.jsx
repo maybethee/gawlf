@@ -49,13 +49,13 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
   const isPlayerTurn = currentPlayerId === playerId;
 
-  const sortedRoundScores =
-    roundScores.length > 0
-      ? [...roundScores].sort((a, b) => a.round_score - b.round_score)
-      : [];
+  // const sortedRoundScores =
+  //   roundScores.length > 0
+  //     ? [...roundScores].sort((a, b) => a.round_score - b.round_score)
+  //     : [];
 
-  const roundWinner =
-    sortedRoundScores.length > 0 ? sortedRoundScores[0].player_name : null;
+  // const roundWinner =
+  //   sortedRoundScores.length > 0 ? sortedRoundScores[0].player_name : null;
 
   const sortedTotalScores =
     allRoundScores.length > 0
@@ -189,6 +189,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
     return (
       <div className={styles.game_page}>
+        <UIOptions
+          updateBackground={updateBackgroundImage}
+          backgrounds={backgrounds}
+        />
         <div className={styles.game_container}>
           <TheDayThat />
 
@@ -198,7 +202,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
           <div className={styles.results_container}>
             <div className={styles.left_col}>
-              <h3 className={styles.round_winner}>Winner: {roundWinner}</h3>
+              {/* <h3 className={styles.round_winner}>Winner: {roundWinner}</h3> */}
 
               <table>
                 <tbody>
@@ -248,6 +252,13 @@ function Game({ gameId, playerId, isLobbyHost }) {
     console.log("all round scores:", allRoundScores);
     return (
       <div className={styles.game_page}>
+        <UIOptions
+          updateBackground={updateBackgroundImage}
+          backgrounds={backgrounds}
+        />
+        <div style={{ height: "80vh" }}>
+          <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+        </div>
         <div className={styles.game_container}>
           <TheDayThat />
 

@@ -60,6 +60,7 @@ body {
   /* color: #03256cff; */
   /* background-color: #fceb9dff; */
   color: #374151;
+
   background-color: #fbe9d2;
 }
 
@@ -86,7 +87,6 @@ h2 {
   font-family: "Nunito Sans", sans-serif;
   font-size: 1.2rem;
   margin: 0.5rem 0;
-  /* font-weight: bold; */
   font-weight: 800;
 }
 
@@ -145,9 +145,21 @@ button:hover {
   background-color: #fbe9d2;
 }
 
-button:focus,
+/* button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+} */
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  transition: none;
+}
+
+button:disabled:hover {
+  color: initial;
+  background-color: initial;
 }
 
 .card,

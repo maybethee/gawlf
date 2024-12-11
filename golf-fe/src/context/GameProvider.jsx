@@ -195,7 +195,7 @@ export const GameProvider = ({ children }) => {
   };
 
   const displayCardContent = (card) => {
-    // console.log("visible?", card.visibility);
+    console.log("visible?", card.visibility);
     if (card.visibility === "hidden") {
       return null;
     } else {
