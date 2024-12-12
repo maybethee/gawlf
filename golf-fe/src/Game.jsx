@@ -59,11 +59,21 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
   const sortedTotalScores =
     allRoundScores.length > 0
-      ? [...allRoundScores].sort((a, b) => a.total_score - b.total_score)
+      ? [...allRoundScores]
+          .sort((a, b) => a.total_score - b.total_score)
+          .reverse()
       : [];
 
+  const placements = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
+
+  const sortedPlacements = placements
+    .slice(0, sortedTotalScores.length)
+    .reverse();
+
   const gameWinner =
-    sortedTotalScores.length > 0 ? sortedTotalScores[0].player_name : null;
+    sortedTotalScores.length > 0
+      ? sortedTotalScores[sortedTotalScores.length - 1].player_name
+      : null;
 
   const setDrawnCardClass = () => {
     let classes = "card";
@@ -126,9 +136,9 @@ function Game({ gameId, playerId, isLobbyHost }) {
     setBackgroundUrl(newUrl);
   };
 
-  useEffect(() => {
-    console.log("Updated background URL:", backgroundUrl);
-  }, [backgroundUrl]);
+  // useEffect(() => {
+  //   console.log("Updated background URL:", backgroundUrl);
+  // }, [backgroundUrl]);
 
   if (!gameId) {
     return null;
@@ -256,22 +266,54 @@ function Game({ gameId, playerId, isLobbyHost }) {
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
         />
-        <div style={{ height: "80vh" }}>
-          <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
-        </div>
         <div className={styles.game_container}>
           <TheDayThat />
 
           <h2 className={styles.game_over}>Game Over</h2>
 
-          <table>
+          <div className={styles.placements_container}>
+            <h3>Results</h3>
+            <div className={styles.placements}>
+              {sortedTotalScores.map((player, index) => {
+                const animationDelay =
+                  index === sortedTotalScores.length - 1
+                    ? `${1.5 + index}s`
+                    : `${0.5 + index}s`;
+
+                return (
+                  <p style={{ animationDelay: animationDelay }} key={index}>
+                    {sortedPlacements[index]}: {player.player_name} -{" "}
+                    {player.round_scores.reduce((a, b) => a + b, 0)} points
+                  </p>
+                );
+              })}
+            </div>
+
+            <h3
+              style={{ animationDelay: `${sortedTotalScores.length + 1.5}s` }}
+              className={styles.winner}
+            >
+              Winner:
+            </h3>
+            <h3
+              style={{ animationDelay: `${sortedTotalScores.length + 2}s` }}
+              className={styles.winner_name}
+            >
+              {gameWinner}
+            </h3>
+          </div>
+
+          <table
+            style={{ animationDelay: `${sortedTotalScores.length + 4}s` }}
+            className={styles.total_scores_table}
+          >
             <tbody>
               <tr>
                 <th>Player</th>
                 {allRoundScores[0].round_scores.map((_, index) => {
                   return <th key={index}>Hole #{index + 1}</th>;
                 })}
-                <th>Score</th>
+                <th>Total</th>
               </tr>
 
               {allRoundScores.map((player) => {
@@ -289,22 +331,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
               })}
             </tbody>
           </table>
-
-          <div className={styles.placements_container}>
-            <h3>Placements</h3>
-            <div className={styles.placements}>
-              {sortedTotalScores.map((player, index) => {
-                return (
-                  <p key={index}>
-                    {index + 1}: {player.player_name}
-                  </p>
-                );
-              })}
-            </div>
-
-            <h3 className={styles.winner}>Winner:</h3>
-            <h3 className={styles.winner_name}>{gameWinner}</h3>
-          </div>
 
           <button
             onClick={() => {
