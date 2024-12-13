@@ -89,7 +89,7 @@
 }
 
 .game_over {
-  margin: 2.5rem 0 2rem 0;
+  margin: 2.5rem 0 1rem 0;
 }
 
 .hole_completed,
@@ -103,7 +103,7 @@
   flex-flow: column;
   align-items: center;
   row-gap: 0.8rem;
-  margin: 2rem 0 3rem 0;
+  margin: 2rem 0 1rem 0;
 }
 .placements_container h3 {
   font-weight: 700;
@@ -120,6 +120,16 @@
 
 .placements p:last-child {
   font-weight: 700;
+}
+
+.total_scores_table {
+  margin-bottom: 2rem;
+}
+
+.total_scores_table th,
+.total_scores_table td {
+  font-size: 0.85rem;
+  padding: 10px 10px;
 }
 
 .winner h3,
