@@ -138,7 +138,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
                     <Card
                       card={card}
                       playerHand={playerHand}
-                      key={`${card.rank}${card.suit}`}
+                      key={`card-${card.id}`}
                     />
                   ))}
                 </div>
@@ -201,7 +201,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
                       card={card}
                       playerId={playerId}
                       playerHand={playerHand}
-                      key={`${card.rank}${card.suit}`}
+                      key={`card-${card.id}`}
                       onClick={() => handleCardClick(card, playerHand.id)}
                     />
                   ))}

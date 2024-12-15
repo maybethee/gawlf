@@ -160,9 +160,25 @@ export const GameProvider = ({ children }) => {
 
     const { id: playerId, hand: updatedHand } = updatedPlayer;
 
+    console.log("Updated Hand from Backend:", updatedHand);
+
+    const deduplicateHand = (hand) => {
+      const uniqueIds = new Set(hand.map((card) => card.id));
+      return Array.from(uniqueIds).map((id) =>
+        hand.find((card) => card.id === id)
+      );
+    };
+
+    console.log("Deduplicated Hand:", deduplicateHand(updatedHand));
+
     setPlayerHands((prevHands) =>
       prevHands.map((hand) =>
-        hand.id === playerId ? { ...hand, hand: updatedHand } : hand
+        hand.id === playerId
+          ? {
+              ...hand,
+              hand: deduplicateHand(updatedHand),
+            }
+          : hand
       )
     );
 

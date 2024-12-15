@@ -45,82 +45,87 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def swap_card(data)
-    @player = Player.find(data['player_id'])
-    @game.reload
+    broadcast_message = nil
+    ActiveRecord::Base.transaction do
+      @player = Player.find(data['player_id'])
+      @game.reload
 
-    if data['swap_origin'] == 'deck'
-      updated_hand = @player.hand.map do |hand_card|
-        if data['card_to_swap']['rank'] == hand_card['rank'] && data['card_to_swap']['suit'] == hand_card['suit']
-          hand_card = @game.game_state['drawn_card']
-          hand_card['visibility'] = 'revealed'
+      new_card = if data['swap_origin'] == 'deck'
+                   @game.game_state['drawn_card']
+                 else
+                   @game.game_state['discard_pile'].pop
+                 end
+      new_card['visibility'] = 'revealed'
+
+      updated_hand = @player.hand.map do |card|
+        if card['id'] == data['card_to_swap']['id']
+          new_card
+        else
+          card
         end
-        hand_card
       end
-    else
-      updated_hand = @player.hand.map do |hand_card|
-        if data['card_to_swap']['rank'] == hand_card['rank'] && data['card_to_swap']['suit'] == hand_card['suit']
-          hand_card = @game.game_state['discard_pile'].pop
-          hand_card['visibility'] = 'revealed'
+
+      @player.update!(hand: updated_hand)
+
+      discarded_card = data['card_to_swap']
+      @game.game_state['discard_pile'] << discarded_card
+
+      reconstitute_deck if @game.game_state['deck'].empty?
+
+      @player.save!
+      @game.save!
+
+      curr_round_scores = nil
+      all_round_scores = nil
+      # end round if player's hand is all revealed
+      if all_revealed?(@player.hand)
+        curr_round_scores = @game.calculate_scores(@game.hole)
+        Rails.logger.debug("round scores calculated: #{curr_round_scores}")
+        Rails.logger.debug('now updating stats...')
+        @game.update_stats(curr_round_scores, @game.hole)
+        # finalize game if last hole
+        if @game.reload.hole == 2
+          all_round_scores = @game.all_round_scores
+          Rails.logger.debug("finalizing game, all round scores: #{all_round_scores.inspect}")
+          summary_update = @game.update_summary
+          Rails.logger.debug("summary update: #{summary_update.inspect}")
+          all_round_scores
+        else
+          curr_round_scores
         end
-        hand_card
       end
+
+      Rails.logger.debug("\n\nCurr round scores? #{curr_round_scores}")
+      Rails.logger.debug("\n\nAll round scores? #{all_round_scores}")
+
+      # see if i need to ignore this at round/game end or if it's fine to leave it
+      next_player_id = @game.next_player.id
+      @game.update!(current_player_id: next_player_id)
+
+      Rails.logger.debug("current player id: #{@game.current_player_id}")
+
+      current_player_name = Player.find_by(id: @game.current_player_id).name
+
+      broadcast_message = {
+        action: 'card_swapped',
+        players: @game.reload.players,
+        player: @player.reload,
+        hole: @game.reload.hole,
+        current_player_id: @game.reload.current_player_id,
+        current_player_name:,
+        discard_pile: @game.reload.game_state['discard_pile'],
+        updated_player_hand: @player.reload.hand,
+        game_state: @game.reload.game_state,
+        curr_round_scores:,
+        all_round_scores:
+      }
     end
 
-    @player.hand = updated_hand
-    @player.save!
-
-    @game.game_state['discard_pile'] << data['card_to_swap']
-
-    reconstitute_deck if @game.game_state['deck'].empty?
-
-    @game.save
-
-    curr_round_scores = nil
-    all_round_scores = nil
-    # end round if player's hand is all revealed
-    if all_revealed?(@player.hand)
-      curr_round_scores = @game.calculate_scores(@game.hole)
-      Rails.logger.debug("round scores calculated: #{curr_round_scores}")
-      Rails.logger.debug('now updating stats...')
-      @game.update_stats(curr_round_scores, @game.hole)
-      # finalize game if last hole
-      if @game.reload.hole == 2
-        all_round_scores = @game.all_round_scores
-        Rails.logger.debug("finalizing game, all round scores: #{all_round_scores.inspect}")
-        summary_update = @game.update_summary
-        Rails.logger.debug("summary update: #{summary_update.inspect}")
-        all_round_scores
-      else
-        curr_round_scores
-      end
-    end
-
-    Rails.logger.debug("\n\nCurr round scores? #{curr_round_scores}")
-    Rails.logger.debug("\n\nAll round scores? #{all_round_scores}")
-
-    # see if i need to ignore this at round/game end or if it's fine to leave it
-    next_player_id = @game.next_player.id
-    @game.update!(current_player_id: next_player_id)
-
-    Rails.logger.debug("current player id: #{@game.current_player_id}")
-
-    current_player_name = Player.find_by(id: @game.current_player_id).name
-
-    broadcast_message = {
-      action: 'card_swapped',
-      players: @game.reload.players,
-      player: @player.reload,
-      hole: @game.reload.hole,
-      current_player_id: @game.reload.current_player_id,
-      current_player_name:,
-      discard_pile: @game.reload.game_state['discard_pile'],
-      updated_player_hand: @player.reload.hand,
-      game_state: @game.reload.game_state,
-      curr_round_scores:,
-      all_round_scores:
-    }
-
+    Rails.logger.debug "is hand unique? #{@player.hand.uniq! { |card| card['id'] }}"
+    Rails.logger.debug "Hand before broadcast: #{@player.hand}"
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
+  rescue ActiveRecord::RecordInvalid => e
+    Rails.logger.error("Failed to swap cards: #{e.message}")
   end
 
   def discard_card(data)
@@ -264,13 +269,16 @@ class GameChannel < ApplicationCable::Channel
   def initial_game_state
     initial_state = {
       deck: [].tap do |cards|
+        card_id = 1
         %w[♠︎ ♣︎ ♥︎ ♦︎].each do |suit|
           %w[A 2 3 4 5 6 7 8 9 10 J Q K].each do |rank|
-            cards << { suit:, rank:, visibility: 'hidden' }
+            cards << { id: card_id, suit:, rank:, visibility: 'hidden' }
+            card_id += 1
           end
         end
-        cards << { suit: '★', rank: '★', visibility: 'hidden' }
-        cards << { suit: '★', rank: '★', visibility: 'hidden' }
+        cards << { id: card_id, suit: '★', rank: '★', visibility: 'hidden' }
+        card_id += 1
+        cards << { id: card_id, suit: '★', rank: '★', visibility: 'hidden' }
       end,
       discard_pile: [],
       drawn_card: {}
