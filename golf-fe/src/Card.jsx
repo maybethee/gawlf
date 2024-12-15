@@ -4,6 +4,7 @@ function Card({ playerHand, card, playerId, onClick }) {
   const {
     initializingGame,
     roundOver,
+    gameOver,
     displayCardContent,
     currentPlayerId,
     drawnCard,
@@ -14,9 +15,13 @@ function Card({ playerHand, card, playerId, onClick }) {
   const setClassName = (playerHand, card) => {
     let classes = "card";
 
-    card.visibility === "hidden"
-      ? (classes += " hidden")
-      : (classes += " revealed");
+    if (roundOver || gameOver) {
+      classes += " revealed";
+    } else {
+      card.visibility === "hidden"
+        ? (classes += " hidden")
+        : (classes += " revealed");
+    }
 
     if (initializingGame && playerHand.id === playerId) {
       classes += " clickable";
@@ -46,24 +51,19 @@ function Card({ playerHand, card, playerId, onClick }) {
     return classes;
   };
 
-  if (roundOver) {
-    return (
-      <div>
-        <div
-          className={`card revealed ${
-            card.suit === "♥︎" || card.suit === "♦︎" ? "red" : "black"
-          }`}
-        >
-          <div>
-            <p className="card-content">
-              {card.rank}
-              {card.suit}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (roundOver) {
+  //   return (
+  //     <div>
+  //       <div
+  //         className={setClassName(playerHand, card)}
+  //       >
+  //         <div className="card-content-container">
+  //           <p>{displayCardContent(card)}</p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className={setClassName(playerHand, card)} onClick={onClick}>

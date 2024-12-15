@@ -46,3 +46,7 @@ group :development do
 end
 
 gem 'devise', '~> 4.9'
+
+gem "dockerfile-rails", ">= 1.6", :group => :development
+
+gem "redis", "~> 5.3"

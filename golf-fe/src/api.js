@@ -1,5 +1,7 @@
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export const getCurrentUser = async () => {
-  const response = await fetch("http://localhost:3000/current_user", {
+  const response = await fetch(`${apiUrl}/current_user`, {
     credentials: "include",
   });
 
@@ -12,7 +14,7 @@ export const getCurrentUser = async () => {
 };
 
 export const getUserDataFromBackend = async (userId) => {
-  const response = await fetch(`http://localhost:3000/users/${userId}`, {
+  const response = await fetch(`${apiUrl}/users/${userId}`, {
     credentials: "include",
   });
 
@@ -25,24 +27,21 @@ export const getUserDataFromBackend = async (userId) => {
 };
 
 export const createPlayer = async (playerName, gameId, userId) => {
-  const response = await fetch(
-    `http://localhost:3000/games/${gameId}/players`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+  const response = await fetch(`${apiUrl}/games/${gameId}/players`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      player: {
+        name: playerName,
+        game_id: gameId,
+        user_id: userId,
+        hand: [],
       },
-      credentials: "include",
-      body: JSON.stringify({
-        player: {
-          name: playerName,
-          game_id: gameId,
-          user_id: userId,
-          hand: [],
-        },
-      }),
-    }
-  );
+    }),
+  });
   const data = await response.json();
   console.log("created player:", data);
 
@@ -50,7 +49,7 @@ export const createPlayer = async (playerName, gameId, userId) => {
 };
 
 export const createGuest = async () => {
-  const response = await fetch(`http://localhost:3000/guest_users`, {
+  const response = await fetch(`${apiUrl}/guest_users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -64,20 +63,17 @@ export const createGuest = async () => {
 };
 
 export const fetchJoinedPlayers = async (gameId) => {
-  const response = await fetch(
-    `http://localhost:3000/games/${gameId}/players`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(`${apiUrl}/games/${gameId}/players`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   return response.json();
 };
 
 export const createLobby = async () => {
-  const response = await fetch("http://localhost:3000/create_lobby");
+  const response = await fetch(`${apiUrl}/create_lobby`);
   const data = await response.json();
 
   console.log(data.message);
@@ -87,7 +83,7 @@ export const createLobby = async () => {
 
 export const joinLobby = async (lobbyCode) => {
   // console.log("passed lobby code:", typeof lobby_code);
-  const response = await fetch("http://localhost:3000/join_lobby", {
+  const response = await fetch(`${apiUrl}/join_lobby`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -102,7 +98,7 @@ export const joinLobby = async (lobbyCode) => {
 };
 
 export const lobbyStatus = async (lobbyCode) => {
-  const status = await fetch("http://localhost:3000/lobby_status", {
+  const status = await fetch(`${apiUrl}/lobby_status`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

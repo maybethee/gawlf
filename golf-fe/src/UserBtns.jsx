@@ -16,12 +16,14 @@ function UserBtns({ setUser }) {
     checkAuth();
   }, [setUser, guestCreated]);
 
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
   const redirectToRegister = () => {
-    window.location.href = "http://localhost:3000/users/sign_up";
+    window.location.href = `${apiUrl}/users/sign_up`;
   };
 
   const redirectToLogin = () => {
-    window.location.href = "http://localhost:3000/users/sign_in";
+    window.location.href = `${apiUrl}/users/sign_in`;
   };
 
   const handleGuestLogin = async () => {

@@ -21,6 +21,9 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
 
+# Install Node.js and npm for building the React app
+RUN apt-get install -y nodejs npm
+
 # Install application gems
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
@@ -33,6 +36,17 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
+# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
+# RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+
+# Build React app in golf-fe directory
+WORKDIR /rails/golf-fe
+RUN npm install --legacy-peer-deps
+RUN npm run build
+
+# Copy the built React files to the Rails public folder
+WORKDIR /rails
+RUN cp -r ./golf-fe/dist/* ./public/
 
 # Final stage for app image
 FROM base
@@ -45,6 +59,9 @@ RUN apt-get update -qq && \
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
+
+# Ensure the public folder contains the React build files
+RUN ls ./public
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \

@@ -23,7 +23,9 @@ class PlayersController < ApplicationController
     @player = @game.players.build(player_params)
 
     if @player.save
-      ActionCable.server.broadcast("game_#{@game.id}", { action: 'player_joined', player: @player })
+      ActionCable.server.broadcast("game_#{@game.id}",
+                                   { action: 'player_joined',
+                                     player: @player.as_json(only: %i[name game_id user_id hand]) })
       render json: @player, status: :created
     else
       Rails.logger.debug "Player save errors: #{@player.errors.full_messages}"

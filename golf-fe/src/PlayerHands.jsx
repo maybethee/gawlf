@@ -14,6 +14,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
     drawnCard,
     selectedDiscardPile,
     roundOver,
+    gameOver,
     performAction,
   } = useGame();
 
@@ -85,6 +86,8 @@ function PlayerHands({ playerId, backgroundUrl }) {
         player_id: playerId,
         cards: selectedCards,
       });
+      // make sure this doesn't interfere with other players
+      setSelectedCards([]);
       setInitializingGame(false);
     }
   };
@@ -110,7 +113,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
 
   const childPositions = positions(playerHands.length);
 
-  if (roundOver) {
+  if (roundOver || gameOver) {
     return (
       <div
         key={backgroundUrl}

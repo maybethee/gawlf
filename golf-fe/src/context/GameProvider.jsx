@@ -195,11 +195,15 @@ export const GameProvider = ({ children }) => {
   };
 
   const displayCardContent = (card) => {
-    console.log("visible?", card.visibility);
-    if (card.visibility === "hidden") {
-      return null;
-    } else {
+    if (roundOver || gameOver) {
       return `${card.rank}${card.suit}`;
+    } else {
+      // console.log("visible?", card.visibility);
+      if (card.visibility === "hidden") {
+        return null;
+      } else {
+        return `${card.rank}${card.suit}`;
+      }
     }
   };
 

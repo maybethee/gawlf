@@ -122,6 +122,10 @@
   font-weight: 700;
 }
 
+.final_hands_results {
+  margin: 0rem 2rem 4rem 0em;
+}
+
 .total_scores_table {
   margin-bottom: 2rem;
 }
@@ -132,18 +136,29 @@
   padding: 10px 10px;
 }
 
+.winner {
+  margin-top: 1rem;
+}
+.winner_name {
+  font-size: 2.3rem;
+  color: #f87171;
+}
+
 .winner h3,
 .winner_name h3,
 .total_scores_table {
   opacity: 0;
 }
+
 .placements p,
 .winner,
 .winner_name,
+.final_hands_results,
 .total_scores_table {
   opacity: 0;
   animation: reveal 0.2s ease-in forwards;
 }
+
 @keyframes reveal {
   from {
     opacity: 0;
@@ -151,14 +166,6 @@
   to {
     opacity: 1;
   }
-}
-
-.winner {
-  margin-top: 1rem;
-}
-.winner_name {
-  font-size: 2.3rem;
-  color: #f87171;
 }
 
 @keyframes cycle-color {

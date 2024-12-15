@@ -118,7 +118,10 @@ class Game < ApplicationRecord
   def next_player
     Rails.logger.debug("game's players: #{players.inspect}")
     current_index = players.pluck(:id).index(current_player_id)
+    Rails.logger.debug("\n\n\n\ntotal player count: #{players.count}")
+    Rails.logger.debug("\n\n\n\ncurrent index: #{current_index}")
     next_index = (current_index + 1) % players.count
+    Rails.logger.debug("\n\n\n\nnext player index is: #{next_index}")
     players[next_index]
   end
 end

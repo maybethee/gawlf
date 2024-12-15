@@ -303,6 +303,13 @@ function Game({ gameId, playerId, isLobbyHost }) {
             </h3>
           </div>
 
+          <div
+            className={styles.final_hands_results}
+            style={{ animationDelay: `${sortedTotalScores.length + 4}s` }}
+          >
+            <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+          </div>
+
           <table
             style={{ animationDelay: `${sortedTotalScores.length + 4}s` }}
             className={styles.total_scores_table}
@@ -311,7 +318,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
               <tr>
                 <th>Player</th>
                 {allRoundScores[0].round_scores.map((_, index) => {
-                  return <th key={index}>Hole #{index + 1}</th>;
+                  return <th key={index}>Hole {index + 1}</th>;
                 })}
                 <th>Total</th>
               </tr>
