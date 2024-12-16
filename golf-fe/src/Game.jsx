@@ -24,6 +24,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
     gameOver,
     performAction,
     displayCardContent,
+    handleCleanup,
   } = useGame();
 
   const [checkingHistory, setCheckingHistory] = useState(false);
@@ -142,6 +143,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
   if (!gameId) {
     return null;
+  }
+
+  if (!currentPlayerId) {
+    return <div>Loading...</div>;
   }
 
   if (initializingGame) {
@@ -339,13 +344,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
             </tbody>
           </table>
 
-          <button
-            onClick={() => {
-              setLobbyStatus("");
-            }}
-          >
-            Main Menu
-          </button>
+          <button onClick={handleCleanup}>Main Menu</button>
         </div>
       </div>
     );

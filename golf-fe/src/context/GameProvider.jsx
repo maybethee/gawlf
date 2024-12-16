@@ -120,11 +120,46 @@ export const GameProvider = ({ children }) => {
 
   const handleHoleSetup = (data) => {
     console.log("received action in Game.jsx");
+
     const hands = [];
+    const allCards = [];
 
     data.players.forEach((player) => {
       hands.push({ id: player.id, name: player.name, hand: player.hand });
+
+      player.hand.forEach((card) => {
+        allCards.push(card);
+      });
     });
+
+    if (data.game_state && data.game_state.deck) {
+      data.game_state.deck.forEach((card) => {
+        allCards.push(card);
+      });
+    }
+
+    const checkForDuplicates = (cards) => {
+      const cardIds = new Set();
+      const duplicates = [];
+
+      cards.forEach((card) => {
+        if (cardIds.has(card.id)) {
+          duplicates.push(card);
+        } else {
+          cardIds.add(card.id);
+        }
+      });
+
+      return duplicates;
+    };
+
+    const duplicates = checkForDuplicates(allCards);
+
+    if (duplicates.length > 0) {
+      console.warn("Duplicate cards found:", duplicates);
+    } else {
+      console.log("No duplicate cards found.");
+    }
 
     setPlayerHands(hands);
     setCurrentHole(data.current_hole);
@@ -227,6 +262,18 @@ export const GameProvider = ({ children }) => {
     subscriptionRef.current?.perform(action, payload);
   };
 
+  const handleCleanup = () => {
+    setCurrentHole(null);
+    setDiscardPile([]);
+    setCurrentPlayerId(null);
+    setPrevFirstPlayer(null);
+    setCurrentPlayerName(null);
+    setGameState(null);
+
+    setLobbyStatus("");
+    setPlayerHands([]);
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -260,6 +307,7 @@ export const GameProvider = ({ children }) => {
         setIsEditing,
         performAction,
         displayCardContent,
+        handleCleanup,
       }}
     >
       {children}
