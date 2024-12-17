@@ -124,6 +124,11 @@ export const GameProvider = ({ children }) => {
     const hands = [];
     const allCards = [];
 
+    // console.log("data players:", data.players);
+    // const sortedPlayers = data.players.sort((a, b) => a.id - b.id);
+
+    // console.log("sorted?", sortedPlayers);
+
     data.players.forEach((player) => {
       hands.push({ id: player.id, name: player.name, hand: player.hand });
 

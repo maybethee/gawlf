@@ -8,7 +8,8 @@ function Root() {
   const [user, setUser] = useState(null);
 
   return (
-    <StrictMode>
+    // <StrictMode>
+    <>
       <div className={styles.main_container}>
         {!user ? (
           <div className={styles.user_btns_container}>
@@ -22,8 +23,11 @@ function Root() {
           </div>
         )}
       </div>
-    </StrictMode>
+    </>
   );
+}
+{
+  /* </StrictMode> */
 }
 
 export default Root;

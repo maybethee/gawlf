@@ -45,6 +45,8 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def swap_card(data)
+    # @game = Game.lock.find(params[:game_id])
+    # @player = Player.lock.find(data['player_id'])
     broadcast_message = nil
     ActiveRecord::Base.transaction do
       @player = Player.find(data['player_id'])
@@ -84,7 +86,7 @@ class GameChannel < ApplicationCable::Channel
         Rails.logger.debug('now updating stats...')
         @game.update_stats(curr_round_scores, @game.hole)
         # finalize game if last hole
-        if @game.reload.hole == 2
+        if @game.reload.hole == 9
           all_round_scores = @game.all_round_scores
           Rails.logger.debug("finalizing game, all round scores: #{all_round_scores.inspect}")
           summary_update = @game.update_summary
@@ -171,22 +173,28 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def setup_hole(data)
-    @game.reload
-    Rails.logger.debug("Game hole before setup: #{@game.hole}")
+    @game = Game.lock.find(params[:game_id])
+    Rails.logger.debug("Game hole before setup right after reload (should be 0): #{@game.hole.inspect}")
+
+    Rails.logger.debug("Transaction start for game #{@game.id} at #{Time.current}")
 
     ActiveRecord::Base.transaction do
-      @game = Game.lock.find(params[:game_id])
-
+      @game.reload
       @game.update!(game_state: initial_game_state)
 
       Rails.logger.debug("\n\n\n\ninitialized deck: #{@game.game_state['deck']}")
-      @game.update!(hole: @game.hole + 1) if @game.hole.zero? || @game.hole.nil?
-      # @game.update!(hole: @game.hole += 1)
+      if @game.hole.nil? || @game.hole.zero?
+        @game.update!(hole: 1)
+      else
+        @game.update!(hole: @game.hole + 1)
+      end
 
-      Rails.logger.debug("game current hole: #{@game.hole}")
+      Rails.logger.debug("game current hole (should be 1 on first round here): #{@game.hole.inspect}")
 
       deck = @game.game_state['deck']
       raise 'Deck is empty' if deck.empty?
+
+      Rails.logger.debug("is hole greater than 1 here?? right before dealing hands: #{@game.hole.inspect}")
 
       @game.players.each do |player|
         player['hand'] = []
@@ -196,14 +204,17 @@ class GameChannel < ApplicationCable::Channel
       Rails.logger.debug("Deck before duplicate check: #{@game.game_state['deck'].map { |card| card['id'] }.inspect}")
 
       @game.players.each do |player|
-        Rails.logger.debug("Player #{player.id} hand before duplicate check: #{player['hand'].map { |card| card['id'] }.inspect}")
+        Rails.logger.debug("Player #{player.id} hand before duplicate check: #{player['hand'].map do |card|
+                                                                                 card['id']
+                                                                               end.inspect}")
       end
 
-      # Check for duplicate cards
+      Rails.logger.debug("is hole greater than 1 here?? right before duplication check: #{@game.hole.inspect}")
+
       all_cards = @game.game_state['deck'] + @game.players.flat_map { |player| player['hand'] }
       seen_cards = {}
       all_cards.each do |card|
-        card_id = card['id']  # Ensure only the ID is being compared
+        card_id = card['id']
         if seen_cards[card_id]
           puts "\n\n\n\nDuplicate found: #{card_id}"
         else
@@ -211,10 +222,10 @@ class GameChannel < ApplicationCable::Channel
         end
       end
 
-
-
+      Rails.logger.debug("is hole greater than 1 here?? right before the check: #{@game.hole.inspect}")
 
       first_player_id = if @game.hole > 1
+                          Rails.logger.debug("apparently hole is greater than 1, this is the current hole: #{@game.hole.inspect}")
                           prev_first_player_id = data['prev_first_player_id']
                           @game.update!(current_player_id: prev_first_player_id)
                           @game.reload.next_player.id
@@ -239,46 +250,8 @@ class GameChannel < ApplicationCable::Channel
 
       ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
     end
+    Rails.logger.debug("Transaction end for game #{@game.id} at #{Time.current}")
   end
-
-  # @game.update!(game_state: initial_game_state)
-  # @game.update!(hole: @game.hole += 1)
-
-  # Rails.logger.debug("game current hole: #{@game.hole}")
-
-  # @game.players.all.each do |player|
-  #   Mutex.new.synchronize do
-  #     player['hand'] = []
-  #     deal_hand(player)
-  #   end
-  # end
-
-  # eventually, have some sort of way for players to decide who goes first manually? and if none chosen then pick random?
-  # first_player_id = if @game.hole > 1
-  #                     prev_first_player_id = data['prev_first_player_id']
-  #                     @game.update!(current_player_id: prev_first_player_id)
-  #                     @game.reload.next_player.id
-  #                   else
-  #                     @game.players.pluck(:id).sample
-  #                   end
-
-  # Rails.logger.debug("random player: #{first_player_id.inspect}")
-  # @game.update!(current_player_id: first_player_id)
-
-  # current_player_name = Player.find_by(id: @game.current_player_id).name
-
-  # # Rails.logger.debug("updated game: #{@game.inspect}")
-  # broadcast_message = {
-  #   action: 'hole_setup',
-  #   players: @game.reload.players,
-  #   current_player_id: @game.reload.current_player_id,
-  #   current_player_name:,
-  #   current_hole: @game.reload.hole,
-  #   game_state: @game.reload.game_state
-  # }
-
-  # ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
-  # end
 
   def reveal_cards(data)
     @player = Player.find(data['player_id'])
@@ -333,7 +306,6 @@ class GameChannel < ApplicationCable::Channel
       Rails.logger.info("Drawn card: #{drawn_card['id']} - #{drawn_card['rank']}#{drawn_card['suit']}")
 
       @player.add_card(drawn_card)
-      # @game.game_state['deck'].delete(drawn_card)
       @game.game_state['deck'].reject! { |card| card['id'] == drawn_card['id'] }
 
       Rails.logger.info("Deck after dealing: #{@game.game_state['deck'].map { |card| card['id'] }.inspect}")

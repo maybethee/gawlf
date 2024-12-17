@@ -113,6 +113,8 @@ function PlayerHands({ playerId, backgroundUrl }) {
 
   const childPositions = positions(playerHands.length);
 
+  const sortedHands = playerHands.sort((a, b) => a.id - b.id);
+
   if (roundOver || gameOver) {
     return (
       <div
@@ -171,6 +173,8 @@ function PlayerHands({ playerId, backgroundUrl }) {
               height: `${parentHeight}px`,
             }}
           >
+            {/* {console.log("player hands:", playerHands)}
+            {console.log("sorted hands", sortedHands)} */}
             {playerHands.map((playerHand, index) => (
               <div
                 key={playerHand.id}

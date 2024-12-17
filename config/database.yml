@@ -79,8 +79,19 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# production:
+#   <<: *default
+#   database: golf_production
+#   username: golf
+#   password: <%= ENV["GOLF_DATABASE_PASSWORD"] %>
+
 production:
-  <<: *default
-  database: golf_production
-  username: golf
-  password: <%= ENV["GOLF_DATABASE_PASSWORD"] %>
+  adapter: postgresql
+  encoding: unicode
+  database: your_database_name
+  username: postgres
+  password: khwfHSIPKVubSja
+  host: gawlf-db.internal
+  port: 5432
+  Postgres port: 5433
+  Connection string: postgres://postgres:khwfHSIPKVubSja@gawlf-db.flycast:5432
