@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_24_141907) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_18_134610) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -37,6 +37,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_24_141907) do
     t.datetime "lobby_created_at"
     t.string "the_day_that"
     t.jsonb "summary", default: {}
+    t.boolean "in_progress", default: false, null: false
   end
 
   create_table "players", force: :cascade do |t|

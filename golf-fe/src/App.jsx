@@ -6,12 +6,19 @@ import styles from "./App.module.css";
 import Lobby from "./Lobby";
 
 function App({ userId }) {
-  const { gameId, setGameId, setJoinedPlayers, lobbyStatus, setLobbyStatus } =
-    useGame();
+  const {
+    gameId,
+    setGameId,
+    setJoinedPlayers,
+    lobbyStatus,
+    setLobbyStatus,
+    isLobbyHost,
+    setIsLobbyHost,
+  } = useGame();
 
   const [lobbyCode, setLobbyCode] = useState("");
   const [lobbyCodeInput, setLobbyCodeInput] = useState("");
-  const [isLobbyHost, setIsLobbyHost] = useState(false);
+  // const [isLobbyHost, setIsLobbyHost] = useState(false);
   const [viewingProfile, setViewingProfile] = useState(false);
   const [error, setError] = useState("");
 

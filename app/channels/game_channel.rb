@@ -50,6 +50,7 @@ class GameChannel < ApplicationCable::Channel
     broadcast_message = nil
     ActiveRecord::Base.transaction do
       @player = Player.find(data['player_id'])
+      # @player.reload
       @game.reload
 
       new_card = if data['swap_origin'] == 'deck'
@@ -101,8 +102,8 @@ class GameChannel < ApplicationCable::Channel
       Rails.logger.debug("\n\nAll round scores? #{all_round_scores}")
 
       # see if i need to ignore this at round/game end or if it's fine to leave it
-      next_player_id = @game.next_player.id
-      @game.update!(current_player_id: next_player_id)
+      # next_player_id = @game.next_player.id
+      @game.update!(current_player_id: @game.next_player.id)
 
       Rails.logger.debug("current player id: #{@game.current_player_id}")
 
@@ -189,12 +190,12 @@ class GameChannel < ApplicationCable::Channel
         @game.update!(hole: @game.hole + 1)
       end
 
-      Rails.logger.debug("game current hole (should be 1 on first round here): #{@game.hole.inspect}")
+      # Rails.logger.debug("game current hole (should be 1 on first round here): #{@game.hole.inspect}")
 
       deck = @game.game_state['deck']
       raise 'Deck is empty' if deck.empty?
 
-      Rails.logger.debug("is hole greater than 1 here?? right before dealing hands: #{@game.hole.inspect}")
+      # Rails.logger.debug("is hole greater than 1 here?? right before dealing hands: #{@game.hole.inspect}")
 
       @game.players.each do |player|
         player['hand'] = []
@@ -209,7 +210,7 @@ class GameChannel < ApplicationCable::Channel
                                                                                end.inspect}")
       end
 
-      Rails.logger.debug("is hole greater than 1 here?? right before duplication check: #{@game.hole.inspect}")
+      # Rails.logger.debug("is hole greater than 1 here?? right before duplication check: #{@game.hole.inspect}")
 
       all_cards = @game.game_state['deck'] + @game.players.flat_map { |player| player['hand'] }
       seen_cards = {}
@@ -222,10 +223,10 @@ class GameChannel < ApplicationCable::Channel
         end
       end
 
-      Rails.logger.debug("is hole greater than 1 here?? right before the check: #{@game.hole.inspect}")
+      # Rails.logger.debug("is hole greater than 1 here?? right before the check: #{@game.hole.inspect}")
 
       first_player_id = if @game.hole > 1
-                          Rails.logger.debug("apparently hole is greater than 1, this is the current hole: #{@game.hole.inspect}")
+                          # Rails.logger.debug("apparently hole is greater than 1, this is the current hole: #{@game.hole.inspect}")
                           prev_first_player_id = data['prev_first_player_id']
                           @game.update!(current_player_id: prev_first_player_id)
                           @game.reload.next_player.id

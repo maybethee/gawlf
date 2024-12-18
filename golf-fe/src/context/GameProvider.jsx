@@ -14,6 +14,7 @@ export const GameProvider = ({ children }) => {
   const [discardPile, setDiscardPile] = useState([]);
   const [playerHands, setPlayerHands] = useState([]);
   const [lobbyStatus, setLobbyStatus] = useState("");
+  const [isLobbyHost, setIsLobbyHost] = useState(false);
   const [initializingGame, setInitializingGame] = useState(true);
   const [selectedCards, setSelectedCards] = useState([]);
   const [selectedDiscardPile, setSelectedDiscardPile] = useState(null);
@@ -115,7 +116,11 @@ export const GameProvider = ({ children }) => {
     console.log(data);
     setGameOver(false);
     setLobbyStatus("active");
-    performAction("setup_hole");
+
+    if (isLobbyHost) {
+      console.log("Host setting up the first hole...");
+      performAction("setup_hole");
+    }
   };
 
   const handleHoleSetup = (data) => {
@@ -288,6 +293,8 @@ export const GameProvider = ({ children }) => {
         setJoinedPlayers,
         lobbyStatus,
         setLobbyStatus,
+        isLobbyHost,
+        setIsLobbyHost,
         gameState,
         currentHole,
         drawnCard,
