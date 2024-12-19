@@ -116,12 +116,21 @@ class Game < ApplicationRecord
   end
 
   def next_player
-    Rails.logger.debug("game's players: #{players.inspect}")
-    current_index = players.pluck(:id).index(current_player_id)
-    Rails.logger.debug("\n\n\n\ntotal player count: #{players.count}")
+    # Rails.logger.debug("game's players (ordered by turn_order): #{players.order(:turn_order).inspect}")
+    turn_order = self.turn_order
+
+    current_index = turn_order.index(current_player_id)
+
     Rails.logger.debug("\n\n\n\ncurrent index: #{current_index}")
-    next_index = (current_index + 1) % players.count
-    Rails.logger.debug("\n\n\n\nnext player index is: #{next_index}")
-    players[next_index]
+
+    next_index = (current_index + 1) % turn_order.size
+
+    Rails.logger.debug("\n\n\n\nnext index is: #{next_index}")
+
+    next_player_id = turn_order[next_index]
+
+    Rails.logger.debug("\n\n\n\nnext player index is: #{next_player_id}")
+
+    Player.find(next_player_id)
   end
 end

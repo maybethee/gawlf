@@ -125,6 +125,7 @@ export const GameProvider = ({ children }) => {
 
   const handleHoleSetup = (data) => {
     console.log("received action in Game.jsx");
+    // setTurnOrder(data.turn_order);
 
     const hands = [];
     const allCards = [];
@@ -177,7 +178,7 @@ export const GameProvider = ({ children }) => {
     setCurrentPlayerId(data.current_player_id);
     setPrevFirstPlayer(data.current_player_id);
     setCurrentPlayerName(data.current_player_name);
-    setGameState(data.gameState);
+    setGameState(data.game_state);
     setRoundOver(false);
     // setGameOver(false);
     setInitializingGame(true);

@@ -5,6 +5,7 @@ import { Eye } from "lucide-react";
 
 function PlayerHands({ playerId, backgroundUrl }) {
   const {
+    gameState,
     playerHands,
     initializingGame,
     setInitializingGame,
@@ -96,6 +97,14 @@ function PlayerHands({ playerId, backgroundUrl }) {
   const parentHeight = 700;
   const radius = (Math.min(parentWidth, parentHeight) / 2) * 0.8;
 
+  const turnOrder = gameState.turn_order || [];
+  const sortedHands = [...playerHands].sort(
+    (a, b) => turnOrder.indexOf(a.id) - turnOrder.indexOf(b.id)
+  );
+
+  // console.log("Turn Order: ", turnOrder);
+  // console.log("Sorted Hands: ", sortedHands);
+
   const positions = (numChildren) => {
     const isOdd = numChildren % 2 !== 0;
     const rotationOffset = isOdd ? -Math.PI / 2 : Math.PI / numChildren;
@@ -111,9 +120,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
     });
   };
 
-  const childPositions = positions(playerHands.length);
-
-  const sortedHands = playerHands.sort((a, b) => a.id - b.id);
+  const positionsArr = positions(sortedHands.length);
 
   if (roundOver || gameOver) {
     return (
@@ -130,7 +137,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
       >
         {playerHands && (
           <div className={styles.results_player_hands}>
-            {playerHands.map((playerHand) => (
+            {sortedHands.map((playerHand) => (
               <div key={playerHand.id}>
                 <div className={styles.hand_header}>
                   <p>{playerHand.name}</p>
@@ -175,14 +182,14 @@ function PlayerHands({ playerId, backgroundUrl }) {
           >
             {/* {console.log("player hands:", playerHands)}
             {console.log("sorted hands", sortedHands)} */}
-            {playerHands.map((playerHand, index) => (
+            {sortedHands.map((playerHand, index) => (
               <div
                 key={playerHand.id}
                 className={styles.child}
                 style={{
                   position: "absolute",
-                  left: `${childPositions[index].left}px`,
-                  top: `${childPositions[index].top}px`,
+                  left: `${positionsArr[index].left}px`,
+                  top: `${positionsArr[index].top}px`,
                 }}
               >
                 <div className={styles.hand_header}>

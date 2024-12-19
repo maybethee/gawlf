@@ -45,13 +45,11 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def swap_card(data)
-    # @game = Game.lock.find(params[:game_id])
     # @player = Player.lock.find(data['player_id'])
     broadcast_message = nil
     ActiveRecord::Base.transaction do
+      @game = Game.find(params[:game_id])
       @player = Player.find(data['player_id'])
-      # @player.reload
-      @game.reload
 
       new_card = if data['swap_origin'] == 'deck'
                    @game.game_state['drawn_card']
@@ -87,7 +85,7 @@ class GameChannel < ApplicationCable::Channel
         Rails.logger.debug('now updating stats...')
         @game.update_stats(curr_round_scores, @game.hole)
         # finalize game if last hole
-        if @game.reload.hole == 9
+        if @game.hole == 9
           all_round_scores = @game.all_round_scores
           Rails.logger.debug("finalizing game, all round scores: #{all_round_scores.inspect}")
           summary_update = @game.update_summary
@@ -102,8 +100,8 @@ class GameChannel < ApplicationCable::Channel
       Rails.logger.debug("\n\nAll round scores? #{all_round_scores}")
 
       # see if i need to ignore this at round/game end or if it's fine to leave it
-      # next_player_id = @game.next_player.id
-      @game.update!(current_player_id: @game.next_player.id)
+      next_player = @game.next_player
+      @game.update!(current_player_id: next_player.id)
 
       Rails.logger.debug("current player id: #{@game.current_player_id}")
 
@@ -142,8 +140,8 @@ class GameChannel < ApplicationCable::Channel
 
     reconstitute_deck if @game.game_state['deck'].empty?
 
-    next_player_id = @game.next_player.id
-    @game.update!(current_player_id: next_player_id)
+    next_player = @game.next_player
+    @game.update!(current_player_id: next_player.id)
 
     current_player_name = Player.find_by(id: @game.current_player_id).name
     broadcast_message = {
@@ -173,7 +171,7 @@ class GameChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 
-  def setup_hole(data)
+  def setup_hole(_data)
     @game = Game.lock.find(params[:game_id])
     Rails.logger.debug("Game hole before setup right after reload (should be 0): #{@game.hole.inspect}")
 
@@ -223,18 +221,19 @@ class GameChannel < ApplicationCable::Channel
         end
       end
 
-      # Rails.logger.debug("is hole greater than 1 here?? right before the check: #{@game.hole.inspect}")
+      turn_order = if @game.hole == 1
+                     @game.players.pluck(:id).shuffle
+                   else
+                     @game.turn_order.rotate(1)
+                   end
 
-      first_player_id = if @game.hole > 1
-                          # Rails.logger.debug("apparently hole is greater than 1, this is the current hole: #{@game.hole.inspect}")
-                          prev_first_player_id = data['prev_first_player_id']
-                          @game.update!(current_player_id: prev_first_player_id)
-                          @game.reload.next_player.id
-                        else
-                          @game.players.pluck(:id).sample
-                        end
+      @game.update!(turn_order:)
 
-      Rails.logger.debug("random player: #{first_player_id.inspect}")
+      game_state = @game.game_state
+      game_state['turn_order'] = turn_order
+      @game.update!(game_state:)
+
+      first_player_id = turn_order.first
       @game.update!(current_player_id: first_player_id)
 
       current_player_name = Player.find_by(id: @game.current_player_id).name
@@ -245,6 +244,7 @@ class GameChannel < ApplicationCable::Channel
         players: @game.reload.players,
         current_player_id: @game.reload.current_player_id,
         current_player_name:,
+        # turn_order:,
         current_hole: @game.reload.hole,
         game_state: @game.reload.game_state
       }
@@ -260,7 +260,9 @@ class GameChannel < ApplicationCable::Channel
     Rails.logger.debug "Initial hand state: #{@player.hand}"
 
     updated_hand = @player.hand.map do |hand_card|
-      if data['cards'].any? { |card| card['rank'] == hand_card['rank'] && card['suit'] == hand_card['suit'] }
+      if data['cards'].any? do |card|
+           card['rank'] == hand_card['rank'] && card['suit'] == hand_card['suit'] && card['id'] == hand_card['id']
+         end
         hand_card['visibility'] = 'revealed'
       end
       hand_card
