@@ -8,7 +8,7 @@ import { ArrowBigRightDash, Play } from "lucide-react";
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
-    setLobbyStatus,
+    // setLobbyStatus,
     currentHole,
     drawnCard,
     discardPile,

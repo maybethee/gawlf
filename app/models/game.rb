@@ -13,9 +13,9 @@ class Game < ApplicationRecord
     round_scores = []
     players.all.each do |player|
       Rails.logger.debug("\n\ncalculate scores, working on player: #{player.inspect}")
+
       scoring_array = player.hand.map do |card|
-        # need joker's suit for conversion rather than rank
-        card['suit'] == '★' ? card['suit'] : card['rank']
+        { rank: card['rank'].to_sym }
       end
 
       cancel_equal_columns(scoring_array)
@@ -35,18 +35,19 @@ class Game < ApplicationRecord
 
     column_pairs.each do |pair|
       # ignore column with two jokers
-      if array[pair[0]] == array[pair[1]] && array[pair[0]]['suit'] != '★'
+      if array[pair[0]][:rank] == array[pair[1]][:rank] && array[pair[0]][:rank] != :★
         # convert to 'K' for conversion hash compatibility
-        array[pair[0]] = 'K'
-        array[pair[1]] = 'K'
+        array[pair[0]][:rank] = :K
+        array[pair[1]][:rank] = :K
       end
       next
     end
   end
 
   def convert_rank_to_scores!(array)
-    array.map! do |score|
-      RANK_CONVERSION.fetch(score.to_sym)
+    array.map! do |card|
+      # RANK_CONVERSION.fetch(card[:rank].to_sym)
+      RANK_CONVERSION.fetch(card[:rank])
     end
   end
 
