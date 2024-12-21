@@ -66,26 +66,23 @@ function App({ userId }) {
     setLobbyStatus("waiting");
   };
 
+  if (viewingProfile) {
+    return (
+      <Profile
+        userId={userId}
+        setViewingProfile={() => setViewingProfile(!viewingProfile)}
+      />
+    );
+  }
+
   if (!lobbyStatus)
     return (
       <div className={styles.home_page_container}>
-        <h1 className={styles.title}>Golf</h1>
-        {viewingProfile ? (
-          <div>
-            <Profile userId={userId} />
-            <button
-              onClick={() => {
-                setViewingProfile(false);
-              }}
-            >
-              Back to menu
-            </button>
-          </div>
-        ) : (
+        <div>
+          <h1 className={styles.title}>Golf</h1>
           <div className={styles.home_btns_container}>
             <div className={styles.home_row_1}>
               <button
-                disabled
                 onClick={() => {
                   setViewingProfile(true);
                 }}
@@ -128,7 +125,8 @@ function App({ userId }) {
               </div>
             </div>
           </div>
-        )}
+        </div>
+        {/* )} */}
       </div>
     );
 

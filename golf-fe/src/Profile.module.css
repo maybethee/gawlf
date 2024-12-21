@@ -1,0 +1,28 @@
+.profile_container {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  /* justify-content: center; */
+}
+
+.profile_container ul {
+  /* overflow: auto; */
+  /* height: 100%; */
+  /* width: 100%; */
+  display: flex;
+  margin-bottom: 13rem;
+  position: relative;
+}
+
+.profile_container ul li {
+  position: absolute;
+  transition: transform 0.1s, z-index 0.05s;
+}
+
+/* .profile_container ul li {
+  margin-right: -8rem;
+  margin-left: -8rem;
+} */
+/* .profile_container ul li:first-child {
+  margin-left: 0;
+} */

@@ -251,3 +251,28 @@ th {
   font-size: 0.875rem;
   margin-top: 0.5rem;
 }
+
+.left-of-current-record {
+  transform: translateX(-80px); /* Overlap to the left */
+  z-index: 2;
+}
+
+.right-of-current-record {
+  transform: translateX(80px); /* Overlap to the right */
+  z-index: 1;
+}
+
+.current-record {
+  transform: translateX(0);
+  z-index: 3;
+  animation: focus 0.1s ease-in-out forwards;
+}
+
+@keyframes focus {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.1;
+  }
+}
