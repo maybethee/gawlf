@@ -85,7 +85,7 @@ class GameChannel < ApplicationCable::Channel
         Rails.logger.debug('now updating stats...')
         @game.update_stats(curr_round_scores, @game.hole)
         # finalize game if last hole
-        if @game.hole == 2
+        if @game.hole == 9
           all_round_scores = @game.all_round_scores
           Rails.logger.debug("finalizing game, all round scores: #{all_round_scores.inspect}")
           summary_update = @game.update_summary

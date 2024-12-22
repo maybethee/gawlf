@@ -3,7 +3,7 @@ import { getUserDataFromBackend } from "./api";
 import GameRecord from "./GameRecord";
 import RecordSlider from "./RecordSlider";
 import styles from "./Profile.module.css";
-import { getDialogActionsUtilityClass } from "@mui/material";
+import { getOpacity } from "@mui/material/styles/createColorScheme";
 
 function Profile({ userId, setViewingProfile }) {
   const [userData, setUserData] = useState(null);
@@ -39,10 +39,14 @@ function Profile({ userId, setViewingProfile }) {
 
   const getDynamicStyle = (index) => {
     const distanceFromCenter = index - sliderValue;
+    const absDistance = Math.abs(distanceFromCenter);
 
     return {
-      transform: `translateX(${distanceFromCenter * 30}px)`,
-      zIndex: 100 - Math.abs(distanceFromCenter),
+      filter: `blur(${absDistance * 1}px)`,
+      transform: `translateX(${distanceFromCenter * 65}px) rotate(${
+        distanceFromCenter * 1
+      }deg)`,
+      zIndex: 999 - absDistance,
     };
   };
 
@@ -50,7 +54,7 @@ function Profile({ userId, setViewingProfile }) {
 
   return (
     <div className={styles.profile_container}>
-      <h2>{userData.user.username}'s profile</h2>
+      <h2>{userData.user.username}</h2>
 
       <ul>
         {userData.games.map((game, index) => {
@@ -62,21 +66,16 @@ function Profile({ userId, setViewingProfile }) {
               className={setRecordClass(index)}
               key={game.id}
             >
-              <GameRecord
-                zIndex={game.id === sliderValue ? "999" : ""}
-                key={game.id}
-                gameData={game}
-              />
+              <GameRecord key={game.id} gameData={game} />
             </li>
           );
         })}
       </ul>
-
-      <div>
+      <div className={styles.slider_container}>
         <RecordSlider
           value={sliderValue}
           onValueChange={handleSliderChange}
-          maxGames={userData.games.length}
+          maxGames={userData.games.length - 1}
         />
       </div>
 

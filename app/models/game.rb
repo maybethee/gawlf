@@ -97,18 +97,25 @@ class Game < ApplicationRecord
   end
 
   def update_summary
-    stats = GameStat.where(game_id: id).includes(:user).order(total_score: :asc)
+    stats = GameStat.where(game_id: id).includes(:user).order(total_score: :asc).index_by(&:user_id)
 
-    players_summary = stats.map.with_index(1) do |game_stat, index|
+    players_summary = players.map do |player|
+      stat = stats[player.user_id]
       {
-        user_id: game_stat.user_id,
-        total_score: game_stat.total_score,
-        round_scores: game_stat.round_scores,
-        placement: index
+        user_id: player.user_id,
+        player_name: player.name,
+        total_score: stat&.total_score,
+        round_scores: stat&.round_scores,
+        placement: nil
       }
     end
 
-    winner_id = players_summary.first[:user_id]
+    sorted_summary = players_summary.sort_by { |player| player[:total_score] || Float::INFINITY }
+    sorted_summary.each_with_index do |player_summary, index|
+      player_summary[:placement] = index + 1
+    end
+
+    winner_id = sorted_summary.first[:user_id]
 
     update!(summary: {
               players: players_summary,
