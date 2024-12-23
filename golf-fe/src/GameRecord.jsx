@@ -1,7 +1,7 @@
 import styles from "./GameRecord.module.css";
 
 function GameRecord({ gameData }) {
-  console.log(gameData);
+  // console.log(gameData);
   return (
     <div className={styles.card}>
       <p className={styles.the_day}>

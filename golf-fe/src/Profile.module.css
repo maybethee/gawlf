@@ -11,12 +11,12 @@
   font-size: 2rem;
 }
 
-.profile_container ul {
+.game_records_ul {
   display: flex;
   justify-content: center;
 }
 
-.profile_container ul li {
+.game_records_ul li {
   position: absolute;
   width: 450px;
   min-height: 200px;
