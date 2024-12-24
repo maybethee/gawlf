@@ -128,18 +128,20 @@ function Profile({ userId, setViewingProfile }) {
         />
       </div>
 
-      <div className={styles.stats_section}>
-        <h3>Stats</h3>
-        <ul>
-          <li>{userData.games.length} games played</li>
-          <li>{numberOfWins} games won</li>
-          <li>
-            best total score: {bestScoreGame.score} on {bestScoreGame.date}
-          </li>
-          <li>
-            worst total score: {worstScoreGame.score} on {worstScoreGame.date}
-          </li>
-        </ul>
+      <div className={styles.stats_section_container}>
+        <div className={styles.stats_section}>
+          <h3>Stats</h3>
+          <ul>
+            <li>{userData.games.length} games played</li>
+            <li>{numberOfWins} games won</li>
+            <li>
+              best total score: {bestScoreGame.score} on {bestScoreGame.date}
+            </li>
+            <li>
+              worst total score: {worstScoreGame.score} on {worstScoreGame.date}
+            </li>
+          </ul>
+        </div>
       </div>
 
       <button onClick={setViewingProfile}>Main Menu</button>

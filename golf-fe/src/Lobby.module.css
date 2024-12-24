@@ -6,6 +6,24 @@
   flex-flow: column nowrap;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+}
+.back_btn {
+  position: absolute;
+  top: 15px;
+  left: 40px;
+  padding: 0.4rem 0.5rem 0.3rem 0.4rem;
+  border: 2px #f87171 solid;
+  border-radius: 50%;
+  background-color: #fbe9d2;
+}
+
+.back_btn:hover {
+  transition: background-color 0.3s, color 0.3s, padding-right 0.3s;
+  background-color: #f87171;
+  color: #fbe9d2;
+  padding-right: 0.9rem;
+  cursor: pointer;
 }
 
 .top_row {
