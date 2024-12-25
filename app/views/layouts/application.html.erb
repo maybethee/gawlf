@@ -4,7 +4,9 @@
   <title>Golf</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
   <style>
 
 html, body, div, span, applet, object, iframe,
@@ -58,6 +60,9 @@ table {
 }
 
 body {
+    font-family: "Nunito Sans", sans-serif;
+    
+
   height: 100%;
   width: 100%;
   color: #374151;
@@ -67,7 +72,7 @@ body {
 h2 {
   font-size: 2.2rem;
   margin: 1.5rem 0;
-  font-weight: bold;
+  font-weight: 800;
 }
 
 h2,
@@ -140,6 +145,46 @@ input[type=submit]:focus-visible,
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+#checkbox-div {
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  margin-bottom: -12px;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  --moz-appearance: none;
+
+  width: 20px;
+  height: 20px;
+  margin-bottom: 12px;
+  background-color: #fbe9d2;
+  border: 2px solid #f87171;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #f87171;
+  border-color: #f87171;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 5px;
+  border: solid #fbe9d2;
+  border-width: 0 0 3px 3px;
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .page-container {
