@@ -101,6 +101,19 @@ function Profile({ userId, setViewingProfile }) {
 
   if (!userData) return null;
 
+  if (userData.games.length < 1)
+    return (
+      <div className={styles.profile_container}>
+        <h2>{userData.user.username}</h2>
+
+        <p>
+          Play at least 1 game to see game records and some interesting stats
+        </p>
+
+        <button onClick={setViewingProfile}>Main Menu</button>
+      </div>
+    );
+
   return (
     <div className={styles.profile_container}>
       <h2>{userData.user.username}</h2>
@@ -120,13 +133,15 @@ function Profile({ userId, setViewingProfile }) {
           );
         })}
       </ul>
-      <div className={styles.slider_container}>
-        <RecordSlider
-          value={sliderValue}
-          onValueChange={handleSliderChange}
-          maxGames={userData.games.length - 1}
-        />
-      </div>
+      {userData.games.length > 1 && (
+        <div className={styles.slider_container}>
+          <RecordSlider
+            value={sliderValue}
+            onValueChange={handleSliderChange}
+            maxGames={userData.games.length - 1}
+          />
+        </div>
+      )}
 
       <div className={styles.stats_section_container}>
         <div className={styles.stats_section}>

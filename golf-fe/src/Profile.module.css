@@ -1,4 +1,6 @@
 .profile_container {
+  padding-top: 1rem;
+  font-size: 1rem;
   font-weight: 500;
   display: flex;
   flex-flow: column;
@@ -14,6 +16,7 @@
 .game_records_ul {
   display: flex;
   justify-content: center;
+  margin-bottom: 15rem;
 }
 
 .game_records_ul li {
@@ -26,10 +29,10 @@
   padding: 1rem;
   transition: transform 0.1s, z-index 0.05s;
 }
-
+/* 
 .slider_container {
-  margin-top: 9rem;
-}
+  margin-top: 19rem;
+} */
 
 .stats_section_container {
   display: flex;
@@ -38,6 +41,7 @@
   border-top: #f87171 dotted 4px;
   border-bottom: #f87171 dotted 4px;
   padding: 2rem 0;
+  margin-top: 2rem;
 }
 
 .stats_section {

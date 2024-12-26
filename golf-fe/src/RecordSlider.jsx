@@ -7,7 +7,7 @@ function RecordSlider({ value, onValueChange, maxGames }) {
 
   return (
     <Slider
-      style={{ width: 400, marginTop: "4rem" }}
+      style={{ width: 400 }}
       value={value}
       onChange={handleChange}
       min={0}
