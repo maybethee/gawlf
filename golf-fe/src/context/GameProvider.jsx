@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { GameContext } from "./GameContext";
-import cable from "../cable";
+import cable from "../utils/cable";
 
 export const GameProvider = ({ children }) => {
   const [gameId, setGameId] = useState(null);

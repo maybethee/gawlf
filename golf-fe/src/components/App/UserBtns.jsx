@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getCurrentUser, createGuest } from "./api";
+import { getCurrentUser, createGuest } from "../../utils/api";
 import styles from "./UserBtns.module.css";
 
 function UserBtns({ setUser }) {

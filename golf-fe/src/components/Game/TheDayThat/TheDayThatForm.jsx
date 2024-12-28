@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useGame } from "./context/useGame";
+import { useGame } from "../../../context/useGame";
 import styles from "./TheDayThatForm.module.css";
 
 function TheDayThatForm({ initialText }) {

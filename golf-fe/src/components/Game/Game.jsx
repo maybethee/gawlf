@@ -1,6 +1,6 @@
-import { useGame } from "./context/useGame";
+import { useGame } from "../../context/useGame";
 import PlayerHands from "./PlayerHands";
-import TheDayThat from "./TheDayThat";
+import TheDayThat from "./TheDayThat/TheDayThat";
 import styles from "./Game.module.css";
 import { useState, useEffect } from "react";
 import UIOptions from "./UIOptions";

@@ -1,6 +1,6 @@
 import { StrictMode, useState } from "react";
-import UserBtns from "./UserBtns";
-import App from "./App";
+import UserBtns from "./components/App/UserBtns";
+import App from "./components/App/App";
 import { GameProvider } from "./context/GameProvider";
 import styles from "./Root.module.css";
 

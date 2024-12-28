@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { getUserDataFromBackend } from "./api";
+import { getUserDataFromBackend } from "../../utils/api";
 import GameRecord from "./GameRecord";
 import RecordSlider from "./RecordSlider";
 import styles from "./Profile.module.css";

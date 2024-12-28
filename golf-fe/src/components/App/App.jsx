@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { createLobby, joinLobby, fetchJoinedPlayers } from "./api";
-import { useGame } from "./context/useGame";
-import Profile from "./Profile";
+import { createLobby, joinLobby, fetchJoinedPlayers } from "../../utils/api";
+import { useGame } from "../../context/useGame";
+import Profile from "../Profile/Profile";
 import styles from "./App.module.css";
 import Lobby from "./Lobby";
 

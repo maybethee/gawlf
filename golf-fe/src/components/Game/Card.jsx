@@ -1,4 +1,4 @@
-import { useGame } from "./context/useGame";
+import { useGame } from "../../context/useGame";
 
 function Card({ playerHand, card, playerId, onClick }) {
   const {
@@ -50,20 +50,6 @@ function Card({ playerHand, card, playerId, onClick }) {
 
     return classes;
   };
-
-  // if (roundOver) {
-  //   return (
-  //     <div>
-  //       <div
-  //         className={setClassName(playerHand, card)}
-  //       >
-  //         <div className="card-content-container">
-  //           <p>{displayCardContent(card)}</p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className={setClassName(playerHand, card)} onClick={onClick}>

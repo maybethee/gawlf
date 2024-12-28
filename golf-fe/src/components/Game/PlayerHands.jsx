@@ -1,4 +1,4 @@
-import { useGame } from "./context/useGame";
+import { useGame } from "../../context/useGame";
 import Card from "./Card";
 import styles from "./PlayerHands.module.css";
 import { Eye } from "lucide-react";

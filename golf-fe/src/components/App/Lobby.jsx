@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import Game from "./Game";
-import { createPlayer, fetchJoinedPlayers } from "./api";
-import { useGame } from "./context/useGame";
+import Game from "../Game/Game";
+import { createPlayer, fetchJoinedPlayers } from "../../utils/api";
+import { useGame } from "../../context/useGame";
 import styles from "./Lobby.module.css";
 import { ChevronLeft } from "lucide-react";
 

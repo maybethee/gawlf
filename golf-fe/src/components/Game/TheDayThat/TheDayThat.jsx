@@ -1,4 +1,4 @@
-import { useGame } from "./context/useGame";
+import { useGame } from "../../../context/useGame";
 import TheDayThatForm from "./TheDayThatForm";
 import styles from "./TheDayThat.module.css";
 import { Pencil } from "lucide-react";
