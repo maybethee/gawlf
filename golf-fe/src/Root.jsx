@@ -17,7 +17,7 @@ function Root() {
         ) : (
           <div className={styles.app_container}>
             <GameProvider>
-              <App userId={user?.id} />
+              <App userId={user?.id} guest={user?.guest} />
             </GameProvider>
           </div>
         )}

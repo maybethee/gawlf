@@ -5,7 +5,7 @@ import Profile from "../Profile/Profile";
 import styles from "./App.module.css";
 import Lobby from "./Lobby";
 
-function App({ userId }) {
+function App({ userId, guest }) {
   const {
     gameId,
     setGameId,
@@ -18,7 +18,6 @@ function App({ userId }) {
 
   const [lobbyCode, setLobbyCode] = useState("");
   const [lobbyCodeInput, setLobbyCodeInput] = useState("");
-  // const [isLobbyHost, setIsLobbyHost] = useState(false);
   const [viewingProfile, setViewingProfile] = useState(false);
   const [error, setError] = useState("");
 
@@ -86,6 +85,7 @@ function App({ userId }) {
                 onClick={() => {
                   setViewingProfile(true);
                 }}
+                disabled={guest}
               >
                 Profile
               </button>
@@ -126,7 +126,6 @@ function App({ userId }) {
             </div>
           </div>
         </div>
-        {/* )} */}
       </div>
     );
 

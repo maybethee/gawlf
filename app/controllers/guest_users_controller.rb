@@ -6,7 +6,8 @@ class GuestUsersController < ApplicationController
       username: SecureRandom.hex(8),
       email: nil,
       password: 'password',
-      password_confirmation: 'password'
+      password_confirmation: 'password',
+      guest: true
     )
 
     sign_in(guest_user)
