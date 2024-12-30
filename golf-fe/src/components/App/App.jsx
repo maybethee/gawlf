@@ -85,7 +85,7 @@ function App({ userId, guest }) {
                 onClick={() => {
                   setViewingProfile(true);
                 }}
-                disabled={guest}
+                disabled={guest || !userId}
               >
                 Profile
               </button>
@@ -95,6 +95,7 @@ function App({ userId, guest }) {
                 <button
                   className={styles.create_lobby_btn}
                   onClick={handleCreateLobby}
+                  disabled={!userId}
                 >
                   Create Lobby
                 </button>
@@ -116,11 +117,12 @@ function App({ userId, guest }) {
                         onChange={(e) => {
                           setLobbyCodeInput(e.target.value);
                         }}
+                        disabled={!userId}
                       />
                     </div>
                     {error && <p className="error">{error}</p>}
                   </div>
-                  <button>Join Lobby</button>
+                  <button disabled={!userId}>Join Lobby</button>
                 </form>
               </div>
             </div>

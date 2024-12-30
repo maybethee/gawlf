@@ -1,0 +1,19 @@
+.main_container {
+  position: relative;
+}
+
+.user_btns_container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 999;
+}
+
+.loading_user {
+  width: 100vw;
+  height: 100vh;
+  background-color: red;
+  opacity: 1;
+  z-index: 1000;
+}

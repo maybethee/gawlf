@@ -10,17 +10,20 @@ function Root() {
   return (
     <StrictMode>
       <div className={styles.main_container}>
-        {!user ? (
+        {!user && (
           <div className={styles.user_btns_container}>
             <UserBtns setUser={setUser} />
           </div>
-        ) : (
-          <div className={styles.app_container}>
-            <GameProvider>
-              <App userId={user?.id} guest={user?.guest} />
-            </GameProvider>
-          </div>
         )}
+
+        <div
+          style={{ opacity: !user ? ".3" : "1", transition: "opacity .7s" }}
+          className={styles.app_container}
+        >
+          <GameProvider>
+            <App userId={user?.id} guest={user?.guest} />
+          </GameProvider>
+        </div>
       </div>
     </StrictMode>
   );

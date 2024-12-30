@@ -5,12 +5,20 @@ import styles from "./UserBtns.module.css";
 function UserBtns({ setUser }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [guestCreated, setGuestCreated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
-      const user = await getCurrentUser();
-      setIsAuthenticated(!!user);
-      setUser(user);
+      try {
+        const user = await getCurrentUser();
+        setIsAuthenticated(!!user);
+        setLoading(false);
+        setUser(user);
+      } catch (error) {
+        console.error("Error authenticating user:", error);
+        setLoading(false);
+        setUser(null);
+      }
     };
 
     checkAuth();
@@ -30,10 +38,15 @@ function UserBtns({ setUser }) {
     try {
       await createGuest();
       setGuestCreated(true);
+      setLoading(false);
     } catch (error) {
-      console.error("Error creating geust:", error);
+      console.error("Error creating guest:", error);
     }
   };
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <div className={styles.container}>
@@ -41,8 +54,12 @@ function UserBtns({ setUser }) {
         <p>Logged in!</p>
       ) : (
         <div className={styles.btns_container}>
-          <button onClick={redirectToRegister}>Register</button>
-          <button onClick={redirectToLogin}>Login</button>
+          <button disabled={true} onClick={redirectToRegister}>
+            Register
+          </button>
+          <button disabled={true} onClick={redirectToLogin}>
+            Login
+          </button>
           <button onClick={handleGuestLogin}>Play as Guest</button>
         </div>
       )}
