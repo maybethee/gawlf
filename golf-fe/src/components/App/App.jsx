@@ -4,6 +4,8 @@ import { useGame } from "../../context/useGame";
 import Profile from "../Profile/Profile";
 import styles from "./App.module.css";
 import Lobby from "./Lobby";
+import { Info } from "lucide-react";
+import SiteInfo from "./SiteInfo";
 
 function App({ userId, guest }) {
   const {
@@ -19,6 +21,7 @@ function App({ userId, guest }) {
   const [lobbyCode, setLobbyCode] = useState("");
   const [lobbyCodeInput, setLobbyCodeInput] = useState("");
   const [viewingProfile, setViewingProfile] = useState(false);
+  const [viewingInfo, setViewingInfo] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -77,54 +80,61 @@ function App({ userId, guest }) {
   if (!lobbyStatus)
     return (
       <div className={styles.home_page_container}>
-        <div>
-          <h1 className={styles.title}>Golf</h1>
-          <div className={styles.home_btns_container}>
-            <div className={styles.home_row_1}>
+        <h1 className={styles.title}>Golf</h1>
+        <div className={styles.home_btns_container}>
+          {viewingInfo && <SiteInfo setViewingInfo={setViewingInfo} />}
+          <div className={styles.home_row_1}>
+            <span
+              className={styles.info_btn}
+              onClick={() => {
+                setViewingInfo(!viewingInfo);
+              }}
+            >
+              <Info size={40} color="#f87171" />
+            </span>
+            <button
+              onClick={() => {
+                setViewingProfile(true);
+              }}
+              disabled={guest || !userId}
+            >
+              Profile
+            </button>
+          </div>
+          <div className={styles.home_row_2}>
+            <div className={styles.lobby_create_row}>
               <button
-                onClick={() => {
-                  setViewingProfile(true);
-                }}
-                disabled={guest || !userId}
+                className={styles.create_lobby_btn}
+                onClick={handleCreateLobby}
+                disabled={!userId}
               >
-                Profile
+                Create Lobby
               </button>
             </div>
-            <div className={styles.home_row_2}>
-              <div className={styles.lobby_create_row}>
-                <button
-                  className={styles.create_lobby_btn}
-                  onClick={handleCreateLobby}
-                  disabled={!userId}
-                >
-                  Create Lobby
-                </button>
-              </div>
-              <div className={styles.lobby_form_row}>
-                <form
-                  onSubmit={handleJoinLobby}
-                  action=""
-                  className={styles.join_lobby_form}
-                >
-                  <div className={styles.join_lobby_form_input_container}>
-                    <label className="visually-hidden" htmlFor="">
-                      Lobby Code:{" "}
-                    </label>
-                    <div className={styles.input_container}>
-                      <input
-                        type="text"
-                        value={lobbyCodeInput}
-                        onChange={(e) => {
-                          setLobbyCodeInput(e.target.value);
-                        }}
-                        disabled={!userId}
-                      />
-                    </div>
-                    {error && <p className="error">{error}</p>}
+            <div className={styles.lobby_form_row}>
+              <form
+                onSubmit={handleJoinLobby}
+                action=""
+                className={styles.join_lobby_form}
+              >
+                <div className={styles.join_lobby_form_input_container}>
+                  <label className="visually-hidden" htmlFor="">
+                    Lobby Code:{" "}
+                  </label>
+                  <div className={styles.input_container}>
+                    <input
+                      type="text"
+                      value={lobbyCodeInput}
+                      onChange={(e) => {
+                        setLobbyCodeInput(e.target.value);
+                      }}
+                      disabled={!userId}
+                    />
                   </div>
-                  <button disabled={!userId}>Join Lobby</button>
-                </form>
-              </div>
+                  {error && <p className="error">{error}</p>}
+                </div>
+                <button disabled={!userId}>Join Lobby</button>
+              </form>
             </div>
           </div>
         </div>

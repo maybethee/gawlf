@@ -115,7 +115,7 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
             </p>
           )}
 
-          {joinedPlayers.length > 0 ? (
+          {joinedPlayers.length > 1 ? (
             <div>
               {isLobbyHost ? (
                 <button className={styles.play_btn} onClick={handleSetupGame}>
