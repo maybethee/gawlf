@@ -15,6 +15,26 @@
   transform: translate(-50%, -50%);
 }
 
+.waiting_player_hand {
+  box-shadow: inset 0px 0px 1px 1000px rgba(248, 113, 113, 0.8),
+    0px 0px 4px 20px rgba(248, 113, 113, 0.8);
+}
+
+.current_player_hand {
+  animation: breathe 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+  from {
+    box-shadow: inset 0px 0px 1px 1000px rgba(254, 240, 138, 0.8),
+      0px 0px 4px 15px rgba(254, 240, 138, 0.8);
+  }
+  to {
+    box-shadow: inset 0px 0px 1px 1000px rgba(254, 240, 138, 0.8),
+      0px 0px 4px 20px rgba(254, 240, 138, 0.8);
+  }
+}
+
 .hand {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -22,20 +42,26 @@
 }
 
 .hand_header {
-  margin-bottom: 0.2rem;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   font-size: 0.9rem;
-  font-weight: bolder;
+  font-weight: 700;
+  position: absolute;
+  transform: translate(0%, -115%);
 }
 
 .hand_header p {
   font-family: "Nunito", serif;
-  background: #e2d2bd;
+  background-color: #e2d2bd;
   padding: 5px;
   border-radius: 8px;
   box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.hand_header p.next_player {
+  background-color: #f59e0b;
 }
 
 .hand_header button {

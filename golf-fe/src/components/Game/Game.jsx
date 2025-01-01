@@ -366,11 +366,24 @@ function Game({ gameId, playerId, isLobbyHost }) {
           className={styles.draw_and_discard_piles_container}
         >
           <div>
+            {!isPlayerTurn ? (
+              <h3 className={styles.turn_message}>
+                Waiting for {currentPlayerName}'s turn...
+              </h3>
+            ) : (
+              <h3
+                style={{ backgroundColor: "#fef08a" }}
+                className={styles.turn_message}
+              >
+                Your Turn
+              </h3>
+            )}
+            {/* 
             {!isPlayerTurn && (
               <h3 className={styles.turn_message}>
                 Waiting for {currentPlayerName}'s turn...
               </h3>
-            )}
+            )} */}
           </div>
           <div className={styles.draw_and_discard_piles}>
             <div>

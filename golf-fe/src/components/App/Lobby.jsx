@@ -39,8 +39,8 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
   const handleCreatePlayer = async (e) => {
     e.preventDefault();
 
-    if (playerName.trim().length < 1 || playerName.trim().length > 10) {
-      setError("Name must be between 1 and 10 characters.");
+    if (playerName.trim().length < 1 || playerName.trim().length > 15) {
+      setError("Name must be between 1 and 15 characters.");
       return;
     }
 

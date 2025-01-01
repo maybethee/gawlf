@@ -122,6 +122,21 @@ function PlayerHands({ playerId, backgroundUrl }) {
 
   const positionsArr = positions(sortedHands.length);
 
+  const setClassName = (playerHand) => {
+    let classes = `${styles.child}`;
+
+    if (
+      !initializingGame &&
+      playerHand.id === turnOrder[turnOrder.indexOf(currentPlayerId)]
+    ) {
+      classes += ` ${styles.current_player_hand}`;
+    } else {
+      classes += ` ${styles.waiting_player_hand}`;
+    }
+
+    return classes;
+  };
+
   if (roundOver || gameOver) {
     return (
       <div
@@ -185,7 +200,8 @@ function PlayerHands({ playerId, backgroundUrl }) {
             {sortedHands.map((playerHand, index) => (
               <div
                 key={playerHand.id}
-                className={styles.child}
+                className={setClassName(playerHand)}
+                // className={styles.child}
                 style={{
                   position: "absolute",
                   left: `${positionsArr[index].left}px`,
@@ -205,6 +221,15 @@ function PlayerHands({ playerId, backgroundUrl }) {
                       {<Eye color="#fbe9d2" />}
                     </button>
                   )}
+
+                  {/* {!initializingGame &&
+                    (playerHand.id ===
+                    turnOrder[
+                      (turnOrder.indexOf(currentPlayerId) + 1) %
+                        turnOrder.length
+                    ] ? (
+                      <p className={styles.next_player}>next</p>
+                    ) : null)} */}
                 </div>
                 <div className={styles.hand}>
                   {playerHand.hand.map((card) => (
