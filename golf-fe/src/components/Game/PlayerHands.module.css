@@ -39,6 +39,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.2rem;
+  transform-style: preserve-3d;
 }
 
 .hand_header {
@@ -89,7 +90,7 @@
 }
 
 .results_player_hands_container {
-  padding: 1rem;
+  padding: 2.5rem 1rem 1rem 1rem;
 }
 
 .results_player_hands {

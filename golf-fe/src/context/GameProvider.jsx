@@ -21,6 +21,7 @@ export const GameProvider = ({ children }) => {
   const [roundScores, setRoundScores] = useState([]);
   const [allRoundScores, setAllRoundScores] = useState([]);
   const [roundOver, setRoundOver] = useState(false);
+  const [viewingRoundResults, setViewingRoundResults] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [recordedTheDayThat, setRecordedTheDayThat] = useState("");
   const [isEditing, setIsEditing] = useState(true);
@@ -180,6 +181,7 @@ export const GameProvider = ({ children }) => {
     setCurrentPlayerName(data.current_player_name);
     setGameState(data.game_state);
     setRoundOver(false);
+    setViewingRoundResults(false);
     // setGameOver(false);
     setInitializingGame(true);
   };
@@ -311,6 +313,8 @@ export const GameProvider = ({ children }) => {
         selectedDiscardPile,
         setSelectedDiscardPile,
         roundOver,
+        viewingRoundResults,
+        setViewingRoundResults,
         roundScores,
         allRoundScores,
         gameOver,

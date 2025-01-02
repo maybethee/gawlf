@@ -15,6 +15,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
     drawnCard,
     selectedDiscardPile,
     roundOver,
+    viewingRoundResults,
     gameOver,
     performAction,
   } = useGame();
@@ -127,6 +128,8 @@ function PlayerHands({ playerId, backgroundUrl }) {
 
     if (
       !initializingGame &&
+      !roundOver &&
+      !gameOver &&
       playerHand.id === turnOrder[turnOrder.indexOf(currentPlayerId)]
     ) {
       classes += ` ${styles.current_player_hand}`;
@@ -137,7 +140,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
     return classes;
   };
 
-  if (roundOver || gameOver) {
+  if (viewingRoundResults || gameOver) {
     return (
       <div
         key={backgroundUrl}

@@ -21,6 +21,8 @@ function Game({ gameId, playerId, isLobbyHost }) {
     roundScores,
     allRoundScores,
     roundOver,
+    viewingRoundResults,
+    setViewingRoundResults,
     gameOver,
     performAction,
     displayCardContent,
@@ -199,7 +201,8 @@ function Game({ gameId, playerId, isLobbyHost }) {
     );
   }
 
-  if (roundOver && roundScores.length > 0) {
+  // if (roundOver && roundScores.length > 0) {
+  if (viewingRoundResults && roundScores.length > 0) {
     console.log("round scores:", roundScores);
 
     return (
@@ -366,17 +369,21 @@ function Game({ gameId, playerId, isLobbyHost }) {
           className={styles.draw_and_discard_piles_container}
         >
           <div>
-            {!isPlayerTurn ? (
-              <h3 className={styles.turn_message}>
-                Waiting for {currentPlayerName}'s turn...
-              </h3>
-            ) : (
-              <h3
-                style={{ backgroundColor: "#fef08a" }}
-                className={styles.turn_message}
-              >
-                Your Turn
-              </h3>
+            {!roundOver && (
+              <div>
+                {!isPlayerTurn ? (
+                  <h3 className={styles.turn_message}>
+                    Waiting for {currentPlayerName}'s turn...
+                  </h3>
+                ) : (
+                  <h3
+                    style={{ backgroundColor: "#fef08a" }}
+                    className={styles.turn_message}
+                  >
+                    Your Turn
+                  </h3>
+                )}
+              </div>
             )}
             {/* 
             {!isPlayerTurn && (
@@ -440,6 +447,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
           </div>
         </div>
         <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+        {roundOver && (
+          <button
+            className={styles.view_results_btn}
+            onClick={() => setViewingRoundResults(true)}
+          >
+            See Results
+          </button>
+        )}
       </div>
     </div>
   );
