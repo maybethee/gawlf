@@ -108,8 +108,6 @@ h3 {
 input {
   box-shadow: none;
   background-color: rgba(0, 0, 0, 0);
-  /* border: #03256cff solid 5px; */
-  /* color: #03256cff; */
   border: #f87171 solid 4px;
   color: #374151;
   border-radius: 6px;
@@ -130,10 +128,7 @@ button {
   font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
-  /* background-color: rgba(0, 0, 0, 0); */
   cursor: pointer;
-  /* border: 5px solid #03256cff;
-  color: #03256cff; */
   border: #f87171 solid 4px;
   background-color: #f87171;
   color: #fbe9d2;
@@ -144,11 +139,6 @@ button:hover {
   color: #f87171;
   background-color: #fbe9d2;
 }
-
-/* button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
 
 button:disabled {
   opacity: 0.5;
@@ -219,10 +209,10 @@ button:disabled:hover {
 }
 
 .revealed {
-  -webkit-animation: cardFlip 0.6s ease-in-out forwards;
-  -moz-animation: cardFlip 0.6s ease-in-out forwards;
-  -ms-animation: cardFlip 0.6s ease-in-out forwards;
-  animation: cardFlip 0.6s ease-in-out forwards;
+  -webkit-animation: cardFlip 0.4s ease-in-out forwards;
+  -moz-animation: cardFlip 0.4s ease-in-out forwards;
+  -ms-animation: cardFlip 0.4s ease-in-out forwards;
+  animation: cardFlip 0.4s ease-in-out forwards;
 }
 
 @-webkit-keyframes cardFlip {

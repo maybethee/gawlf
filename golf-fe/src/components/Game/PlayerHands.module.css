@@ -1,6 +1,6 @@
 .parent {
   position: absolute;
-  top: 57%;
+  top: 56%;
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 10%;
@@ -96,5 +96,5 @@
 .results_player_hands {
   display: flex;
   flex-flow: row wrap;
-  gap: 1rem;
+  gap: 3rem;
 }

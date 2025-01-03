@@ -94,8 +94,8 @@ function PlayerHands({ playerId, backgroundUrl }) {
     }
   };
 
-  const parentWidth = 700;
-  const parentHeight = 700;
+  const parentWidth = 800;
+  const parentHeight = 800;
   const radius = (Math.min(parentWidth, parentHeight) / 2) * 0.8;
 
   const turnOrder = gameState.turn_order || [];

@@ -161,7 +161,8 @@ function Game({ gameId, playerId, isLobbyHost }) {
         <div className={styles.game_container}>
           <TheDayThat />
 
-          <h2>Hole: {currentHole} / 9</h2>
+          <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2>
+
           <div
             style={{ left: "50%" }}
             className={styles.draw_and_discard_piles_container}
@@ -359,10 +360,16 @@ function Game({ gameId, playerId, isLobbyHost }) {
         updateBackground={updateBackgroundImage}
         backgrounds={backgrounds}
       />
-      <div className={styles.game_container}>
+      <div
+        className={styles.game_container}
+        style={{
+          pointerEvents: roundOver ? "none" : "",
+          opacity: roundOver ? ".8" : "1",
+        }}
+      >
         <TheDayThat />
 
-        <h2>Hole: {currentHole} / 9</h2>
+        <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2>
 
         <div
           style={{ left: "51%" }}
@@ -447,15 +454,16 @@ function Game({ gameId, playerId, isLobbyHost }) {
           </div>
         </div>
         <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
-        {roundOver && (
-          <button
-            className={styles.view_results_btn}
-            onClick={() => setViewingRoundResults(true)}
-          >
-            See Results
-          </button>
-        )}
       </div>
+      {roundOver && (
+        <button
+          style={{ pointerEvents: "auto", opacity: roundOver ? "1" : "" }}
+          className={styles.view_results_btn}
+          onClick={() => setViewingRoundResults(true)}
+        >
+          See Results
+        </button>
+      )}
     </div>
   );
 }
