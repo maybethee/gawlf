@@ -5,7 +5,23 @@
   row-gap: 1rem;
 }
 
+.list_record {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  row-gap: 0.3rem;
+}
+
+.list_record table {
+  margin-left: 30px;
+}
+
+.the_day_container {
+  display: flex;
+}
+
 .the_day {
+  display: flex;
   font-weight: 500;
 }
 

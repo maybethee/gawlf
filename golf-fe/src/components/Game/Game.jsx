@@ -167,6 +167,9 @@ function Game({ gameId, playerId, isLobbyHost }) {
             style={{ left: "50%" }}
             className={styles.draw_and_discard_piles_container}
           >
+            <h3 className={styles.turn_message}>
+              Select two cards to reveal and click the eye
+            </h3>
             <div className={styles.draw_and_discard_piles}>
               <div>
                 <div className="card hidden"></div>

@@ -11,17 +11,88 @@
   transition: opacity 1s;
 }
 
+.game_history_container {
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 1.4rem;
+}
+
+.game_history_header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+.game_history_container h3 {
+  grid-column: 2;
+  text-align: center;
+  padding: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.showcase_container {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  position: relative;
+  row-gap: 2rem;
+}
+
 .profile_container h2 {
   font-size: 2rem;
 }
 
-.game_records_ul {
+.display_btns {
+  grid-column: 3;
+  margin-right: 8rem;
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 0.5rem;
+}
+
+.display_btns button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 7px 10px;
+}
+
+.display_btns button:hover {
+  background-color: #f45e5e;
+  color: #fbe9d2;
+}
+
+.display_btns button.selected {
+  background-color: #f45e5e;
+  box-shadow: inset 3px 3px 4px 1px rgba(0, 0, 0, 0.4);
+}
+
+.list_container {
+  /* padding: 2rem; */
+  display: flex;
+  justify-content: center;
+  max-width: 420px;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+.game_records_ul_list {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  row-gap: 0.5rem;
+}
+
+.game_records_ul_showcase {
   display: flex;
   justify-content: center;
   margin-bottom: 15rem;
 }
 
-.game_records_ul li {
+.game_records_ul_showcase li {
   position: absolute;
   width: 450px;
   min-height: 200px;
@@ -31,10 +102,6 @@
   padding: 1rem;
   transition: transform 0.1s, z-index 0.05s;
 }
-/* 
-.slider_container {
-  margin-top: 19rem;
-} */
 
 .stats_section_container {
   display: flex;
@@ -47,6 +114,7 @@
 }
 
 .stats_section {
+  max-width: 420px;
   display: flex;
   flex-flow: column;
   align-items: flex-start;
@@ -54,6 +122,9 @@
 }
 
 .stats_section h3 {
+  display: flex;
+  justify-content: center;
+  width: 100%;
   padding: 0;
   font-size: 1.4rem;
   font-weight: 600;
@@ -63,6 +134,11 @@
   display: flex;
   flex-flow: column;
   row-gap: 0.8rem;
+}
+
+.stats_section ul li {
+  text-indent: -35.5px;
+  padding-left: 35.5px;
 }
 
 .stats_section ul li::before {
