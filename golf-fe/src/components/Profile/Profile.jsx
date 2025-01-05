@@ -9,6 +9,9 @@ function Profile({ userId, setViewingProfile }) {
   const [userData, setUserData] = useState(null);
   const [sliderValue, setSliderValue] = useState(0);
   const [viewList, setViewList] = useState(false);
+  const [playerCountsArr, setPlayerCountsArr] = useState([]);
+  const [statsFilter, setStatsFilter] = useState(null);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -20,24 +23,97 @@ function Profile({ userId, setViewingProfile }) {
     getUserData();
   }, [userId]);
 
+  useEffect(() => {
+    if (userData?.games?.length) {
+      let playerCountsArr = [];
+
+      userData.games.forEach((game) => {
+        const playerCount = game.summary.players.length;
+
+        if (playerCount) {
+          playerCountsArr.push(playerCount);
+        }
+      });
+
+      let playerCountsUniqueArr = playerCountsArr
+        .filter(function (value, id, self) {
+          return id == self.indexOf(value) && value != null;
+        })
+        .sort((a, b) => a - b);
+
+      setPlayerCountsArr(playerCountsUniqueArr);
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (userData?.games?.length) {
+      setStats(calculateStats());
+    }
+  }, [userData, statsFilter]);
+
+  const calculateStats = () => {
+    return {
+      gamesPlayed: `${gamesPlayed()} games played`,
+      numberOfWins: `${numberOfWins()} games won`,
+      bestScoreGame: `best total score: ${bestScoreGame().score} on ${
+        bestScoreGame().date
+      }`,
+      worstScoreGame: `worst total score: ${worstScoreGame().score} on ${
+        worstScoreGame().date
+      }`,
+      bestScoreRound: `best round score: ${bestScoreRound().best_round} on ${
+        bestScoreRound().date
+      }`,
+      worstScoreRound: `worst round score: ${
+        worstScoreRound().worst_round
+      } on ${worstScoreRound().date}`,
+    };
+  };
+
   const handleSliderChange = (newVal) => {
     setSliderValue(newVal);
   };
 
-  const numberOfWins = useMemo(() => {
-    if (!userData) return 0;
-
-    return userData.games.filter((game) => {
-      return userData.user.id === game.summary.winner_id;
-    }).length;
-  }, [userData]);
-
-  const bestScoreGame = useMemo(() => {
+  const filterDataByPlayerCount = () => {
     if (!userData) return null;
 
-    const usersTotalScores = userData.games.map((game) => {
+    let gamesWithCount = userData.games;
+
+    if (statsFilter) {
+      gamesWithCount = userData.games.filter((game) => {
+        return game.summary.players.length === statsFilter;
+      });
+    }
+
+    return { ...userData, games: gamesWithCount };
+  };
+
+  const gamesPlayed = () => {
+    if (!userData) return 0;
+
+    const filteredData = filterDataByPlayerCount();
+
+    return filteredData.games.length;
+  };
+
+  const numberOfWins = () => {
+    if (!userData) return 0;
+
+    const filteredData = filterDataByPlayerCount();
+
+    return filteredData.games.filter((game) => {
+      return userData.user.id === game.summary.winner_id;
+    }).length;
+  };
+
+  const bestScoreGame = () => {
+    if (!userData) return null;
+
+    const filteredData = filterDataByPlayerCount();
+
+    const usersTotalScores = filteredData.games.map((game) => {
       const gameTotal = game.summary.players.find(
-        (player) => player.user_id === userData.user.id
+        (player) => player.user_id === filteredData.user.id
       );
 
       return {
@@ -53,14 +129,18 @@ function Profile({ userId, setViewingProfile }) {
     return usersTotalScores.reduce((lowestObj, currObj) =>
       currObj.score < lowestObj.score ? currObj : lowestObj
     );
-  }, [userData]);
+  };
 
-  const worstScoreGame = useMemo(() => {
+  // const worstScoreGame = useMemo(() => {
+
+  const worstScoreGame = () => {
     if (!userData) return null;
 
-    const usersTotalScores = userData.games.map((game) => {
+    const filteredData = filterDataByPlayerCount();
+
+    const usersTotalScores = filteredData.games.map((game) => {
       const gameTotal = game.summary.players.find(
-        (player) => player.user_id === userData.user.id
+        (player) => player.user_id === filteredData.user.id
       );
 
       return {
@@ -76,14 +156,16 @@ function Profile({ userId, setViewingProfile }) {
     return usersTotalScores.reduce((highestObj, currObj) =>
       currObj.score > highestObj.score ? currObj : highestObj
     );
-  }, [userData]);
+  };
 
-  const bestScoreRound = useMemo(() => {
+  const bestScoreRound = () => {
     if (!userData) return null;
 
-    const usersRoundScores = userData.games.map((game) => {
+    const filteredData = filterDataByPlayerCount();
+
+    const usersRoundScores = filteredData.games.map((game) => {
       const gameRoundScores = game.summary.players.find(
-        (player) => player.user_id === userData.user.id
+        (player) => player.user_id === filteredData.user.id
       );
 
       const bestRoundScore = Math.min(...gameRoundScores.round_scores);
@@ -102,14 +184,16 @@ function Profile({ userId, setViewingProfile }) {
     return usersRoundScores.reduce((lowestObj, currObj) =>
       currObj.best_round < lowestObj.best_round ? currObj : lowestObj
     );
-  }, [userData]);
+  };
 
-  const worstScoreRound = useMemo(() => {
+  const worstScoreRound = () => {
     if (!userData) return null;
 
-    const usersRoundScores = userData.games.map((game) => {
+    const filteredData = filterDataByPlayerCount();
+
+    const usersRoundScores = filteredData.games.map((game) => {
       const gameRoundScores = game.summary.players.find(
-        (player) => player.user_id === userData.user.id
+        (player) => player.user_id === filteredData.user.id
       );
 
       const worstRoundScore = Math.max(...gameRoundScores.round_scores);
@@ -128,7 +212,40 @@ function Profile({ userId, setViewingProfile }) {
     return usersRoundScores.reduce((highestObj, currObj) =>
       currObj.worst_round > highestObj.worst_round ? currObj : highestObj
     );
-  }, [userData]);
+  };
+
+  const playerAliases = () => {
+    if (!userData) return null;
+
+    let aliases = [];
+
+    userData.games.map((game) => {
+      const player = game.summary.players.find(
+        (player) => player.user_id === userData.user.id
+      );
+
+      aliases.push(player.player_name);
+    });
+
+    const uniqueAliasArr = uniqueStrings(aliases);
+
+    return uniqueAliasArr;
+  };
+
+  const uniqueStrings = (arr) => {
+    const seen = new Set();
+
+    return arr.filter((string) => {
+      const lowercaseString = string.toLowerCase();
+
+      if (!seen.has(lowercaseString)) {
+        seen.add(lowercaseString);
+        return true;
+      }
+
+      return false;
+    });
+  };
 
   const setRecordClass = (index) => {
     if (index === sliderValue) {
@@ -244,25 +361,34 @@ function Profile({ userId, setViewingProfile }) {
       </div>
       <div className={styles.stats_section_container}>
         <div className={styles.stats_section}>
-          <h3>Stats</h3>
-          <ul>
-            <li>{userData.games.length} games played</li>
-            <li>{numberOfWins} games won</li>
-            <li>
-              best total score: {bestScoreGame.score} on {bestScoreGame.date}
-            </li>
-            <li>
-              worst total score: {worstScoreGame.score} on {worstScoreGame.date}
-            </li>
-            <li>
-              best round score: {bestScoreRound.best_round} on{" "}
-              {bestScoreRound.date}
-            </li>
-            <li>
-              worst round score: {worstScoreRound.worst_round} on{" "}
-              {worstScoreRound.date}{" "}
-            </li>
-          </ul>
+          <div className={styles.stats_section_header}>
+            <h3>Stats</h3>
+            {playerCountsArr.length <= 1 ? null : (
+              <div className={styles.filter_container}>
+                <p>Filter by game's player count</p>
+                <div className={styles.filter_btns}>
+                  <button onClick={() => setStatsFilter(null)}>
+                    All Games
+                  </button>
+                  {playerCountsArr.map((count) => {
+                    return (
+                      <button onClick={() => setStatsFilter(count)} key={count}>
+                        {count} players
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+          {stats && (
+            <ul>
+              {Object.keys(stats).map((key) => {
+                return <li key={key}>{stats[key]}</li>;
+              })}
+              <li>Aliases: {playerAliases()}</li>
+            </ul>
+          )}
         </div>
       </div>
 
@@ -272,10 +398,3 @@ function Profile({ userId, setViewingProfile }) {
 }
 
 export default Profile;
-
-{
-  /* <li>most jokers found in one game</li>
-<li>total jokers found</li>
-<li>most jokers given away</li>
-<li>total jokers given away</li> */
-}
