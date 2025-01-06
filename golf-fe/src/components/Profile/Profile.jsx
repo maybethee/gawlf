@@ -247,6 +247,13 @@ function Profile({ userId, setViewingProfile }) {
     });
   };
 
+  const sortedGames = useMemo(() => {
+    if (!userData || !userData.games) return [];
+    return [...userData.games].sort(
+      (a, b) => new Date(a.created_at) - new Date(b.created_at)
+    );
+  }, [userData]);
+
   const setRecordClass = (index) => {
     if (index === sliderValue) {
       return "current-record";
@@ -272,7 +279,7 @@ function Profile({ userId, setViewingProfile }) {
 
   if (!userData) return null;
 
-  if (userData.games.length < 1)
+  if (userData?.games?.length < 1)
     return (
       <div className={styles.profile_container}>
         <h2>{userData.user.username}</h2>
@@ -311,7 +318,7 @@ function Profile({ userId, setViewingProfile }) {
         {viewList ? (
           <div className={styles.list_container}>
             <ul className={styles.game_records_ul_list}>
-              {userData.games.map((game, index) => {
+              {sortedGames.map((game, index) => {
                 // console.log("game id:", game.id);
                 // console.log("slider val:", sliderValue);
                 return (
@@ -329,7 +336,7 @@ function Profile({ userId, setViewingProfile }) {
         ) : (
           <div className={styles.showcase_container}>
             <ul className={styles.game_records_ul_showcase}>
-              {userData.games.map((game, index) => {
+              {sortedGames.map((game, index) => {
                 // console.log("game id:", game.id);
                 // console.log("slider val:", sliderValue);
                 return (

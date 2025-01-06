@@ -23,6 +23,7 @@ function App({ userId, guest }) {
   const [viewingProfile, setViewingProfile] = useState(false);
   const [viewingInfo, setViewingInfo] = useState(false);
   const [error, setError] = useState("");
+  const [playerId, setPlayerId] = useState(null);
 
   useEffect(() => {
     if (!gameId) {
@@ -49,6 +50,7 @@ function App({ userId, guest }) {
     setLobbyCode(data.lobby_code);
     setLobbyStatus("waiting");
     setIsLobbyHost(true);
+    setJoinedPlayers([]);
   };
 
   const handleJoinLobby = async (e) => {
@@ -143,7 +145,13 @@ function App({ userId, guest }) {
 
   return (
     <div className={styles.lobby_page_container}>
-      <Lobby lobbyCode={lobbyCode} isLobbyHost={isLobbyHost} userId={userId} />
+      <Lobby
+        lobbyCode={lobbyCode}
+        isLobbyHost={isLobbyHost}
+        userId={userId}
+        playerId={playerId}
+        setPlayerId={setPlayerId}
+      />
     </div>
   );
 }

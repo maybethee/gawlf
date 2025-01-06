@@ -52,14 +52,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
   const isPlayerTurn = currentPlayerId === playerId;
 
-  // const sortedRoundScores =
-  //   roundScores.length > 0
-  //     ? [...roundScores].sort((a, b) => a.round_score - b.round_score)
-  //     : [];
-
-  // const roundWinner =
-  //   sortedRoundScores.length > 0 ? sortedRoundScores[0].player_name : null;
-
   const sortedTotalScores =
     allRoundScores.length > 0
       ? [...allRoundScores]
@@ -205,7 +197,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
     );
   }
 
-  // if (roundOver && roundScores.length > 0) {
   if (viewingRoundResults && roundScores.length > 0) {
     console.log("round scores:", roundScores);
 
@@ -395,12 +386,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
                 )}
               </div>
             )}
-            {/* 
-            {!isPlayerTurn && (
-              <h3 className={styles.turn_message}>
-                Waiting for {currentPlayerName}'s turn...
-              </h3>
-            )} */}
           </div>
           <div className={styles.draw_and_discard_piles}>
             <div>

@@ -4,8 +4,9 @@ import { createPlayer, fetchJoinedPlayers } from "../../utils/api";
 import { useGame } from "../../context/useGame";
 import styles from "./Lobby.module.css";
 import { ChevronLeft } from "lucide-react";
+import { isObject } from "chart.js/helpers";
 
-function Lobby({ lobbyCode, isLobbyHost, userId }) {
+function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
   const {
     gameId,
     joinedPlayers,
@@ -16,7 +17,6 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
   } = useGame();
 
   const [playerName, setPlayerName] = useState("");
-  const [playerId, setPlayerId] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -51,7 +51,7 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
     setPlayerId(data.id);
   };
 
-  const isJoined = joinedPlayers?.find((player) => player.user_id === userId);
+  let isJoined = joinedPlayers?.find((player) => player.user_id === userId);
 
   const handleSetupGame = () => {
     performAction("setup_game");
@@ -61,7 +61,10 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
     return (
       <div className={styles.lobby_content_container}>
         <div
-          onClick={() => setLobbyStatus(!lobbyStatus)}
+          onClick={() => {
+            setLobbyStatus(!lobbyStatus);
+            isJoined = false;
+          }}
           className={styles.back_btn}
         >
           <ChevronLeft />
@@ -75,7 +78,9 @@ function Lobby({ lobbyCode, isLobbyHost, userId }) {
             Share this code to let others join this game
           </p>
 
-          {!playerId && !isJoined && (
+          {console.log()}
+
+          {!isJoined && (
             <form
               className={styles.join_game_form}
               onSubmit={handleCreatePlayer}
