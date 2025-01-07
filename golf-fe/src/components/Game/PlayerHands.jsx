@@ -94,37 +94,23 @@ function PlayerHands({ playerId, backgroundUrl }) {
     }
   };
 
-  const parentWidth = 800;
-  const parentHeight = 800;
-  const radius = (Math.min(parentWidth, parentHeight) / 2) * 0.8;
-
   const turnOrder = gameState.turn_order || [];
   const sortedHands = [...playerHands].sort(
     (a, b) => turnOrder.indexOf(a.id) - turnOrder.indexOf(b.id)
   );
 
-  // console.log("Turn Order: ", turnOrder);
-  // console.log("Sorted Hands: ", sortedHands);
-
-  const positions = (numChildren) => {
-    const isOdd = numChildren % 2 !== 0;
-    const rotationOffset = isOdd ? -Math.PI / 2 : Math.PI / numChildren;
-    const centerX = parentWidth / 2;
-    const centerY = parentHeight / 2;
-    return Array.from({ length: numChildren }, (_, index) => {
-      const angle = (2 * Math.PI * index) / numChildren + rotationOffset;
-      const x = centerX + radius * Math.cos(angle);
-      const y = centerY + radius * Math.sin(angle);
-      // console.log(`Child ${index}: x=${x}, y=${y}, angle=${angle}`);
-
-      return { left: x, top: y };
-    });
-  };
-
-  const positionsArr = positions(sortedHands.length);
-
   const setClassName = (playerHand) => {
     let classes = `${styles.child}`;
+
+    if (sortedHands.length === 2) {
+      classes += ` ${styles.two_p_child}`;
+    } else if (sortedHands.length === 3) {
+      classes += ` ${styles.three_p_child}`;
+    } else if (sortedHands.length === 4) {
+      classes += ` ${styles.four_p_child}`;
+    } else if (sortedHands.length === 5) {
+      classes += ` ${styles.five_p_child}`;
+    }
 
     if (
       !initializingGame &&
@@ -191,26 +177,9 @@ function PlayerHands({ playerId, backgroundUrl }) {
     >
       {playerHands && (
         <div className={styles.player_hand_area}>
-          <div
-            className={styles.parent}
-            style={{
-              width: `${parentWidth}px`,
-              height: `${parentHeight}px`,
-            }}
-          >
-            {/* {console.log("player hands:", playerHands)}
-            {console.log("sorted hands", sortedHands)} */}
+          <div className={styles.parent}>
             {sortedHands.map((playerHand, index) => (
-              <div
-                key={playerHand.id}
-                className={setClassName(playerHand)}
-                // className={styles.child}
-                style={{
-                  position: "absolute",
-                  left: `${positionsArr[index].left}px`,
-                  top: `${positionsArr[index].top}px`,
-                }}
-              >
+              <div key={playerHand.id} className={setClassName(playerHand)}>
                 <div className={styles.hand_header}>
                   <p
                     style={{
@@ -221,7 +190,9 @@ function PlayerHands({ playerId, backgroundUrl }) {
                   </p>
                   {initializingGame && playerHand.id === playerId && (
                     <button onClick={revealSelectedCards}>
-                      {<Eye color="#fbe9d2" />}
+                      <div>
+                        <Eye color="#fbe9d2" />}
+                      </div>
                     </button>
                   )}
 

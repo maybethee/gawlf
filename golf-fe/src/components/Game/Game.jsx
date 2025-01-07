@@ -4,7 +4,7 @@ import TheDayThat from "./TheDayThat/TheDayThat";
 import styles from "./Game.module.css";
 import { useState, useEffect } from "react";
 import UIOptions from "./UIOptions";
-import { ArrowBigRightDash, Play } from "lucide-react";
+import { Eye, ArrowBigRightDash, Play } from "lucide-react";
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
@@ -159,8 +159,25 @@ function Game({ gameId, playerId, isLobbyHost }) {
             style={{ left: "50%" }}
             className={styles.draw_and_discard_piles_container}
           >
-            <h3 className={styles.turn_message}>
-              Select two cards to reveal and click the eye
+            <h3 style={{ fontSize: "1rem" }} className={styles.turn_message}>
+              Select two cards and reveal them by clicking the eye{" "}
+              <button
+                disabled={true}
+                style={{
+                  opacity: "1",
+                  height: "30px",
+                  width: "30px",
+                  padding: "0.2rem",
+                  borderRadius: "50%",
+                  fontSize: "0.8rem",
+                  fontWeight: "800",
+                  border: "none",
+                  backgroundColor: "#e11d47",
+                  color: "#374151",
+                }}
+              >
+                <Eye color="#fbe9d2" size={20} />
+              </button>
             </h3>
             <div className={styles.draw_and_discard_piles}>
               <div>

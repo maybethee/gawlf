@@ -3,16 +3,15 @@
   top: 56%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 10%;
+  /* border-radius: 10%; */
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 400;
 }
 
 .child {
-  font-weight: 400;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .waiting_player_hand {
@@ -97,4 +96,107 @@
   display: flex;
   flex-flow: row wrap;
   gap: 3rem;
+}
+
+/* 2 players */
+
+.two_p_child:first-child {
+  position: absolute;
+  top: 220px;
+  right: 50%;
+  transform: translate(50%, -50%);
+}
+
+.two_p_child:last-child {
+  position: absolute;
+  bottom: 190px;
+}
+
+/* 3 players */
+
+/* top */
+.three_p_child:first-child {
+  position: absolute;
+  bottom: 160px;
+}
+
+/* bottom right */
+.three_p_child:nth-child(2) {
+  position: absolute;
+  top: 140px;
+  left: 120px;
+}
+
+/* bottom left */
+.three_p_child:last-child {
+  position: absolute;
+  top: 140px;
+  right: 120px;
+}
+
+/* 4 players */
+
+/* bottom right */
+.four_p_child:first-child {
+  position: absolute;
+  top: 120px;
+  left: 100px;
+}
+
+/* bottom left */
+.four_p_child:nth-child(2) {
+  position: absolute;
+  top: 120px;
+  right: 100px;
+}
+
+/* top left */
+.four_p_child:nth-child(3) {
+  position: absolute;
+  bottom: 190px;
+  right: 100px;
+}
+
+/* top right */
+.four_p_child:last-child {
+  position: absolute;
+  bottom: 190px;
+  left: 100px;
+}
+
+/* 5 players */
+
+/* bottom right */
+.five_p_child:first-child {
+  position: absolute;
+  top: 100px;
+  left: 140px;
+}
+
+/* bottom left */
+.five_p_child:nth-child(2) {
+  position: absolute;
+  top: 100px;
+  right: 140px;
+}
+
+/* top left */
+.five_p_child:nth-child(3) {
+  position: absolute;
+  bottom: 110px;
+  right: 220px;
+}
+
+/* top middle */
+.five_p_child:nth-child(4) {
+  position: absolute;
+  bottom: 250px;
+  /* right: -100px; */
+}
+
+/* top right */
+.five_p_child:last-child {
+  position: absolute;
+  bottom: 110px;
+  left: 220px;
 }
