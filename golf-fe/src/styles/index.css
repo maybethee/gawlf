@@ -192,7 +192,7 @@ button:disabled:hover {
 }
 
 .card {
-  transition: margin-left 0.3s;
+  transition: margin-left 0.3s, opacity 0s 0.3s;
   background-color: rgb(254, 236, 236);
   border-width: 4px;
   border-style: solid;
@@ -200,6 +200,16 @@ button:disabled:hover {
   display: flex;
   justify-content: flex-end;
   box-shadow: -8px 8px 5px 0px rgba(0, 0, 0, 0.75), 0 0 0 1px black;
+}
+
+.hidden-history:not(:nth-last-child(2)) {
+  z-index: -1;
+  opacity: 0;
+}
+
+.card:not(.hidden-history) {
+  opacity: 1;
+  transition: opacity 0s, margin-left 0.3s;
 }
 
 .hidden {

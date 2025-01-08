@@ -128,17 +128,7 @@ function PlayerHands({ playerId, backgroundUrl }) {
 
   if (viewingRoundResults || gameOver) {
     return (
-      <div
-        key={backgroundUrl}
-        style={{
-          background: `no-repeat url(${backgroundUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "100%",
-          width: "100%",
-        }}
-        className={styles.results_player_hands_container}
-      >
+      <div className={styles.results_player_hands_container}>
         {playerHands && (
           <div className={styles.results_player_hands}>
             {sortedHands.map((playerHand) => (
@@ -165,14 +155,14 @@ function PlayerHands({ playerId, backgroundUrl }) {
 
   return (
     <div
-      key={backgroundUrl}
-      style={{
-        background: `no-repeat url(${backgroundUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100%",
-        width: "100%",
-      }}
+      // key={backgroundUrl}
+      // style={{
+      //   background: `no-repeat url(${backgroundUrl})`,
+      //   backgroundSize: "cover",
+      //   backgroundPosition: "center",
+      //   height: "100%",
+      //   width: "100%",
+      // }}
       className={styles.player_hands_container}
     >
       {playerHands && (

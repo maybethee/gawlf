@@ -97,7 +97,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
     if (selectedDiscardPile && index === discardPile.length - 1) {
       classes += " selected";
     }
-    if (checkingHistory) {
+    if (checkingHistory || initializingGame) {
       classes = classes.replace(/\bhidden-history\b/, "").trim();
     }
     if (card.suit === "★") {
@@ -150,32 +150,21 @@ function Game({ gameId, playerId, isLobbyHost }) {
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
         />
-        <div className={styles.game_container}>
+        <div
+          style={{
+            backgroundImage: `url(${backgroundUrl})`,
+          }}
+          className={styles.game_container}
+        >
           <TheDayThat />
-
           <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2>
-
           <div
             style={{ left: "50%" }}
             className={styles.draw_and_discard_piles_container}
           >
             <h3 style={{ fontSize: "1rem" }} className={styles.turn_message}>
               Select two cards and reveal them by clicking the eye{" "}
-              <button
-                disabled={true}
-                style={{
-                  opacity: "1",
-                  height: "30px",
-                  width: "30px",
-                  padding: "0.2rem",
-                  borderRadius: "50%",
-                  fontSize: "0.8rem",
-                  fontWeight: "800",
-                  border: "none",
-                  backgroundColor: "#e11d47",
-                  color: "#374151",
-                }}
-              >
+              <button disabled={true}>
                 <Eye color="#fbe9d2" size={20} />
               </button>
             </h3>
@@ -183,8 +172,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
               <div>
                 <div className="card hidden"></div>
               </div>
-              <div style={{ display: "flex" }}>
-                <div className="card"></div>
+              <div style={{ display: "flex", paddingBottom: "6px" }}>
                 {discardPile.map((card, index) => {
                   return (
                     <div
@@ -232,8 +220,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
           <div className={styles.results_container}>
             <div className={styles.left_col}>
-              {/* <h3 className={styles.round_winner}>Winner: {roundWinner}</h3> */}
-
               <table>
                 <tbody>
                   <tr>
@@ -252,7 +238,17 @@ function Game({ gameId, playerId, isLobbyHost }) {
               </table>
             </div>
 
-            <div className={styles.right_col}>
+            <div
+              style={{
+                backgroundImage: `url(${backgroundUrl})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                height: "100%",
+                width: "100%",
+              }}
+              className={styles.right_col}
+            >
               <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
             </div>
           </div>
@@ -325,7 +321,9 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
           <div
             className={styles.final_hands_results}
-            style={{ animationDelay: `${sortedTotalScores.length + 4}s` }}
+            style={{
+              backgroundImage: `url(${backgroundUrl})`,
+            }}
           >
             <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
           </div>
@@ -374,6 +372,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
       <div
         className={styles.game_container}
         style={{
+          backgroundImage: `url(${backgroundUrl})`,
           pointerEvents: roundOver ? "none" : "",
           opacity: roundOver ? ".8" : "1",
         }}
@@ -405,7 +404,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
             )}
           </div>
           <div className={styles.draw_and_discard_piles}>
-            <div>
+            <div className={styles.deck}>
               <div
                 className={setDrawnCardClass()}
                 onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
@@ -420,7 +419,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
             <div>
               <div className={styles.discard_pile_container}>
-                <div className="card"></div>
                 {discardPile.map((card, index) => {
                   return (
                     <div
@@ -458,7 +456,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
             </div>
           </div>
         </div>
-        <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+        <PlayerHands playerId={playerId} />
       </div>
       {roundOver && (
         <button

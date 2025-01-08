@@ -3,17 +3,25 @@
 }
 
 .game_container {
-  height: 100%;
   position: relative;
   display: flex;
   flex-flow: column;
   align-items: center;
 }
 
+.game_container,
+.right_col,
+.final_hands_results {
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 .current_hole {
   position: absolute;
   background-color: #fbe9d2;
-  /* height: 40px; */
   padding: 10px 30px;
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
@@ -61,11 +69,21 @@
   column-gap: 0.5rem;
 }
 
+.deck {
+  padding-left: 6px;
+  margin-right: 65px;
+}
+
 .discard_pile_container {
   display: flex;
   max-width: 100%;
   height: 100px;
 }
+
+.discard_pile_container div:first-child {
+  margin-left: -60px;
+}
+
 .card_content_container {
   margin-top: 0.2rem;
 }
@@ -78,6 +96,19 @@
   border-radius: 4px;
   font-weight: 800;
   box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.turn_message button {
+  opacity: 1;
+  height: 30px;
+  width: 30px;
+  padding: 0.2rem;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border: none;
+  background-color: #e11d47;
+  color: #374151;
 }
 
 .hole_completed {
@@ -113,6 +144,10 @@
   grid-template-columns: 1fr 3fr;
   gap: 7rem;
   margin: 2rem 3rem 3rem 3rem;
+}
+
+.right_col > div:first-child {
+  padding: 2.5rem 1rem 1rem 1rem;
 }
 
 .information {
