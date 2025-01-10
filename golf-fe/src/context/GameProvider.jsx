@@ -282,7 +282,8 @@ export const GameProvider = ({ children }) => {
     setPrevFirstPlayer(null);
     setCurrentPlayerName(null);
     setGameState(null);
-
+    setIsLobbyHost(false);
+    setRecordedTheDayThat("");
     setLobbyStatus("");
     setPlayerHands([]);
   };

@@ -86,14 +86,11 @@
   /* background-color: #fc8888; */
   box-shadow: inset 3px 3px 2px 2px rgba(0, 0, 0, 0.75);
 }
-/* 
-.results_player_hands_container {
-  padding: 2.5rem 1rem 1rem 1rem;
-} */
 
 .results_player_hands {
   display: flex;
   flex-flow: row wrap;
+  justify-content: center;
   gap: 3rem;
 }
 

@@ -2,9 +2,9 @@ import { useGame } from "../../context/useGame";
 import PlayerHands from "./PlayerHands";
 import TheDayThat from "./TheDayThat/TheDayThat";
 import styles from "./Game.module.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import UIOptions from "./UIOptions";
-import { Eye, ArrowBigRightDash, Play } from "lucide-react";
+import { Eye, Play } from "lucide-react";
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
@@ -196,7 +196,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
               </div>
             </div>
           </div>
-          <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+          <PlayerHands playerId={playerId} />
         </div>
       </div>
     );
@@ -249,7 +249,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
               }}
               className={styles.right_col}
             >
-              <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+              <PlayerHands playerId={playerId} />
             </div>
           </div>
 
@@ -325,7 +325,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
               backgroundImage: `url(${backgroundUrl})`,
             }}
           >
-            <PlayerHands playerId={playerId} backgroundUrl={backgroundUrl} />
+            <PlayerHands playerId={playerId} />
           </div>
 
           <table

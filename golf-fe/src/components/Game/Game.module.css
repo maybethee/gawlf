@@ -7,6 +7,7 @@
   display: flex;
   flex-flow: column;
   align-items: center;
+  overflow-x: hidden;
 }
 
 .game_container,
@@ -146,9 +147,14 @@
   margin: 2rem 3rem 3rem 3rem;
 }
 
-.right_col > div:first-child {
+.right_col > div:first-child,
+.final_hands_results > div:first-child {
   padding: 2.5rem 1rem 1rem 1rem;
 }
+
+/* .final_hands_results > div:first-child > div {
+  align-items: center;
+} */
 
 .information {
   animation: cycle-color 1.8s infinite;
@@ -189,7 +195,7 @@
 }
 
 .final_hands_results {
-  margin: 0rem 2rem 4rem 0em;
+  margin: 0rem 0rem 4rem 0rem;
 }
 
 .total_scores_table {

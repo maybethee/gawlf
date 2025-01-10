@@ -4,7 +4,6 @@ import { createPlayer, fetchJoinedPlayers } from "../../utils/api";
 import { useGame } from "../../context/useGame";
 import styles from "./Lobby.module.css";
 import { ChevronLeft } from "lucide-react";
-import { isObject } from "chart.js/helpers";
 
 function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
   const {
