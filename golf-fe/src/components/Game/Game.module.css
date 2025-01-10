@@ -32,12 +32,15 @@
 }
 
 .history_btn {
+  max-height: 85px;
   margin-left: 0.2rem;
   background-color: transparent;
   font-size: 2rem;
   padding: 0;
   border: none;
   font-weight: 800;
+  display: flex;
+  align-items: center;
 }
 
 .history_btn:hover {

@@ -3,7 +3,7 @@ import { getUserDataFromBackend } from "../../utils/api";
 import GameRecord from "./GameRecord";
 import RecordSlider from "./RecordSlider";
 import styles from "./Profile.module.css";
-import { GalleryHorizontal, List } from "lucide-react";
+import { GalleryHorizontal, List, UserRoundSearch } from "lucide-react";
 
 function Profile({ userId, setViewingProfile }) {
   const [userData, setUserData] = useState(null);
@@ -16,8 +16,16 @@ function Profile({ userId, setViewingProfile }) {
   useEffect(() => {
     const getUserData = async () => {
       const data = await getUserDataFromBackend(userId);
-      setUserData(data);
-      console.log(data);
+
+      const filteredGames = data.games.filter((game) => {
+        return Object.keys(game.summary).length !== 0;
+      });
+
+      const filteredData = { user: data.user, games: filteredGames };
+
+      setUserData(filteredData);
+      console.log("unfiltered data:", data);
+      console.log("filtered data:", filteredData);
     };
 
     getUserData();
@@ -67,6 +75,8 @@ function Profile({ userId, setViewingProfile }) {
       worstScoreRound: `worst round score: ${
         worstScoreRound().worst_round
       } on ${worstScoreRound().date}`,
+      avgScoreGame: `average total score: ${avgScoreGame()} points`,
+      avgScoreRound: `average round score: ${avgScoreRound()} points`,
     };
   };
 
@@ -109,7 +119,19 @@ function Profile({ userId, setViewingProfile }) {
   const bestScoreGame = () => {
     if (!userData) return null;
 
-    const filteredData = filterDataByPlayerCount();
+    const filteredDataByCount = filterDataByPlayerCount();
+
+    // filters out unfinished games from skewing total score stats
+    const filteredGames = filteredDataByCount.games.filter((game) => {
+      return game.summary.players[0].round_scores.length === 9;
+    });
+
+    const filteredData = {
+      user: filteredDataByCount.user,
+      games: filteredGames,
+    };
+
+    // console.log("filtered data in best score game:", filteredData);
 
     const usersTotalScores = filteredData.games.map((game) => {
       const gameTotal = game.summary.players.find(
@@ -158,6 +180,41 @@ function Profile({ userId, setViewingProfile }) {
     );
   };
 
+  const avgScoreGame = () => {
+    if (!userData) return null;
+
+    const filteredDataByCount = filterDataByPlayerCount();
+
+    // filters out unfinished games from skewing total score stats
+    const filteredGames = filteredDataByCount.games.filter((game) => {
+      return game.summary.players[0].round_scores.length === 9;
+    });
+
+    const filteredData = {
+      user: filteredDataByCount.user,
+      games: filteredGames,
+    };
+
+    // console.log("filtered data in best score game:", filteredData);
+
+    const usersTotalScores = filteredData.games.map((game) => {
+      const gameTotal = game.summary.players.find(
+        (player) => player.user_id === filteredData.user.id
+      );
+
+      return gameTotal.total_score;
+    });
+
+    if (usersTotalScores.length === 0) {
+      return null;
+    }
+
+    console.log("all total scores?:", usersTotalScores);
+    const sum = usersTotalScores.reduce((sum, round) => sum + round, 0);
+    const avg = sum / usersTotalScores.length;
+    return avg.toFixed(0);
+  };
+
   const bestScoreRound = () => {
     if (!userData) return null;
 
@@ -176,7 +233,6 @@ function Profile({ userId, setViewingProfile }) {
         date: game.created_at.split("T", 1)[0],
       };
     });
-
     if (usersRoundScores.length === 0) {
       return null;
     }
@@ -184,6 +240,30 @@ function Profile({ userId, setViewingProfile }) {
     return usersRoundScores.reduce((lowestObj, currObj) =>
       currObj.best_round < lowestObj.best_round ? currObj : lowestObj
     );
+  };
+
+  const avgScoreRound = () => {
+    if (!userData) return null;
+
+    const filteredData = filterDataByPlayerCount();
+
+    const usersRoundScores = filteredData.games
+      .map((game) => {
+        const gameRoundScores = game.summary.players.find(
+          (player) => player.user_id === filteredData.user.id
+        );
+
+        return gameRoundScores.round_scores;
+      })
+      .flat();
+    if (usersRoundScores.length === 0) {
+      return null;
+    }
+
+    console.log("all round scores?:", usersRoundScores);
+    const sum = usersRoundScores.reduce((sum, round) => sum + round, 0);
+    const avg = sum / usersRoundScores.length;
+    return avg.toFixed(0);
   };
 
   const worstScoreRound = () => {
@@ -294,7 +374,15 @@ function Profile({ userId, setViewingProfile }) {
 
   return (
     <div className={styles.profile_container}>
-      <h2>{userData.user.username}</h2>
+      <div className={styles.username}>
+        <h2>{userData.user.username}</h2>
+        <p>
+          Aliases:{" "}
+          {playerAliases().map((name, index) =>
+            index === playerAliases().length - 1 ? name : name + ", "
+          )}
+        </p>
+      </div>
 
       <div className={styles.game_history_container}>
         <div className={styles.game_history_header}>
@@ -393,7 +481,6 @@ function Profile({ userId, setViewingProfile }) {
               {Object.keys(stats).map((key) => {
                 return <li key={key}>{stats[key]}</li>;
               })}
-              <li>Aliases: {playerAliases()}</li>
             </ul>
           )}
         </div>
