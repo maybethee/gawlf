@@ -88,7 +88,7 @@ test:
 production:
   adapter: postgresql
   encoding: unicode
-  database: your_database_name
+  database: gawlf-db
   username: postgres
   password: khwfHSIPKVubSja
   host: gawlf-db.internal

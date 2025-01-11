@@ -2,13 +2,56 @@ import { useGame } from "../../context/useGame";
 import PlayerHands from "./PlayerHands";
 import TheDayThat from "./TheDayThat/TheDayThat";
 import styles from "./Game.module.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import UIOptions from "./UIOptions";
 import { Eye, Play } from "lucide-react";
+import turnSound from "./../../../public/your-turn.mp3";
+
+function notifyTurnUntilVisible() {
+  const originalTitle = document.title;
+  const originalFavicon = document.querySelector("link[rel='icon']").href;
+
+  const turnFaviconURL = "/../../../public/diamond.png";
+
+  const setFavicon = (url) => {
+    const favicon = document.querySelector("link[rel='icon']");
+    if (favicon) {
+      favicon.href = url;
+    } else {
+      const newFavicon = document.createElement("link");
+      newFavicon.rel = "icon";
+      newFavicon.href = url;
+      document.head.appendChild(newFavicon);
+    }
+  };
+
+  setFavicon(turnFaviconURL);
+
+  let flashInterval = setInterval(() => {
+    document.title =
+      document.title === "Your Turn!" ? originalTitle : "Your Turn!";
+  }, 1000);
+
+  const visibilityChangeHandler = () => {
+    if (document.visibilityState === "visible") {
+      clearInterval(flashInterval);
+      document.title = originalTitle;
+      setFavicon(originalFavicon);
+    }
+  };
+
+  document.addEventListener("visibilitychange", visibilityChangeHandler);
+
+  return () => {
+    clearInterval(flashInterval);
+    document.title = originalTitle;
+    document.removeEventListener("visibilitychange", visibilityChangeHandler);
+    setFavicon(originalFavicon);
+  };
+}
 
 function Game({ gameId, playerId, isLobbyHost }) {
   const {
-    // setLobbyStatus,
     currentHole,
     drawnCard,
     discardPile,
@@ -30,6 +73,9 @@ function Game({ gameId, playerId, isLobbyHost }) {
   } = useGame();
 
   const [checkingHistory, setCheckingHistory] = useState(false);
+  const [notified, setNotified] = useState(false);
+  const tabVisible = useRef(true);
+  const cleanupRef = useRef(null);
 
   const handleDrawCard = () => {
     console.log("Drawing card for player:", playerId);
@@ -51,6 +97,61 @@ function Game({ gameId, playerId, isLobbyHost }) {
   };
 
   const isPlayerTurn = currentPlayerId === playerId;
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      tabVisible.current = !document.hidden;
+
+      if (tabVisible.current && cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+
+        if (!isPlayerTurn) {
+          setNotified(false);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isPlayerTurn]);
+
+  useEffect(() => {
+    console.log("useEffect triggered:");
+
+    if (
+      isPlayerTurn &&
+      !notified &&
+      !initializingGame &&
+      !roundOver &&
+      !gameOver
+    ) {
+      const audio = new Audio(turnSound);
+      audio.volume = 0.4; // Set volume to 50%
+
+      audio
+        .play()
+        .catch((error) => console.error("Error playing audio", error));
+
+      if (!tabVisible.current) {
+        console.log("tab is not visible: starting tab flashing...");
+        cleanupRef.current = notifyTurnUntilVisible();
+      }
+
+      setNotified(true);
+    } else if (!isPlayerTurn) {
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
+      setNotified(false);
+    } else {
+      console.log("No action taken this render.");
+    }
+  }, [isPlayerTurn, notified, initializingGame, roundOver, gameOver]);
 
   const sortedTotalScores =
     allRoundScores.length > 0
@@ -130,10 +231,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
     console.log("background updated (Game.jsx) to", newUrl);
     setBackgroundUrl(newUrl);
   };
-
-  // useEffect(() => {
-  //   console.log("Updated background URL:", backgroundUrl);
-  // }, [backgroundUrl]);
 
   if (!gameId) {
     return null;

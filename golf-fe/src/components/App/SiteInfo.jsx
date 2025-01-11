@@ -11,6 +11,29 @@ function SiteInfo({ setViewingInfo }) {
         <p>
           Made by <a href="https://github.com/maybethee">maybethee</a>
         </p>
+
+        <p>Favicons:</p>
+        <ul>
+          <li>
+            <a
+              href="https://www.flaticon.com/free-icons/spades"
+              title="spades icons"
+            >
+              Spades icons
+            </a>{" "}
+            created by Smashicons - Flaticon
+          </li>
+          <li>
+            <a
+              href="https://www.flaticon.com/free-icons/diamond"
+              title="diamond icons"
+            >
+              Diamond icons
+            </a>{" "}
+            created by Smashicons - Flaticon
+          </li>
+        </ul>
+
         <p>
           Most card backs illustrations, as well as some backgrounds - Designed
           by <a href="https://www.freepik.com">Freepik</a>
