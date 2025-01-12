@@ -8,24 +8,24 @@ function Root() {
   const [user, setUser] = useState(null);
 
   return (
-    // <StrictMode>
-    <div className={styles.main_container}>
-      {!user && (
-        <div className={styles.user_btns_container}>
-          <UserBtns setUser={setUser} />
-        </div>
-      )}
+    <StrictMode>
+      <div className={styles.main_container}>
+        {!user && (
+          <div className={styles.user_btns_container}>
+            <UserBtns setUser={setUser} />
+          </div>
+        )}
 
-      <div
-        style={{ opacity: !user ? ".3" : "1", transition: "opacity .7s" }}
-        className={styles.app_container}
-      >
-        <GameProvider>
-          <App userId={user?.id} guest={user?.guest} />
-        </GameProvider>
+        <div
+          style={{ opacity: !user ? ".3" : "1", transition: "opacity .7s" }}
+          className={styles.app_container}
+        >
+          <GameProvider>
+            <App userId={user?.id} guest={user?.guest} />
+          </GameProvider>
+        </div>
       </div>
-    </div>
-    // {/* </StrictMode> */}
+    </StrictMode>
   );
 }
 

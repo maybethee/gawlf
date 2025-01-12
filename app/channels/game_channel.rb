@@ -45,11 +45,17 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def swap_card(data)
+    Rails.logger.debug("GameChannel swap_card called with data: #{data}")
+
     # @player = Player.lock.find(data['player_id'])
     broadcast_message = nil
     ActiveRecord::Base.transaction do
       @game = Game.find(params[:game_id])
       @player = Player.find(data['player_id'])
+
+      Rails.logger.debug("card to swap: #{data['card_to_swap']}")
+
+      Rails.logger.debug("origin: #{data['swap_origin']}")
 
       new_card = if data['swap_origin'] == 'deck'
                    @game.game_state['drawn_card']
@@ -59,6 +65,7 @@ class GameChannel < ApplicationCable::Channel
       new_card['visibility'] = 'revealed'
 
       updated_hand = @player.hand.map do |card|
+        Rails.logger.debug("mapping over player hand:\n\ncard: #{card['id']} #{card['rank']} #{card['suit']}\n\ncard to swap: #{data['card_to_swap']}")
         if card['id'] == data['card_to_swap']['id']
           new_card
         else
@@ -85,7 +92,7 @@ class GameChannel < ApplicationCable::Channel
         Rails.logger.debug('now updating stats...')
         @game.update_stats(curr_round_scores, @game.hole)
         # finalize game if last hole
-        if @game.hole == 3
+        if @game.hole == 9
           all_round_scores = @game.all_round_scores
           Rails.logger.debug("finalizing game, all round scores: #{all_round_scores.inspect}")
           summary_update = @game.update_summary

@@ -63,7 +63,7 @@ function PlayerHands({ playerId }) {
           performAction("swap_card", {
             player_id: playerId,
             card_to_swap: card,
-            swap_origin: "discard",
+            swap_origin: "deck",
           });
         }, 250);
 

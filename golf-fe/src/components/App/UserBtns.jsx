@@ -57,7 +57,9 @@ function UserBtns({ setUser }) {
           <button disabled={true} onClick={redirectToRegister}>
             Register
           </button>
-          <button onClick={redirectToLogin}>Login</button>
+          <button disabled={true} onClick={redirectToLogin}>
+            Login
+          </button>
           <button onClick={handleGuestLogin}>Play as Guest</button>
         </div>
       )}
