@@ -319,6 +319,13 @@ class GameChannel < ApplicationCable::Channel
     @game.save
   end
 
+  def play_audio(data)
+    ActionCable.server.broadcast("game_#{params[:game_id]}", {
+                                   action: 'audio_played',
+                                   audio_clip: data['audio_clip']
+                                 })
+  end
+
   def all_revealed?(hand)
     hand.all? { |card| card['visibility'] == 'revealed' }
   end

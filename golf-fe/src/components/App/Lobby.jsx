@@ -53,7 +53,11 @@ function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
   let isJoined = joinedPlayers?.find((player) => player.user_id === userId);
 
   const handleSetupGame = () => {
-    performAction("setup_game");
+    performAction("play_audio", { audio_clip: "/assets/shuffle.mp3" });
+
+    setTimeout(() => {
+      performAction("setup_game");
+    }, 300);
   };
 
   if (lobbyStatus !== "active")

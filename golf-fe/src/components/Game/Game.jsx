@@ -5,13 +5,13 @@ import styles from "./Game.module.css";
 import { useState, useEffect, useRef } from "react";
 import UIOptions from "./UIOptions";
 import { Eye, Play } from "lucide-react";
-import turnSound from "./../../../public/your-turn.mp3";
+import turnSound from "/assets/your-turn.mp3";
 
 function notifyTurnUntilVisible() {
   const originalTitle = document.title;
   const originalFavicon = document.querySelector("link[rel='icon']").href;
 
-  const turnFaviconURL = "/../../../public/diamond.png";
+  const turnFaviconURL = "/assets/diamond.png";
 
   const setFavicon = (url) => {
     const favicon = document.querySelector("link[rel='icon']");
@@ -26,6 +26,10 @@ function notifyTurnUntilVisible() {
   };
 
   setFavicon(turnFaviconURL);
+
+  const audio = new Audio(turnSound);
+  audio.volume = 0.4;
+  audio.play().catch((error) => console.error("Error playing audio", error));
 
   let flashInterval = setInterval(() => {
     document.title =
@@ -80,7 +84,11 @@ function Game({ gameId, playerId, isLobbyHost }) {
   const handleDrawCard = () => {
     console.log("Drawing card for player:", playerId);
 
-    performAction("draw_card", { player_id: playerId });
+    performAction("play_audio", { audio_clip: "/assets/flip.mp3" });
+
+    setTimeout(() => {
+      performAction("draw_card", { player_id: playerId });
+    }, 300);
   };
 
   const handleDiscardPileClick = (card = null) => {
@@ -90,7 +98,12 @@ function Game({ gameId, playerId, isLobbyHost }) {
     }
     if (drawnCard) {
       console.log("discarding drawn card");
-      performAction("discard_card", { player_id: playerId });
+
+      performAction("play_audio", { audio_clip: "/assets/place.mp3" });
+
+      setTimeout(() => {
+        performAction("discard_card", { player_id: playerId });
+      }, 200);
     } else {
       setSelectedDiscardPile(card);
     }
@@ -124,22 +137,14 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
     if (
       isPlayerTurn &&
+      !tabVisible.current &&
       !notified &&
       !initializingGame &&
       !roundOver &&
       !gameOver
     ) {
-      const audio = new Audio(turnSound);
-      audio.volume = 0.4; // Set volume to 50%
-
-      audio
-        .play()
-        .catch((error) => console.error("Error playing audio", error));
-
-      if (!tabVisible.current) {
-        console.log("tab is not visible: starting tab flashing...");
-        cleanupRef.current = notifyTurnUntilVisible();
-      }
+      console.log("tab is not visible: starting tab flashing...");
+      cleanupRef.current = notifyTurnUntilVisible();
 
       setNotified(true);
     } else if (!isPlayerTurn) {

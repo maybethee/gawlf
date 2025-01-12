@@ -89,6 +89,8 @@ export const GameProvider = ({ children }) => {
       handleCardRevealed(data);
     } else if (data.action === "day_recorded") {
       handleTheDayThat(data);
+    } else if (data.action === "audio_played") {
+      playAudio(data.audio_clip);
     }
   };
 
@@ -286,6 +288,12 @@ export const GameProvider = ({ children }) => {
     setRecordedTheDayThat("");
     setLobbyStatus("");
     setPlayerHands([]);
+  };
+
+  const playAudio = (audioClip) => {
+    const audio = new Audio(audioClip);
+    audio.volume = 0.4;
+    audio.play().catch((error) => console.error("Error playing audio", error));
   };
 
   return (

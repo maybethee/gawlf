@@ -40,18 +40,36 @@ function PlayerHands({ playerId }) {
         return;
       } else if (!drawnCard) {
         console.log("swapping card with discard pile card");
-        performAction("swap_card", {
-          player_id: playerId,
-          card_to_swap: card,
-          swap_origin: "discard",
-        });
+
+        performAction("play_audio", { audio_clip: "/assets/place.mp3" });
+
+        setTimeout(() => {
+          performAction("swap_card", {
+            player_id: playerId,
+            card_to_swap: card,
+            swap_origin: "discard",
+          });
+        }, 250);
+
+        setTimeout(() => {
+          performAction("play_audio", { audio_clip: "/assets/flip.mp3" });
+        }, 200);
       } else {
         console.log("swapping card with drawn card");
-        performAction("swap_card", {
-          player_id: playerId,
-          card_to_swap: card,
-          swap_origin: "deck",
-        });
+
+        performAction("play_audio", { audio_clip: "/assets/place.mp3" });
+
+        setTimeout(() => {
+          performAction("swap_card", {
+            player_id: playerId,
+            card_to_swap: card,
+            swap_origin: "discard",
+          });
+        }, 250);
+
+        setTimeout(() => {
+          performAction("play_audio", { audio_clip: "/assets/flip.mp3" });
+        }, 200);
       }
     }
   };
@@ -84,11 +102,16 @@ function PlayerHands({ playerId }) {
     } else {
       console.log("selected cards:", selectedCards);
       console.log("revealing cards...");
-      performAction("reveal_cards", {
-        player_id: playerId,
-        cards: selectedCards,
-      });
-      // make sure this doesn't interfere with other players
+
+      performAction("play_audio", { audio_clip: "/assets/flip.mp3" });
+
+      setTimeout(() => {
+        performAction("reveal_cards", {
+          player_id: playerId,
+          cards: selectedCards,
+        });
+      }, 150);
+
       setSelectedCards([]);
       setInitializingGame(false);
     }

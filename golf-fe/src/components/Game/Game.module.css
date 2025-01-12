@@ -8,6 +8,7 @@
   flex-flow: column;
   align-items: center;
   overflow-x: hidden;
+  /* font-size: 20px; */
 }
 
 .game_container,
@@ -93,6 +94,7 @@
 }
 
 .turn_message {
+  font-size: 20px;
   margin-bottom: 1rem;
   background-color: #f87171;
   color: #374151;
