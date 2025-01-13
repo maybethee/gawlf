@@ -3,6 +3,7 @@ import UserBtns from "./components/App/UserBtns";
 import App from "./components/App/App";
 import { GameProvider } from "./context/GameProvider";
 import styles from "./Root.module.css";
+import { AudioProvider } from "./context/AudioProvider";
 
 function Root() {
   const [user, setUser] = useState(null);
@@ -20,9 +21,11 @@ function Root() {
           style={{ opacity: !user ? ".3" : "1", transition: "opacity .7s" }}
           className={styles.app_container}
         >
-          <GameProvider>
-            <App userId={user?.id} guest={user?.guest} />
-          </GameProvider>
+          <AudioProvider>
+            <GameProvider>
+              <App userId={user?.id} guest={user?.guest} />
+            </GameProvider>
+          </AudioProvider>
         </div>
       </div>
     </StrictMode>

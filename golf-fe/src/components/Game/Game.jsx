@@ -1,4 +1,5 @@
 import { useGame } from "../../context/useGame";
+import { useAudio } from "../../context/useAudio";
 import PlayerHands from "./PlayerHands";
 import TheDayThat from "./TheDayThat/TheDayThat";
 import styles from "./Game.module.css";
@@ -7,7 +8,7 @@ import UIOptions from "./UIOptions";
 import { Eye, Play } from "lucide-react";
 import turnSound from "/assets/your-turn.mp3";
 
-function notifyTurnUntilVisible() {
+function notifyTurnUntilVisible(globalVolume) {
   const originalTitle = document.title;
   const originalFavicon = document.querySelector("link[rel='icon']").href;
 
@@ -28,7 +29,7 @@ function notifyTurnUntilVisible() {
   setFavicon(turnFaviconURL);
 
   const audio = new Audio(turnSound);
-  audio.volume = 0.4;
+  audio.volume = globalVolume;
   audio.play().catch((error) => console.error("Error playing audio", error));
 
   let flashInterval = setInterval(() => {
@@ -75,6 +76,8 @@ function Game({ gameId, playerId, isLobbyHost }) {
     displayCardContent,
     handleCleanup,
   } = useGame();
+
+  const { globalVolume } = useAudio();
 
   const [checkingHistory, setCheckingHistory] = useState(false);
   const [notified, setNotified] = useState(false);
@@ -144,7 +147,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
       !gameOver
     ) {
       console.log("tab is not visible: starting tab flashing...");
-      cleanupRef.current = notifyTurnUntilVisible();
+      cleanupRef.current = notifyTurnUntilVisible(globalVolume);
 
       setNotified(true);
     } else if (!isPlayerTurn) {

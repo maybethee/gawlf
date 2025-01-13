@@ -53,9 +53,9 @@ class GameChannel < ApplicationCable::Channel
       @game = Game.find(params[:game_id])
       @player = Player.find(data['player_id'])
 
-      Rails.logger.debug("card to swap: #{data['card_to_swap']}")
+      # Rails.logger.debug("card to swap: #{data['card_to_swap']}")
 
-      Rails.logger.debug("origin: #{data['swap_origin']}")
+      # Rails.logger.debug("origin: #{data['swap_origin']}")
 
       new_card = if data['swap_origin'] == 'deck'
                    @game.game_state['drawn_card']
@@ -65,7 +65,7 @@ class GameChannel < ApplicationCable::Channel
       new_card['visibility'] = 'revealed'
 
       updated_hand = @player.hand.map do |card|
-        Rails.logger.debug("mapping over player hand:\n\ncard: #{card['id']} #{card['rank']} #{card['suit']}\n\ncard to swap: #{data['card_to_swap']}")
+        # Rails.logger.debug("mapping over player hand:\n\ncard: #{card['id']} #{card['rank']} #{card['suit']}\n\ncard to swap: #{data['card_to_swap']}")
         if card['id'] == data['card_to_swap']['id']
           new_card
         else

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { GameContext } from "./GameContext";
+import { useAudio } from "./useAudio";
 import cable from "../utils/cable";
 
 export const GameProvider = ({ children }) => {
@@ -26,6 +27,12 @@ export const GameProvider = ({ children }) => {
   const [recordedTheDayThat, setRecordedTheDayThat] = useState("");
   const [isEditing, setIsEditing] = useState(true);
   const subscriptionRef = useRef(null);
+  const { globalVolume } = useAudio();
+  const globalVolumeRef = useRef(globalVolume);
+
+  useEffect(() => {
+    globalVolumeRef.current = globalVolume;
+  }, [globalVolume]);
 
   useEffect(() => {
     console.log("gameId changed to:", gameId);
@@ -92,6 +99,12 @@ export const GameProvider = ({ children }) => {
     } else if (data.action === "audio_played") {
       playAudio(data.audio_clip);
     }
+  };
+
+  const playAudio = (audioClip) => {
+    const audio = new Audio(audioClip);
+    audio.volume = globalVolumeRef.current;
+    audio.play().catch((error) => console.error("Error playing audio", error));
   };
 
   const handlePlayerJoined = (data) => {
@@ -288,12 +301,6 @@ export const GameProvider = ({ children }) => {
     setRecordedTheDayThat("");
     setLobbyStatus("");
     setPlayerHands([]);
-  };
-
-  const playAudio = (audioClip) => {
-    const audio = new Audio(audioClip);
-    audio.volume = 0.4;
-    audio.play().catch((error) => console.error("Error playing audio", error));
   };
 
   return (

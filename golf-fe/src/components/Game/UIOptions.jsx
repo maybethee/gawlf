@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { ArrowRightToLine, ArrowLeftFromLine } from "lucide-react";
 import styles from "./UIOptions.module.css";
+import AudioSlider from "./AudioSlider";
+import { useAudio } from "../../context/useAudio";
 
 function UIOptions({ updateBackground, backgrounds }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectionToggle, setSelectionToggle] = useState(true);
   const [cardBackUrl, setCardBackUrl] = useState("/assets/card-back-9.jpg");
+  const { globalVolume, setGlobalVolume } = useAudio();
 
   const toggleDrawer = () => {
     setIsOpen((prev) => !prev);
@@ -39,6 +42,10 @@ function UIOptions({ updateBackground, backgrounds }) {
   const handleCardBackChange = (key) => {
     const newUrl = cardBacks[key];
     setCardBackUrl(newUrl);
+  };
+
+  const handleVolumeChange = (newValue) => {
+    setGlobalVolume(newValue / 100);
   };
 
   return (
@@ -88,6 +95,13 @@ function UIOptions({ updateBackground, backgrounds }) {
             </ul>
           </div>
         )}
+
+        <div>
+          <AudioSlider
+            value={globalVolume * 100}
+            onValueChange={handleVolumeChange}
+          />
+        </div>
       </div>
       <div className={styles.tab} onClick={toggleDrawer}>
         {isOpen ? (
