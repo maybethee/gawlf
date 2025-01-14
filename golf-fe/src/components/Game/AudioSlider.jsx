@@ -1,15 +1,38 @@
+import { useEffect, useRef } from "react";
 import Slider from "@mui/material/Slider";
+import placeSound from "/assets/place.mp3";
 
 function AudioSlider({ value, onValueChange }) {
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio(placeSound);
+    audioRef.current.preload = "auto";
+    return () => {
+      audioRef.current = null;
+    };
+  }, []);
+
   const handleChange = (event, newVal) => {
     onValueChange(newVal);
   };
 
+  const handleMouseRelease = () => {
+    if (audioRef.current) {
+      audioRef.current.volume = value / 100;
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((error) => {
+        console.error("Error playing audio:", error);
+      });
+    }
+  };
+
   return (
     <Slider
-      style={{ width: 300 }}
+      style={{ width: 150 }}
       value={value}
       onChange={handleChange}
+      onChangeCommitted={handleMouseRelease}
       min={0}
       max={100}
       aria-label="Audio Volume Slider"
@@ -23,11 +46,11 @@ function AudioSlider({ value, onValueChange }) {
           backgroundColor: "gray",
           boxShadow: "none",
           "&:hover, &.Mui-focusVisible": {
-            backgroundColor: "darkgray",
+            backgroundColor: "#374151",
           },
         },
         "& .MuiSlider-rail": {
-          backgroundColor: "lightgray",
+          backgroundColor: "#e11d47",
         },
         "& .MuiSlider-track": {
           display: "none",

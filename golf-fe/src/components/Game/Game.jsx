@@ -220,18 +220,31 @@ function Game({ gameId, playerId, isLobbyHost }) {
     return classes;
   };
 
-  const backgrounds = {
-    wood: "/assets/bg-2.jpg",
-    paint: "/assets/bg-1.jpg",
-    leaves: "/assets/bg-3.jpg",
-    pool: "/assets/bg-4.jpg",
-    cow: "/assets/bg-5.jpg",
-    marble: "/assets/bg-6.jpg",
-    giraffe: "/assets/bg-8.jpg",
-    flower: "/assets/bg-9.jpg",
-    clover: "/assets/bg-10.jpg",
-    sunrise: "/assets/bg-11.jpg",
-  };
+  // const backgrounds = {
+  //   wood: "/assets/bg-2.jpg",
+  //   paint: "/assets/bg-1.jpg",
+  //   leaves: "/assets/bg-3.jpg",
+  //   pool: "/assets/bg-4.jpg",
+  //   cow: "/assets/bg-5.jpg",
+  //   marble: "/assets/bg-6.jpg",
+  //   giraffe: "/assets/bg-8.jpg",
+  //   flower: "/assets/bg-9.jpg",
+  //   clover: "/assets/bg-10.jpg",
+  //   sunrise: "/assets/bg-11.jpg",
+  // };
+
+  const backgrounds = [
+    { value: "/assets/bg-2.jpg", label: "wood" },
+    { value: "/assets/bg-1.jpg", label: "paint" },
+    { value: "/assets/bg-3.jpg", label: "leaves" },
+    { value: "/assets/bg-4.jpg", label: "pool" },
+    { value: "/assets/bg-5.jpg", label: "cow" },
+    { value: "/assets/bg-6.jpg", label: "marble" },
+    { value: "/assets/bg-8.jpg", label: "giraffe" },
+    { value: "/assets/bg-9.jpg", label: "flower" },
+    { value: "/assets/bg-10.jpg", label: "clover" },
+    { value: "/assets/bg-11.jpg", label: "sunrise" },
+  ];
 
   const [backgroundUrl, setBackgroundUrl] = useState("/assets/bg-2.jpg");
 

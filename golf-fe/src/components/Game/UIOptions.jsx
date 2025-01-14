@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { ArrowRightToLine, ArrowLeftFromLine } from "lucide-react";
+import { ArrowRightToLine, Settings } from "lucide-react";
 import styles from "./UIOptions.module.css";
 import AudioSlider from "./AudioSlider";
 import { useAudio } from "../../context/useAudio";
+import { Volume1, Volume2 } from "lucide-react";
 
 function UIOptions({ updateBackground, backgrounds }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectionToggle, setSelectionToggle] = useState(true);
   const [cardBackUrl, setCardBackUrl] = useState("/assets/card-back-9.jpg");
   const { globalVolume, setGlobalVolume } = useAudio();
 
@@ -14,8 +14,8 @@ function UIOptions({ updateBackground, backgrounds }) {
     setIsOpen((prev) => !prev);
   };
 
-  const handleBackgroundChange = (name) => {
-    updateBackground(backgrounds[name]);
+  const handleBackgroundChange = (event) => {
+    updateBackground(event.target.value);
   };
 
   useEffect(() => {
@@ -27,20 +27,20 @@ function UIOptions({ updateBackground, backgrounds }) {
     );
   }, [cardBackUrl]);
 
-  const cardBacks = {
-    traditional: "/assets/card-back-9.jpg",
-    squiggle: "/assets/card-back-1.png",
-    abstract: "/assets/card-back-2.jpg",
-    fabric: "/assets/card-back-4.jpg",
-    blobs: "/assets/card-back-5.jpg",
-    waterfall: "/assets/card-back-6.jpg",
-    geometric: "/assets/card-back-7.jpg",
-    halftone: "/assets/card-back-8.png",
-    odo: "/assets/card-back-10.png",
-  };
+  const cardBacks = [
+    { value: "/assets/card-back-9.jpg", label: "traditional" },
+    { value: "/assets/card-back-1.png", label: "squiggle" },
+    { value: "/assets/card-back-2.jpg", label: "abstract" },
+    { value: "/assets/card-back-4.jpg", label: "fabric" },
+    { value: "/assets/card-back-5.jpg", label: "blobs" },
+    { value: "/assets/card-back-6.jpg", label: "waterfall" },
+    { value: "/assets/card-back-7.jpg", label: "geometric" },
+    { value: "/assets/card-back-8.png", label: "halftone" },
+    { value: "/assets/card-back-10.png", label: "odo" },
+  ];
 
-  const handleCardBackChange = (key) => {
-    const newUrl = cardBacks[key];
+  const handleCardBackChange = (event) => {
+    const newUrl = event.target.value;
     setCardBackUrl(newUrl);
   };
 
@@ -55,59 +55,59 @@ function UIOptions({ updateBackground, backgrounds }) {
       }`}
     >
       <div className={styles.selection_drawer}>
-        <div className={styles.category_btns}>
-          <button
-            className={selectionToggle ? styles.selected_category : ""}
-            onClick={() => setSelectionToggle(true)}
-          >
-            Card Backs
-          </button>
-          <button
-            className={!selectionToggle ? styles.selected_category : ""}
-            onClick={() => setSelectionToggle(false)}
-          >
-            Backgrounds
-          </button>
-        </div>
-
-        {selectionToggle ? (
-          <div className={styles.options_selection}>
-            <ul>
-              {Object.keys(cardBacks).map((key) => (
-                <li key={key}>
-                  <button onClick={() => handleCardBackChange(key)}>
-                    {key}
-                  </button>
-                </li>
-              ))}
-            </ul>
+        <div className={styles.options_selection}>
+          <div className={styles.option_container}>
+            <h3>Card Backs</h3>
+            <form action="">
+              <select name="" id="" onChange={handleCardBackChange}>
+                {cardBacks.map((style) => {
+                  return (
+                    <option key={style.value} value={style.value}>
+                      {style.label}
+                    </option>
+                  );
+                })}
+              </select>
+            </form>
           </div>
-        ) : (
-          <div className={styles.options_selection}>
-            <ul>
-              {Object.keys(backgrounds).map((key) => (
-                <li key={key}>
-                  <button onClick={() => handleBackgroundChange(key)}>
-                    {key}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
-        <div>
-          <AudioSlider
-            value={globalVolume * 100}
-            onValueChange={handleVolumeChange}
-          />
+          <div className={styles.option_container}>
+            <h3>Backgrounds</h3>
+            <form action="">
+              <select name="" id="" onChange={handleBackgroundChange}>
+                {backgrounds.map((background) => {
+                  return (
+                    <option key={background.value} value={background.value}>
+                      {background.label}
+                    </option>
+                  );
+                })}
+              </select>
+            </form>
+          </div>
+
+          <div className={styles.option_container}>
+            <h3>Audio Volume</h3>
+            <div className={styles.slider_container}>
+              <span>
+                <Volume1 />
+              </span>
+              <AudioSlider
+                value={globalVolume * 100}
+                onValueChange={handleVolumeChange}
+              />
+              <span>
+                <Volume2 />
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <div className={styles.tab} onClick={toggleDrawer}>
         {isOpen ? (
           <ArrowRightToLine size={32} strokeWidth={2} />
         ) : (
-          <ArrowLeftFromLine size={32} strokeWidth={2} />
+          <Settings size={32} strokeWidth={2} />
         )}
       </div>
     </div>
