@@ -19,7 +19,7 @@ function UIOptions({ updateBackground, backgrounds }) {
   };
 
   useEffect(() => {
-    console.log("Updating card back:", cardBackUrl); // Debugging line
+    console.log("Updating card back:", cardBackUrl);
 
     document.documentElement.style.setProperty(
       "--card-back",

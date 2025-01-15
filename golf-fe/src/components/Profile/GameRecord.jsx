@@ -23,7 +23,8 @@ function GameRecord({ gameData, viewList }) {
       </div>
       {collapsed && viewList ? null : (
         <div>
-          {gameData.summary && gameData.summary.players.length > 0 && (
+          {Object.keys(gameData.summary).length !== 0 &&
+          gameData.summary.players.length > 0 ? (
             <table className={styles.compact_table}>
               <tbody>
                 <tr>
@@ -61,6 +62,8 @@ function GameRecord({ gameData, viewList }) {
                 })}
               </tbody>
             </table>
+          ) : (
+            <p>No scores found :(</p>
           )}
         </div>
       )}

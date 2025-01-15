@@ -32,11 +32,15 @@
 
 .compact_th,
 .compact_td {
-  padding: 7px 5px;
   border: 1px solid #f87171;
 }
 
 .compact_th {
   background-color: #374151;
   color: #fbe9d2;
+  padding: 7px 8px;
+}
+
+.compact_td {
+  padding: 7px 5px;
 }

@@ -3,7 +3,7 @@ import { getUserDataFromBackend } from "../../utils/api";
 import GameRecord from "./GameRecord";
 import RecordSlider from "./RecordSlider";
 import styles from "./Profile.module.css";
-import { GalleryHorizontal, List, UserRoundSearch } from "lucide-react";
+import { GalleryHorizontal, List, ChevronLeft } from "lucide-react";
 
 function Profile({ userId, setViewingProfile }) {
   const [userData, setUserData] = useState(null);
@@ -18,24 +18,33 @@ function Profile({ userId, setViewingProfile }) {
       const data = await getUserDataFromBackend(userId);
 
       const filteredGames = data.games.filter((game) => {
-        return Object.keys(game.summary).length !== 0;
+        const hasDay = game.the_day_that;
+        return Object.keys(game.summary).length !== 0 || hasDay;
       });
 
       const filteredData = { user: data.user, games: filteredGames };
 
       setUserData(filteredData);
-      console.log("unfiltered data:", data);
-      console.log("filtered data:", filteredData);
+      // console.log("unfiltered data:", data);
+      // console.log("filtered data:", filteredData);
     };
 
     getUserData();
   }, [userId]);
 
+  const gamesWithSummaries = (data) => {
+    return data.games.filter((game) => {
+      return Object.keys(game.summary).length !== 0;
+    });
+  };
+
   useEffect(() => {
     if (userData?.games?.length) {
       let playerCountsArr = [];
 
-      userData.games.forEach((game) => {
+      const games = gamesWithSummaries(userData);
+
+      games.forEach((game) => {
         const playerCount = game.summary.players.length;
 
         if (playerCount) {
@@ -87,10 +96,12 @@ function Profile({ userId, setViewingProfile }) {
   const filterDataByPlayerCount = () => {
     if (!userData) return null;
 
-    let gamesWithCount = userData.games;
+    const filteredGames = gamesWithSummaries(userData);
+
+    let gamesWithCount = filteredGames;
 
     if (statsFilter) {
-      gamesWithCount = userData.games.filter((game) => {
+      gamesWithCount = filteredGames.filter((game) => {
         return game.summary.players.length === statsFilter;
       });
     }
@@ -131,8 +142,6 @@ function Profile({ userId, setViewingProfile }) {
       games: filteredGames,
     };
 
-    // console.log("filtered data in best score game:", filteredData);
-
     const usersTotalScores = filteredData.games.map((game) => {
       const gameTotal = game.summary.players.find(
         (player) => player.user_id === filteredData.user.id
@@ -152,8 +161,6 @@ function Profile({ userId, setViewingProfile }) {
       currObj.score < lowestObj.score ? currObj : lowestObj
     );
   };
-
-  // const worstScoreGame = useMemo(() => {
 
   const worstScoreGame = () => {
     if (!userData) return null;
@@ -194,8 +201,6 @@ function Profile({ userId, setViewingProfile }) {
       user: filteredDataByCount.user,
       games: filteredGames,
     };
-
-    // console.log("filtered data in best score game:", filteredData);
 
     const usersTotalScores = filteredData.games.map((game) => {
       const gameTotal = game.summary.players.find(
@@ -296,10 +301,11 @@ function Profile({ userId, setViewingProfile }) {
 
   const playerAliases = () => {
     if (!userData) return null;
+    const filteredGames = gamesWithSummaries(userData);
 
     let aliases = [];
 
-    userData.games.map((game) => {
+    filteredGames.map((game) => {
       const player = game.summary.players.find(
         (player) => player.user_id === userData.user.id
       );
@@ -486,7 +492,9 @@ function Profile({ userId, setViewingProfile }) {
         </div>
       </div>
 
-      <button onClick={setViewingProfile}>Main Menu</button>
+      <div onClick={setViewingProfile} className={styles.back_btn}>
+        <ChevronLeft />
+      </div>
     </div>
   );
 }
