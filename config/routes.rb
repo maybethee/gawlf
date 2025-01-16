@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   resources :users, only: [:show]
 
   get '/current_user', to: 'sessions#show'
-  get '/create_lobby', to: 'lobbies#create'
+  post '/create_lobby', to: 'lobbies#create'
   post '/join_lobby', to: 'lobbies#join'
   post '/lobby_status', to: 'lobbies#status'
   post '/guest_users', to: 'guest_users#create'

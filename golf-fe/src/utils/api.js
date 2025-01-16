@@ -72,8 +72,14 @@ export const fetchJoinedPlayers = async (gameId) => {
   return response.json();
 };
 
-export const createLobby = async () => {
-  const response = await fetch(`${apiUrl}/create_lobby`);
+export const createLobby = async (userId) => {
+  const response = await fetch(`${apiUrl}/create_lobby`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ user_id: userId }),
+  });
   const data = await response.json();
 
   console.log(data.message);

@@ -1,15 +1,18 @@
 class LobbiesController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:create, :join, :status, :update_status]
+  skip_before_action :verify_authenticity_token, only: %i[create join status update_status]
 
   def create
+    user_id = params[:user_id]
+
     game = Game.create!(
       lobby_code: generate_unique_code,
       lobby_created_at: Time.current,
       game_state: {},
-      hole: 0
+      hole: 0,
+      creator_id: user_id
     )
 
-    render json: { message: 'Lobby created', game_id: game.id, lobby_code: game.lobby_code }
+    render json: { message: 'Lobby created', game_id: game.id, lobby_code: game.lobby_code, creator_id: game.creator_id }
   end
 
   def join
@@ -19,7 +22,7 @@ class LobbiesController < ApplicationController
     Rails.logger.debug("found game: #{game.inspect}")
 
     if game && game.status == 'waiting'
-      render json: { message: 'Joined lobby', game_id: game.id }
+      render json: { message: 'Joined lobby', game_id: game.id, creator_id: game.creator_id }
     else
       render json: { error: 'Lobby not found or already started' }, status: :not_found
     end

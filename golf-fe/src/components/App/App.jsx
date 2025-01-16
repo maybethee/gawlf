@@ -43,7 +43,7 @@ function App({ userId, guest }) {
   }, [gameId]);
 
   const handleCreateLobby = async () => {
-    const data = await createLobby();
+    const data = await createLobby(userId);
     console.log("create lobby game id:", data.game_id);
 
     setGameId(data.game_id);
@@ -65,6 +65,13 @@ function App({ userId, guest }) {
 
     const data = await joinLobby(lobbyCodeInput.toLowerCase());
     console.log("lobby data:", data);
+
+    if (data.creator_id === userId) {
+      setIsLobbyHost(true);
+    } else {
+      setIsLobbyHost(false);
+    }
+
     setGameId(data.game_id);
     setLobbyCode(lobbyCodeInput);
     setLobbyStatus("waiting");

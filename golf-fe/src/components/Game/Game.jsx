@@ -136,8 +136,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
   }, [isPlayerTurn]);
 
   useEffect(() => {
-    console.log("useEffect triggered:");
-
     if (
       isPlayerTurn &&
       !tabVisible.current &&
@@ -160,6 +158,12 @@ function Game({ gameId, playerId, isLobbyHost }) {
       console.log("No action taken this render.");
     }
   }, [isPlayerTurn, notified, initializingGame, roundOver, gameOver]);
+
+  useEffect(() => {
+    if (roundOver || gameOver) {
+      performAction("play_audio", { audio_clip: "/assets/round-end.mp3" });
+    }
+  }, [roundOver, gameOver]);
 
   const sortedTotalScores =
     allRoundScores.length > 0
@@ -219,19 +223,6 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
     return classes;
   };
-
-  // const backgrounds = {
-  //   wood: "/assets/bg-2.jpg",
-  //   paint: "/assets/bg-1.jpg",
-  //   leaves: "/assets/bg-3.jpg",
-  //   pool: "/assets/bg-4.jpg",
-  //   cow: "/assets/bg-5.jpg",
-  //   marble: "/assets/bg-6.jpg",
-  //   giraffe: "/assets/bg-8.jpg",
-  //   flower: "/assets/bg-9.jpg",
-  //   clover: "/assets/bg-10.jpg",
-  //   sunrise: "/assets/bg-11.jpg",
-  // };
 
   const backgrounds = [
     { value: "/assets/bg-2.jpg", label: "wood" },
