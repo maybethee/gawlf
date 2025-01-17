@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import UIOptions from "./UIOptions";
 import { Eye, Play } from "lucide-react";
 import turnSound from "/assets/your-turn.mp3";
+import { debounce } from "lodash";
 
 function notifyTurnUntilVisible(globalVolume) {
   const originalTitle = document.title;
@@ -81,6 +82,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
   const [checkingHistory, setCheckingHistory] = useState(false);
   const [notified, setNotified] = useState(false);
+
   const tabVisible = useRef(true);
   const cleanupRef = useRef(null);
 
@@ -93,6 +95,11 @@ function Game({ gameId, playerId, isLobbyHost }) {
       performAction("draw_card", { player_id: playerId });
     }, 300);
   };
+
+  const debouncedHandleDrawCard = debounce(handleDrawCard, 300, {
+    leading: true,
+    trailing: false,
+  });
 
   const handleDiscardPileClick = (card = null) => {
     if (!isPlayerTurn) {
@@ -111,6 +118,23 @@ function Game({ gameId, playerId, isLobbyHost }) {
       setSelectedDiscardPile(card);
     }
   };
+
+  const debouncedHandleDiscardPileClick = debounce(
+    handleDiscardPileClick,
+    300,
+    {
+      leading: true,
+      trailing: false,
+    }
+  );
+
+  const debouncedSetupHole = debounce(
+    () => {
+      performAction("setup_hole", { prev_first_player_id: prevFirstPlayer });
+    },
+    3000,
+    { leading: true, trailing: false }
+  );
 
   const isPlayerTurn = currentPlayerId === playerId;
 
@@ -365,11 +389,7 @@ function Game({ gameId, playerId, isLobbyHost }) {
           {isLobbyHost ? (
             <button
               className={styles.next_hole_btn}
-              onClick={() =>
-                performAction("setup_hole", {
-                  prev_first_player_id: prevFirstPlayer,
-                })
-              }
+              onClick={debouncedSetupHole}
             >
               Next Hole
             </button>
@@ -516,7 +536,9 @@ function Game({ gameId, playerId, isLobbyHost }) {
             <div className={styles.deck}>
               <div
                 className={setDrawnCardClass()}
-                onClick={isPlayerTurn && !drawnCard ? handleDrawCard : null}
+                onClick={
+                  isPlayerTurn && !drawnCard ? debouncedHandleDrawCard : null
+                }
               >
                 {drawnCard && (
                   <div className="card-content-container">
@@ -533,9 +555,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
                     <div
                       className={setDiscardPileCardClass(card, index)}
                       key={index}
+                      disabled={performAction}
                       onClick={
                         index === discardPile.length - 1
-                          ? handleDiscardPileClick
+                          ? debouncedHandleDiscardPileClick
                           : null
                       }
                     >

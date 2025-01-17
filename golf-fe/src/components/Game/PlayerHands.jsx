@@ -2,6 +2,7 @@ import { useGame } from "../../context/useGame";
 import Card from "./Card";
 import styles from "./PlayerHands.module.css";
 import { Eye } from "lucide-react";
+import { debounce } from "lodash";
 
 function PlayerHands({ playerId }) {
   const {
@@ -73,6 +74,14 @@ function PlayerHands({ playerId }) {
       }
     }
   };
+
+  const debouncedHandleCardClick = debounce(
+    (card, handId) => {
+      handleCardClick(card, handId);
+    },
+    300,
+    { leading: true, trailing: false }
+  );
 
   const selectCard = (card) => {
     setSelectedCards((prevCards) => {
@@ -215,7 +224,9 @@ function PlayerHands({ playerId }) {
                       playerId={playerId}
                       playerHand={playerHand}
                       key={`card-${card.id}`}
-                      onClick={() => handleCardClick(card, playerHand.id)}
+                      onClick={() =>
+                        debouncedHandleCardClick(card, playerHand.id)
+                      }
                     />
                   ))}
                 </div>

@@ -4,6 +4,7 @@ import { createPlayer, fetchJoinedPlayers } from "../../utils/api";
 import { useGame } from "../../context/useGame";
 import styles from "./Lobby.module.css";
 import { ChevronLeft } from "lucide-react";
+import { debounce } from "lodash";
 
 function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
   const {
@@ -59,6 +60,11 @@ function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
       performAction("setup_game");
     }, 300);
   };
+
+  const debouncedHandleSetupGame = debounce(handleSetupGame, 3000, {
+    leading: true,
+    trailing: false,
+  });
 
   if (lobbyStatus !== "active")
     return (
@@ -126,7 +132,10 @@ function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
           {joinedPlayers.length > 1 ? (
             <div>
               {isLobbyHost ? (
-                <button className={styles.play_btn} onClick={handleSetupGame}>
+                <button
+                  className={styles.play_btn}
+                  onClick={debouncedHandleSetupGame}
+                >
                   Play Game
                 </button>
               ) : (

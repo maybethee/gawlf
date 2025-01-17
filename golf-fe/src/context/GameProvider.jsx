@@ -286,8 +286,24 @@ export const GameProvider = ({ children }) => {
     }
   };
 
-  const performAction = (action, payload = {}) => {
-    subscriptionRef.current?.perform(action, payload);
+  // const performAction = (action, payload = {}) => {
+  //   subscriptionRef.current?.perform(action, payload);
+  // };
+
+  const performAction = (actionType, payload) => {
+    // Simulating the structure of your performAction
+    return new Promise((resolve, reject) => {
+      // Perform the action here
+
+      subscriptionRef.current?.perform(actionType, payload);
+
+      // Ensure resolve/reject is always called
+      if (actionType) {
+        resolve("Action completed");
+      } else {
+        reject("Action failed");
+      }
+    });
   };
 
   const handleCleanup = () => {
