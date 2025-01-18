@@ -249,16 +249,19 @@ export const GameProvider = ({ children }) => {
     setSelectedDiscardPile(null);
     setDiscardPile(data.game_state.discard_pile);
 
-    if (data.all_round_scores) {
-      setRoundScores(data.curr_round_scores);
+    console.log("what is summary update:", data.summary_update);
+    if (data.summary_update) {
       console.log("All holes finished, game over!");
       console.log("all round scores:", data.all_round_scores);
+      setRoundScores(data.curr_round_scores);
       setAllRoundScores(data.all_round_scores);
       setGameOver(true);
     } else if (data.curr_round_scores) {
       console.log("Player has revealed all cards, round over!");
       console.log("round scores", data.curr_round_scores);
       setRoundScores(data.curr_round_scores);
+      setAllRoundScores(data.all_round_scores);
+      // setRoundScores(data.curr_round_scores);
       setRoundOver(true);
     }
 
@@ -308,6 +311,8 @@ export const GameProvider = ({ children }) => {
 
   const handleCleanup = () => {
     setCurrentHole(null);
+    setRoundScores([]);
+    setAllRoundScores([]);
     setDiscardPile([]);
     setCurrentPlayerId(null);
     setPrevFirstPlayer(null);

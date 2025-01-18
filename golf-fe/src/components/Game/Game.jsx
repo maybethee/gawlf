@@ -8,6 +8,7 @@ import UIOptions from "./UIOptions";
 import { Eye, Play } from "lucide-react";
 import turnSound from "/assets/your-turn.mp3";
 import { debounce } from "lodash";
+import CurrentScoresTable from "./CurrentScoresTable";
 
 function notifyTurnUntilVisible(globalVolume) {
   const originalTitle = document.title;
@@ -290,7 +291,8 @@ function Game({ gameId, playerId, isLobbyHost }) {
           className={styles.game_container}
         >
           <TheDayThat />
-          <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2>
+          <CurrentScoresTable />
+          {/* <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2> */}
           <div
             style={{ left: "50%" }}
             className={styles.draw_and_discard_piles_container}
@@ -508,7 +510,8 @@ function Game({ gameId, playerId, isLobbyHost }) {
       >
         <TheDayThat />
 
-        <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2>
+        <CurrentScoresTable />
+        {/* <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2> */}
 
         <div
           style={{ left: "51%" }}
