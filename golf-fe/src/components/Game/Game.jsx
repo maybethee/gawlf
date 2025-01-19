@@ -131,13 +131,30 @@ function Game({ gameId, playerId, isLobbyHost }) {
 
   const debouncedSetupHole = debounce(
     () => {
-      performAction("setup_hole", { prev_first_player_id: prevFirstPlayer });
+      performAction("play_audio", { audio_clip: "/assets/shuffle.mp3" });
+
+      setTimeout(() => {
+        performAction("setup_hole", { prev_first_player_id: prevFirstPlayer });
+      }, 300);
     },
     3000,
     { leading: true, trailing: false }
   );
 
   const isPlayerTurn = currentPlayerId === playerId;
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
