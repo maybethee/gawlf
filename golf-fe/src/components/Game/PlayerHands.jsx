@@ -224,8 +224,9 @@ function PlayerHands({ playerId }) {
                       playerId={playerId}
                       playerHand={playerHand}
                       key={`card-${card.id}`}
-                      onClick={() =>
-                        debouncedHandleCardClick(card, playerHand.id)
+                      onClick={
+                        // () => handleCardClick(card, playerHand.id)
+                        () => debouncedHandleCardClick(card, playerHand.id)
                       }
                     />
                   ))}

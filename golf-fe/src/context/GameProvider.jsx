@@ -98,6 +98,8 @@ export const GameProvider = ({ children }) => {
       handleTheDayThat(data);
     } else if (data.action === "audio_played") {
       playAudio(data.audio_clip);
+    } else if (data.action === "error") {
+      console.log(data.message);
     }
   };
 
@@ -289,25 +291,25 @@ export const GameProvider = ({ children }) => {
     }
   };
 
-  // const performAction = (action, payload = {}) => {
-  //   subscriptionRef.current?.perform(action, payload);
-  // };
-
-  const performAction = (actionType, payload) => {
-    // Simulating the structure of your performAction
-    return new Promise((resolve, reject) => {
-      // Perform the action here
-
-      subscriptionRef.current?.perform(actionType, payload);
-
-      // Ensure resolve/reject is always called
-      if (actionType) {
-        resolve("Action completed");
-      } else {
-        reject("Action failed");
-      }
-    });
+  const performAction = (action, payload = {}) => {
+    subscriptionRef.current?.perform(action, payload);
   };
+
+  // const performAction = (actionType, payload) => {
+  //   // Simulating the structure of your performAction
+  //   return new Promise((resolve, reject) => {
+  //     // Perform the action here
+
+  //     subscriptionRef.current?.perform(actionType, payload);
+
+  //     // Ensure resolve/reject is always called
+  //     if (actionType) {
+  //       resolve("Action completed");
+  //     } else {
+  //       reject("Action failed");
+  //     }
+  //   });
+  // };
 
   const handleCleanup = () => {
     setCurrentHole(null);

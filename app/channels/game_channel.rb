@@ -23,6 +23,15 @@ class GameChannel < ApplicationCable::Channel
 
     @player = Player.find(data['player_id'])
 
+    if @player.last_action_name == 'draw_card'
+      Rails.logger.warn("Player #{@player.id} attempted to draw a card again without another action")
+
+      return ActionCable.server.broadcast("game_#{@game.id}", {
+                                            action: 'error',
+                                            message: 'Cannot draw a card again without first performing another action'
+                                          })
+    end
+
     drawn_card = @game.game_state['deck'].sample
     drawn_card['visibility'] = 'revealed'
 
@@ -33,6 +42,11 @@ class GameChannel < ApplicationCable::Channel
     updated_game_state['deck'].delete(drawn_card)
 
     @game.update!(game_state: updated_game_state)
+
+    @player.update!(
+      last_action_name: 'draw_card',
+      last_action_timestamp: Time.current
+    )
 
     broadcast_message = {
       action: 'card_drawn',
@@ -52,6 +66,20 @@ class GameChannel < ApplicationCable::Channel
     ActiveRecord::Base.transaction do
       @game = Game.find(params[:game_id])
       @player = Player.find(data['player_id'])
+
+      if @game.previous_player_id
+        previous_player = Player.find(@game.previous_player_id)
+        previous_player.update!(last_action_name: nil)
+      end
+
+      if @player.last_action_name == 'swap_card'
+        Rails.logger.warn("Player #{@player.id} attempted to swap a card multiple times in the same turn")
+
+        return ActionCable.server.broadcast("game_#{@game.id}", {
+                                              action: 'error',
+                                              message: 'Cannot swap more than once per turn'
+                                            })
+      end
 
       # Rails.logger.debug("card to swap: #{data['card_to_swap']}")
 
@@ -79,6 +107,11 @@ class GameChannel < ApplicationCable::Channel
       @game.game_state['discard_pile'] << discarded_card
 
       reconstitute_deck if @game.game_state['deck'].empty?
+
+      @player.update!(
+        last_action_name: 'swap_card',
+        last_action_timestamp: Time.current
+      )
 
       @player.save!
       @game.save!
@@ -108,7 +141,11 @@ class GameChannel < ApplicationCable::Channel
 
       # see if i need to ignore this at round/game end or if it's fine to leave it
       next_player = @game.next_player
-      @game.update!(current_player_id: next_player.id)
+
+      @game.update!(
+        previous_player_id: @game.current_player_id,
+        current_player_id: next_player.id
+      )
 
       Rails.logger.debug("current player id: #{@game.current_player_id}")
 
@@ -141,6 +178,20 @@ class GameChannel < ApplicationCable::Channel
     @player = Player.find(data['player_id'])
     @game.reload
 
+    if @game.previous_player_id
+      previous_player = Player.find(@game.previous_player_id)
+      previous_player.update!(last_action_name: nil)
+    end
+
+    if @player.last_action_name == 'discard_card'
+      Rails.logger.warn("Player #{@player.id} attempted to discard a card multiple times in the same turn")
+
+      return ActionCable.server.broadcast("game_#{@game.id}", {
+                                            action: 'error',
+                                            message: 'Cannot discard more than once per turn'
+                                          })
+    end
+
     updated_game_state = @game.game_state.deep_dup
     updated_game_state['discard_pile'] << @game.game_state['drawn_card']
 
@@ -148,8 +199,17 @@ class GameChannel < ApplicationCable::Channel
 
     reconstitute_deck if @game.game_state['deck'].empty?
 
+    @player.update!(
+      last_action_name: 'discard_card',
+      last_action_timestamp: Time.current
+    )
+
     next_player = @game.next_player
-    @game.update!(current_player_id: next_player.id)
+
+    @game.update!(
+      previous_player_id: @game.current_player_id,
+      current_player_id: next_player.id
+    )
 
     current_player_name = Player.find_by(id: @game.current_player_id).name
     broadcast_message = {
@@ -200,6 +260,10 @@ class GameChannel < ApplicationCable::Channel
 
       deck = @game.game_state['deck']
       raise 'Deck is empty' if deck.empty?
+
+      @game.players.each do |player|
+        player.update!(last_action_name: nil, last_action_timestamp: nil)
+      end
 
       # Rails.logger.debug("is hole greater than 1 here?? right before dealing hands: #{@game.hole.inspect}")
 
