@@ -84,11 +84,14 @@ function PlayerHands({ playerId }) {
   );
 
   const selectCard = (card) => {
+    console.log(card);
     setSelectedCards((prevCards) => {
       if (
         prevCards.some(
           (selectedCard) =>
-            selectedCard.rank === card.rank && selectedCard.suit === card.suit
+            selectedCard.rank === card.rank &&
+            selectedCard.suit === card.suit &&
+            selectedCard.id === card.id
         )
       ) {
         return prevCards;
