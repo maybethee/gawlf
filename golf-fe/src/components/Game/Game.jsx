@@ -9,6 +9,7 @@ import { Eye, Play } from "lucide-react";
 import turnSound from "/assets/your-turn.mp3";
 import { debounce } from "lodash";
 import CurrentScoresTable from "./CurrentScoresTable";
+import { updateUserConfig } from "../../utils/api";
 
 function notifyTurnUntilVisible(globalVolume) {
   const originalTitle = document.title;
@@ -300,9 +301,28 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
 
   const [backgroundUrl, setBackgroundUrl] = useState("/assets/bg-2.jpg");
 
+  useEffect(() => {
+    console.log("user config in game component:", userConfig);
+    if (userConfig) {
+      if (userConfig?.background_url !== undefined) {
+        setBackgroundUrl(userConfig.background_url);
+      }
+      setUpdatedConfig(userConfig);
+    }
+  }, [userConfig]);
+
   const updateBackgroundImage = (newUrl) => {
     console.log("background updated (Game.jsx) to", newUrl);
     setBackgroundUrl(newUrl);
+
+    const newConfig = {
+      ...updatedConfig,
+      background_url: newUrl,
+    };
+
+    setUpdatedConfig(newConfig);
+
+    updateUserConfig(userId, newConfig);
   };
 
   if (!gameId) {
@@ -319,6 +339,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
         <UIOptions
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
+          backgroundUrl={backgroundUrl}
           userId={userId}
           userConfig={userConfig}
           updatedConfig={updatedConfig}
@@ -385,6 +406,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
         <UIOptions
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
+          backgroundUrl={backgroundUrl}
           userId={userId}
           userConfig={userConfig}
           updatedConfig={updatedConfig}
@@ -456,6 +478,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
         <UIOptions
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
+          backgroundUrl={backgroundUrl}
           userId={userId}
           userConfig={userConfig}
           updatedConfig={updatedConfig}
@@ -547,6 +570,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
       <UIOptions
         updateBackground={updateBackgroundImage}
         backgrounds={backgrounds}
+        backgroundUrl={backgroundUrl}
         userId={userId}
         userConfig={userConfig}
         updatedConfig={updatedConfig}

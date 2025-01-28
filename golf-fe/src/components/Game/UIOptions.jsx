@@ -9,6 +9,7 @@ import { updateUserConfig } from "../../utils/api";
 function UIOptions({
   updateBackground,
   backgrounds,
+  backgroundUrl,
   userId,
   userConfig,
   updatedConfig,
@@ -21,8 +22,16 @@ function UIOptions({
 
   useEffect(() => {
     console.log("user config in ui options:", userConfig);
-    if (userConfig?.all_audio_notifications !== undefined) {
-      setChecked(userConfig.all_audio_notifications);
+    if (userConfig) {
+      if (userConfig?.all_audio_notifications !== undefined) {
+        setChecked(userConfig.all_audio_notifications);
+      }
+      if (userConfig?.card_back_url !== undefined) {
+        setCardBackUrl(userConfig.card_back_url);
+      }
+      if (userConfig?.global_volume !== undefined) {
+        setGlobalVolume(userConfig.global_volume / 100);
+      }
       setUpdatedConfig(userConfig);
     }
   }, [userConfig]);
@@ -36,7 +45,6 @@ function UIOptions({
       all_audio_notifications: newCheckedValue,
     };
 
-    setChecked(!checked);
     setUpdatedConfig(newConfig);
 
     updateUserConfig(userId, newConfig);
@@ -74,10 +82,30 @@ function UIOptions({
   const handleCardBackChange = (event) => {
     const newUrl = event.target.value;
     setCardBackUrl(newUrl);
+
+    const newConfig = {
+      ...updatedConfig,
+      card_back_url: newUrl,
+    };
+
+    setUpdatedConfig(newConfig);
+
+    updateUserConfig(userId, newConfig);
   };
 
   const handleVolumeChange = (newValue) => {
     setGlobalVolume(newValue / 100);
+  };
+
+  const handleVolumeRelease = (newValue) => {
+    const newConfig = {
+      ...updatedConfig,
+      global_volume: newValue,
+    };
+
+    setUpdatedConfig(newConfig);
+
+    updateUserConfig(userId, newConfig);
   };
 
   return (
@@ -89,9 +117,14 @@ function UIOptions({
       <div className={styles.selection_drawer}>
         <div className={styles.options_selection}>
           <div className={styles.option_container}>
-            <h3>Card Backs</h3>
+            <h3>Card Back</h3>
             <form action="">
-              <select name="" id="" onChange={handleCardBackChange}>
+              <select
+                name=""
+                id=""
+                onChange={handleCardBackChange}
+                value={cardBackUrl}
+              >
                 {cardBacks.map((style) => {
                   return (
                     <option key={style.value} value={style.value}>
@@ -104,9 +137,14 @@ function UIOptions({
           </div>
 
           <div className={styles.option_container}>
-            <h3>Backgrounds</h3>
+            <h3>Background</h3>
             <form action="">
-              <select name="" id="" onChange={handleBackgroundChange}>
+              <select
+                name=""
+                id=""
+                onChange={handleBackgroundChange}
+                value={backgroundUrl}
+              >
                 {backgrounds.map((background) => {
                   return (
                     <option key={background.value} value={background.value}>
@@ -119,7 +157,7 @@ function UIOptions({
           </div>
 
           <div className={styles.option_container}>
-            <h3>Audio Volume</h3>
+            <h3>Volume</h3>
             <div className={styles.slider_container}>
               <span>
                 <Volume1 />
@@ -127,23 +165,24 @@ function UIOptions({
               <AudioSlider
                 value={globalVolume * 100}
                 onValueChange={handleVolumeChange}
+                onRelease={handleVolumeRelease}
               />
               <span>
                 <Volume2 />
               </span>
             </div>
+          </div>
 
-            <div>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={handleCheckboxChange}
-                />
-                Always play notification audio on your turn (unchecked will only
-                play on your turn while also tabbed out)
-              </label>
-            </div>
+          <div id="checkbox-div">
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={handleCheckboxChange}
+            />
+            <label>
+              Always play notification audio on your turn (unchecked: only when
+              tabbed out)
+            </label>
           </div>
         </div>
       </div>

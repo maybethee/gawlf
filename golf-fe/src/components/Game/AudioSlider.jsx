@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import Slider from "@mui/material/Slider";
 import placeSound from "/assets/place.mp3";
 
-function AudioSlider({ value, onValueChange }) {
+function AudioSlider({ value, onValueChange, onRelease }) {
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ function AudioSlider({ value, onValueChange }) {
     onValueChange(newVal);
   };
 
-  const handleMouseRelease = () => {
+  const handleMouseRelease = (event, newVal) => {
     if (audioRef.current) {
       audioRef.current.volume = value / 100;
       audioRef.current.currentTime = 0;
@@ -25,6 +25,8 @@ function AudioSlider({ value, onValueChange }) {
         console.error("Error playing audio:", error);
       });
     }
+
+    onRelease(newVal);
   };
 
   return (

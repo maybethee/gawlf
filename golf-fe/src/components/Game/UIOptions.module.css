@@ -52,6 +52,7 @@
   display: flex;
   flex-flow: column;
   justify-content: space-evenly;
+  align-items: center;
 }
 
 .selection_drawer h3 {
@@ -80,6 +81,8 @@
   row-gap: 0.8rem;
 }
 
+.checkbox_label {
+}
 .slider_container {
   display: flex;
   justify-content: center;

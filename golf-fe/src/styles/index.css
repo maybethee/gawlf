@@ -120,6 +120,51 @@ input:focus {
   -moz-appearance: none;
 }
 
+#checkbox-div {
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+  font-size: 0.9rem;
+  line-height: 1.1;
+  margin: 0 16px;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  --moz-appearance: none;
+
+  width: 20px;
+  height: 16px;
+  background-color: #fbe9d2;
+  border: 2px solid #f87171;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #f87171;
+  border-color: #f87171;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 10px;
+  height: 4px;
+  border: solid #fbe9d2;
+  border-width: 0 0 3px 3px;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+select:hover {
+  cursor: pointer;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
