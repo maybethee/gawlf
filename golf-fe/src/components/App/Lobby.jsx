@@ -6,7 +6,14 @@ import styles from "./Lobby.module.css";
 import { ChevronLeft } from "lucide-react";
 import { debounce } from "lodash";
 
-function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
+function Lobby({
+  lobbyCode,
+  isLobbyHost,
+  userId,
+  playerId,
+  setPlayerId,
+  userConfig,
+}) {
   const {
     gameId,
     joinedPlayers,
@@ -18,6 +25,10 @@ function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
 
   const [playerName, setPlayerName] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    console.log("Lobby component, user id:", userId);
+  }, []);
 
   useEffect(() => {
     if (!gameId) {
@@ -153,7 +164,13 @@ function Lobby({ lobbyCode, isLobbyHost, userId, playerId, setPlayerId }) {
 
   return (
     <div className={styles.game_page_container}>
-      <Game gameId={gameId} playerId={playerId} isLobbyHost={isLobbyHost} />
+      <Game
+        gameId={gameId}
+        playerId={playerId}
+        isLobbyHost={isLobbyHost}
+        userId={userId}
+        userConfig={userConfig}
+      />
     </div>
   );
 }

@@ -23,7 +23,11 @@ function Root() {
         >
           <AudioProvider>
             <GameProvider>
-              <App userId={user?.id} guest={user?.guest} />
+              <App
+                userId={user?.id}
+                guest={user?.guest}
+                userConfig={user?.user_config}
+              />
             </GameProvider>
           </AudioProvider>
         </div>

@@ -57,7 +57,7 @@ function notifyTurnUntilVisible(globalVolume) {
   };
 }
 
-function Game({ gameId, playerId, isLobbyHost }) {
+function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
   const {
     currentHole,
     drawnCard,
@@ -79,8 +79,13 @@ function Game({ gameId, playerId, isLobbyHost }) {
     handleCleanup,
   } = useGame();
 
+  useEffect(() => {
+    console.log("Game component, user id:", userId);
+  }, []);
+
   const { globalVolume } = useAudio();
 
+  const [updatedConfig, setUpdatedConfig] = useState(userConfig);
   const [checkingHistory, setCheckingHistory] = useState(false);
   const [notified, setNotified] = useState(false);
 
@@ -190,6 +195,20 @@ function Game({ gameId, playerId, isLobbyHost }) {
       cleanupRef.current = notifyTurnUntilVisible(globalVolume);
 
       setNotified(true);
+    } else if (
+      updatedConfig.all_audio_notifications == true &&
+      isPlayerTurn &&
+      // tabVisible.current &&
+      !notified &&
+      !initializingGame &&
+      !roundOver &&
+      !gameOver
+    ) {
+      const audio = new Audio(turnSound);
+      audio.volume = globalVolume;
+      audio
+        .play()
+        .catch((error) => console.error("Error playing audio", error));
     } else if (!isPlayerTurn) {
       if (cleanupRef.current) {
         cleanupRef.current();
@@ -300,6 +319,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
         <UIOptions
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
+          userId={userId}
+          userConfig={userConfig}
+          updatedConfig={updatedConfig}
+          setUpdatedConfig={setUpdatedConfig}
         />
         <div
           style={{
@@ -362,6 +385,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
         <UIOptions
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
+          userId={userId}
+          userConfig={userConfig}
+          updatedConfig={updatedConfig}
+          setUpdatedConfig={setUpdatedConfig}
         />
         <div className={styles.game_container}>
           <TheDayThat />
@@ -429,6 +456,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
         <UIOptions
           updateBackground={updateBackgroundImage}
           backgrounds={backgrounds}
+          userId={userId}
+          userConfig={userConfig}
+          updatedConfig={updatedConfig}
+          setUpdatedConfig={setUpdatedConfig}
         />
         <div className={styles.game_container}>
           <TheDayThat />
@@ -516,6 +547,10 @@ function Game({ gameId, playerId, isLobbyHost }) {
       <UIOptions
         updateBackground={updateBackgroundImage}
         backgrounds={backgrounds}
+        userId={userId}
+        userConfig={userConfig}
+        updatedConfig={updatedConfig}
+        setUpdatedConfig={setUpdatedConfig}
       />
       <div
         className={styles.game_container}

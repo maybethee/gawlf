@@ -7,7 +7,7 @@ import Lobby from "./Lobby";
 import { Info } from "lucide-react";
 import SiteInfo from "./SiteInfo";
 
-function App({ userId, guest }) {
+function App({ userId, guest, userConfig }) {
   const {
     gameId,
     setGameId,
@@ -41,6 +41,10 @@ function App({ userId, guest }) {
 
     fetchPlayers();
   }, [gameId]);
+
+  useEffect(() => {
+    console.log("App component, user id:", userId);
+  }, []);
 
   const handleCreateLobby = async () => {
     const data = await createLobby(userId);
@@ -158,6 +162,7 @@ function App({ userId, guest }) {
         userId={userId}
         playerId={playerId}
         setPlayerId={setPlayerId}
+        userConfig={userConfig}
       />
     </div>
   );

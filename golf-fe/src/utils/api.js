@@ -115,3 +115,18 @@ export const lobbyStatus = async (lobbyCode) => {
   console.log("fetch status:", status);
   return status;
 };
+
+export const updateUserConfig = async (userId, updatedConfig) => {
+  console.log("passed user id when calling to update user config:", userId);
+  const response = await fetch(`${apiUrl}/update_user_config`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ user_id: userId, user_config: updatedConfig }),
+  });
+  const data = await response.json();
+
+  console.log(data);
+  return data;
+};

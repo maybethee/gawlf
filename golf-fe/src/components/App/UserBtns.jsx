@@ -54,10 +54,10 @@ function UserBtns({ setUser }) {
         <p>Logged in!</p>
       ) : (
         <div className={styles.btns_container}>
-          <button disabled={true} onClick={redirectToRegister}>
+          <button disabled={false} onClick={redirectToRegister}>
             Register
           </button>
-          <button disabled={true} onClick={redirectToLogin}>
+          <button disabled={false} onClick={redirectToLogin}>
             Login
           </button>
           <button onClick={handleGuestLogin}>Play as Guest</button>

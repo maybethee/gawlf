@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   post '/join_lobby', to: 'lobbies#join'
   post '/lobby_status', to: 'lobbies#status'
   post '/guest_users', to: 'guest_users#create'
+  patch '/update_user_config', to: 'users#update_config'
 
   namespace :api do
     namespace :v1 do

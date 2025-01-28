@@ -4,11 +4,43 @@ import styles from "./UIOptions.module.css";
 import AudioSlider from "./AudioSlider";
 import { useAudio } from "../../context/useAudio";
 import { Volume1, Volume2 } from "lucide-react";
+import { updateUserConfig } from "../../utils/api";
 
-function UIOptions({ updateBackground, backgrounds }) {
+function UIOptions({
+  updateBackground,
+  backgrounds,
+  userId,
+  userConfig,
+  updatedConfig,
+  setUpdatedConfig,
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [cardBackUrl, setCardBackUrl] = useState("/assets/card-back-9.jpg");
   const { globalVolume, setGlobalVolume } = useAudio();
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    console.log("user config in ui options:", userConfig);
+    if (userConfig?.all_audio_notifications !== undefined) {
+      setChecked(userConfig.all_audio_notifications);
+      setUpdatedConfig(userConfig);
+    }
+  }, [userConfig]);
+
+  const handleCheckboxChange = () => {
+    const newCheckedValue = !checked;
+    setChecked(newCheckedValue);
+
+    const newConfig = {
+      ...updatedConfig,
+      all_audio_notifications: newCheckedValue,
+    };
+
+    setChecked(!checked);
+    setUpdatedConfig(newConfig);
+
+    updateUserConfig(userId, newConfig);
+  };
 
   const toggleDrawer = () => {
     setIsOpen((prev) => !prev);
@@ -99,6 +131,18 @@ function UIOptions({ updateBackground, backgrounds }) {
               <span>
                 <Volume2 />
               </span>
+            </div>
+
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={handleCheckboxChange}
+                />
+                Always play notification audio on your turn (unchecked will only
+                play on your turn while also tabbed out)
+              </label>
             </div>
           </div>
         </div>
