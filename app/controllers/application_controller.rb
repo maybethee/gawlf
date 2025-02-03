@@ -15,10 +15,18 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(_resource)
-    'http://localhost:5173'
+    if Rails.env.production?
+      'https://gawlf.fly.dev'
+    else
+      'http://localhost:5173'
+    end
   end
 
   def after_sign_up_path_for(_resource)
-    'http://localhost:5173'
+    if Rails.env.production?
+      'https://gawlf.fly.dev'
+    else
+      'http://localhost:5173'
+    end
   end
 end
