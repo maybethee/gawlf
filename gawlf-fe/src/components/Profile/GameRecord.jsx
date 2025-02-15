@@ -16,7 +16,7 @@ function GameRecord({ gameData, viewList }) {
             </span>
           )}{" "}
           <p>
-            The day that {gameData.the_day_that || "we golfed"} (
+            The day that {gameData.the_day_that || "we gawlfed"} (
             {gameData.created_at.split("T", 1)})
           </p>
         </div>

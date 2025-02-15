@@ -42,8 +42,8 @@ Make sure you have the following installed:
 1. **Clone the repository:**
 
 ```
- git clone https://github.com/maybethee/golf.git
- cd golf
+ git clone https://github.com/maybethee/gawlf.git
+ cd gawlf
 ```
 
 3. **Set up the backend:**
@@ -66,7 +66,7 @@ Make sure you have the following installed:
 
 - Navigate to the React app folder inside the rails app:
   ```
-  cd golf-fe
+  cd gawlf-fe
   ```
 - Install npm dependencies:
   ```

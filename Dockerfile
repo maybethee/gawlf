@@ -39,14 +39,14 @@ RUN bundle exec bootsnap precompile app/ lib/
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 # RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
-# Build React app in golf-fe directory
-WORKDIR /rails/golf-fe
+# Build React app in gawlf-fe directory
+WORKDIR /rails/gawlf-fe
 RUN npm install --legacy-peer-deps
 RUN npm run build
 
 # Copy the built React files to the Rails public folder
 WORKDIR /rails
-RUN cp -r ./golf-fe/dist/* ./public/
+RUN cp -r ./gawlf-fe/dist/* ./public/
 
 # Final stage for app image
 FROM base

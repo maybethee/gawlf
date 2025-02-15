@@ -93,7 +93,7 @@ function App({ userId, guest, userConfig }) {
   if (!lobbyStatus)
     return (
       <div className={styles.home_page_container}>
-        <h1 className={styles.title}>Golf</h1>
+        <h1 className={styles.title}>Gawlf</h1>
         <div className={styles.home_btns_container}>
           {viewingInfo && <SiteInfo setViewingInfo={setViewingInfo} />}
           <div className={styles.home_row_1}>
