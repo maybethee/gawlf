@@ -48,13 +48,17 @@ class GameChannel < ApplicationCable::Channel
       last_action_timestamp: Time.current
     )
 
+    
     broadcast_message = {
       action: 'card_drawn',
       player_id: @player.id,
       card: drawn_card,
       game_state: @game.reload.game_state
     }
+    
 
+    Rails.logger.debug("#{@player.name} drew #{drawn_card}, and their last_action_name was set to: #{@player.last_action_name} at #{@player.last_action_timestamp}. broadcasting the broadcast_message now.")
+    
     ActionCable.server.broadcast("game_#{@game.id}", broadcast_message)
   end
 

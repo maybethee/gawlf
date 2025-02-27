@@ -250,6 +250,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
     if (isPlayerTurn) classes += " clickable";
 
     if (drawnCard) {
+      console.log("drawn card:", drawnCard);
       classes += " revealed selected";
 
       if (drawnCard.suit === "★") {

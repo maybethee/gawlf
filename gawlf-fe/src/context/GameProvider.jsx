@@ -115,6 +115,8 @@ export const GameProvider = ({ children }) => {
     setJoinedPlayers((prevPlayers) => [...prevPlayers, data.player]);
   };
   const handleCardDrawn = (data) => {
+    console.log("handle card drawn called, data received:", data);
+
     setDrawnCard(data.card);
     setSelectedDiscardPile(null);
     setGameState(data.game_state);
