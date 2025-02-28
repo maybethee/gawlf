@@ -7,8 +7,10 @@ import { GalleryHorizontal, List, ChevronLeft } from "lucide-react";
 
 function Profile({ userId, setViewingProfile }) {
   const [userData, setUserData] = useState(null);
+  const [filteredUserData, setFilteredUserData] = useState(null);
   const [sliderValue, setSliderValue] = useState(0);
   const [viewList, setViewList] = useState(false);
+  const [selectedFilterBtn, setSelectedFilterBtn] = useState(null);
   const [playerCountsArr, setPlayerCountsArr] = useState([]);
   const [statsFilter, setStatsFilter] = useState(null);
   const [stats, setStats] = useState(null);
@@ -25,12 +27,26 @@ function Profile({ userId, setViewingProfile }) {
       const filteredData = { user: data.user, games: filteredGames };
 
       setUserData(filteredData);
-      // console.log("unfiltered data:", data);
-      // console.log("filtered data:", filteredData);
+      console.log("unfiltered data:", data);
+      console.log("filtered data:", filteredData);
     };
 
     getUserData();
   }, [userId]);
+
+  useEffect(() => {
+    if (userData?.games?.length) {
+      const filteredGamesByCount = filterDataByPlayerCount().games;
+
+      console.log("filtered by count", filteredGamesByCount);
+
+      const filteredUserData = {
+        user: userData.user,
+        games: filteredGamesByCount,
+      };
+      setFilteredUserData(filteredUserData);
+    }
+  }, [statsFilter]);
 
   const gamesWithSummaries = (data) => {
     return data.games.filter((game) => {
@@ -335,10 +351,17 @@ function Profile({ userId, setViewingProfile }) {
 
   const sortedGames = useMemo(() => {
     if (!userData || !userData.games) return [];
-    return [...userData.games].sort(
-      (a, b) => new Date(a.created_at) - new Date(b.created_at)
-    );
-  }, [userData]);
+
+    if (filteredUserData) {
+      return [...filteredUserData.games].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      );
+    } else {
+      return [...userData.games].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      );
+    }
+  }, [userData, filteredUserData]);
 
   const setRecordClass = (index) => {
     if (index === sliderValue) {
@@ -392,20 +415,56 @@ function Profile({ userId, setViewingProfile }) {
 
       <div className={styles.game_history_container}>
         <div className={styles.game_history_header}>
+          {playerCountsArr.length <= 1 ? null : (
+            <div className={styles.filter_container}>
+              <p>Filter by player count</p>
+
+              <div className={styles.filter_btns}>
+                <button
+                  className={!selectedFilterBtn ? styles.selected : ""}
+                  onClick={() => {
+                    setStatsFilter(null);
+                    setSelectedFilterBtn(null);
+                  }}
+                >
+                  All
+                </button>
+                {playerCountsArr.map((count) => {
+                  return (
+                    <button
+                      onClick={() => {
+                        setSelectedFilterBtn(count);
+                        setStatsFilter(count);
+                      }}
+                      key={count}
+                      className={
+                        selectedFilterBtn === count ? styles.selected : ""
+                      }
+                    >
+                      {count} Players
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           <h3>Game History</h3>
-          <div className={styles.display_btns}>
-            <button
-              className={!viewList ? styles.selected : ""}
-              onClick={() => setViewList(false)}
-            >
-              <GalleryHorizontal size={20} strokeWidth={2} />
-            </button>
-            <button
-              className={viewList ? styles.selected : ""}
-              onClick={() => setViewList(true)}
-            >
-              <List size={20} strokeWidth={3} />
-            </button>
+          <div className={styles.display_btns_container}>
+            <p>Change display style</p>
+            <div className={styles.display_btns}>
+              <button
+                className={!viewList ? styles.selected : ""}
+                onClick={() => setViewList(false)}
+              >
+                <GalleryHorizontal size={20} strokeWidth={2} />
+              </button>
+              <button
+                className={viewList ? styles.selected : ""}
+                onClick={() => setViewList(true)}
+              >
+                <List size={20} strokeWidth={3} />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -462,26 +521,7 @@ function Profile({ userId, setViewingProfile }) {
       </div>
       <div className={styles.stats_section_container}>
         <div className={styles.stats_section}>
-          <div className={styles.stats_section_header}>
-            <h3>Stats</h3>
-            {playerCountsArr.length <= 1 ? null : (
-              <div className={styles.filter_container}>
-                <p>Filter by game's player count</p>
-                <div className={styles.filter_btns}>
-                  <button onClick={() => setStatsFilter(null)}>
-                    All Games
-                  </button>
-                  {playerCountsArr.map((count) => {
-                    return (
-                      <button onClick={() => setStatsFilter(count)} key={count}>
-                        {count} players
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
+          <h3 className={styles.stats_section_header}>Stats</h3>
           {stats && (
             <ul>
               {Object.keys(stats).map((key) => {
