@@ -10,6 +10,8 @@ import turnSound from "/assets/your-turn.mp3";
 import { debounce } from "lodash";
 import CurrentScoresTable from "./CurrentScoresTable";
 import { updateUserConfig } from "../../utils/api";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
+import Draggable from "./Draggable";
 
 function notifyTurnUntilVisible(globalVolume) {
   const originalTitle = document.title;
@@ -326,6 +328,16 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
     updateUserConfig(userId, newConfig);
   };
 
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
   if (!gameId) {
     return null;
   }
@@ -567,119 +579,140 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
   }
 
   return (
-    <div className={styles.game_page}>
-      <UIOptions
-        updateBackground={updateBackgroundImage}
-        backgrounds={backgrounds}
-        backgroundUrl={backgroundUrl}
-        userId={userId}
-        userConfig={userConfig}
-        updatedConfig={updatedConfig}
-        setUpdatedConfig={setUpdatedConfig}
-      />
-      <div
-        className={styles.game_container}
-        style={{
-          backgroundImage: `url(${backgroundUrl})`,
-          pointerEvents: roundOver ? "none" : "",
-          opacity: roundOver ? ".8" : "1",
-        }}
-      >
-        <TheDayThat />
-
-        <CurrentScoresTable />
-        {/* <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2> */}
-
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className={styles.game_page}>
+        <UIOptions
+          updateBackground={updateBackgroundImage}
+          backgrounds={backgrounds}
+          backgroundUrl={backgroundUrl}
+          userId={userId}
+          userConfig={userConfig}
+          updatedConfig={updatedConfig}
+          setUpdatedConfig={setUpdatedConfig}
+        />
         <div
-          style={{ left: "51%" }}
-          className={styles.draw_and_discard_piles_container}
+          className={styles.game_container}
+          style={{
+            backgroundImage: `url(${backgroundUrl})`,
+            pointerEvents: roundOver ? "none" : "",
+            opacity: roundOver ? ".8" : "1",
+          }}
         >
-          <div>
-            {!roundOver && (
-              <div>
-                {!isPlayerTurn ? (
-                  <h3 className={styles.turn_message}>
-                    Waiting for {currentPlayerName}'s turn...
-                  </h3>
-                ) : (
-                  <h3
-                    style={{ backgroundColor: "#fef08a" }}
-                    className={styles.turn_message}
-                  >
-                    Your Turn
-                  </h3>
-                )}
-              </div>
-            )}
-          </div>
-          <div className={styles.draw_and_discard_piles}>
-            <div className={styles.deck}>
-              <div
-                className={setDrawnCardClass()}
-                onClick={
-                  isPlayerTurn && !drawnCard ? debouncedHandleDrawCard : null
-                }
-              >
-                {drawnCard && (
-                  <div className="card-content-container">
-                    <p>{displayCardContent(drawnCard)}</p>
-                  </div>
-                )}
-              </div>
-            </div>
+          <TheDayThat />
 
+          <CurrentScoresTable />
+          {/* <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2> */}
+
+          <DragOverlay>
+            <div
+              className={setDrawnCardClass()}
+              onClick={
+                isPlayerTurn && !drawnCard ? debouncedHandleDrawCard : null
+              }
+            >
+              {drawnCard && (
+                <div className="card-content-container">
+                  <p>{displayCardContent(drawnCard)}</p>
+                </div>
+              )}
+            </div>
+          </DragOverlay>
+
+          <div
+            style={{ left: "51%" }}
+            className={styles.draw_and_discard_piles_container}
+          >
             <div>
-              <div className={styles.discard_pile_container}>
-                {discardPile.map((card, index) => {
-                  return (
-                    <div
-                      className={setDiscardPileCardClass(card, index)}
-                      key={index}
-                      disabled={performAction}
-                      onClick={
-                        index === discardPile.length - 1
-                          ? debouncedHandleDiscardPileClick
-                          : null
-                      }
+              {!roundOver && (
+                <div>
+                  {!isPlayerTurn ? (
+                    <h3 className={styles.turn_message}>
+                      Waiting for {currentPlayerName}'s turn...
+                    </h3>
+                  ) : (
+                    <h3
+                      style={{ backgroundColor: "#fef08a" }}
+                      className={styles.turn_message}
                     >
+                      Your Turn
+                    </h3>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className={styles.draw_and_discard_piles}>
+              <div className={styles.deck}>
+                <Draggable>
+                  <div
+                    className={setDrawnCardClass()}
+                    onClick={
+                      isPlayerTurn && !drawnCard
+                        ? debouncedHandleDrawCard
+                        : null
+                    }
+                  >
+                    {drawnCard && (
                       <div className="card-content-container">
-                        <p>
-                          {card.rank}
-                          {card.suit}
-                        </p>
+                        <p>{displayCardContent(drawnCard)}</p>
                       </div>
-                    </div>
-                  );
-                })}
-                <button
-                  style={{
-                    transform: checkingHistory ? "rotate(-180deg)" : "",
-                    transition: "transform .35s",
-                  }}
-                  className={styles.history_btn}
-                  onClick={() => setCheckingHistory(!checkingHistory)}
-                >
-                  <Play
-                    style={{ stroke: "black", fill: "#fbe9d2" }}
-                    size={36}
-                  />
-                </button>
+                    )}
+                  </div>
+                </Draggable>
+              </div>
+
+              <div>
+                <div className={styles.discard_pile_container}>
+                  {discardPile.map((card, index) => {
+                    return (
+                      <div
+                        className={setDiscardPileCardClass(card, index)}
+                        key={index}
+                        disabled={performAction}
+                        onClick={
+                          index === discardPile.length - 1
+                            ? debouncedHandleDiscardPileClick
+                            : null
+                        }
+                      >
+                        <div className="card-content-container">
+                          <p>
+                            {card.rank}
+                            {card.suit}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <button
+                    style={{
+                      transform: checkingHistory ? "rotate(-180deg)" : "",
+                      transition: "transform .35s",
+                    }}
+                    className={styles.history_btn}
+                    onClick={() => setCheckingHistory(!checkingHistory)}
+                  >
+                    <Play
+                      style={{ stroke: "black", fill: "#fbe9d2" }}
+                      size={36}
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+          <PlayerHands playerId={playerId} />
         </div>
-        <PlayerHands playerId={playerId} />
+        {roundOver && (
+          <button
+            style={{ pointerEvents: "auto", opacity: roundOver ? "1" : "" }}
+            className={styles.view_results_btn}
+            onClick={() => setViewingRoundResults(true)}
+          >
+            See Results
+          </button>
+        )}
       </div>
-      {roundOver && (
-        <button
-          style={{ pointerEvents: "auto", opacity: roundOver ? "1" : "" }}
-          className={styles.view_results_btn}
-          onClick={() => setViewingRoundResults(true)}
-        >
-          See Results
-        </button>
-      )}
-    </div>
+    </DndContext>
   );
 }
 

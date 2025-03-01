@@ -25,6 +25,7 @@ function Lobby({
 
   const [playerName, setPlayerName] = useState("");
   const [error, setError] = useState("");
+  const [activeId, setActiveId] = useState(null);
 
   useEffect(() => {
     console.log("Lobby component, user id:", userId);
@@ -76,6 +77,14 @@ function Lobby({
     leading: true,
     trailing: false,
   });
+
+  const handleDragStart = (event) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragEnd = () => {
+    setActiveId(null);
+  };
 
   if (lobbyStatus !== "active")
     return (
