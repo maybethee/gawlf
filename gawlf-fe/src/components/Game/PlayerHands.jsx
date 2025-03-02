@@ -3,6 +3,7 @@ import Card from "./Card";
 import styles from "./PlayerHands.module.css";
 import { Eye } from "lucide-react";
 import { debounce } from "lodash";
+import Droppable from "./Droppable";
 
 function PlayerHands({ playerId }) {
   const {
@@ -222,16 +223,18 @@ function PlayerHands({ playerId }) {
                 </div>
                 <div className={styles.hand}>
                   {playerHand.hand.map((card) => (
-                    <Card
-                      card={card}
-                      playerId={playerId}
-                      playerHand={playerHand}
-                      key={`card-${card.id}`}
-                      onClick={
-                        // () => handleCardClick(card, playerHand.id)
-                        () => debouncedHandleCardClick(card, playerHand.id)
-                      }
-                    />
+                    <Droppable key={`card-${card.id}`}>
+                      <Card
+                        card={card}
+                        playerId={playerId}
+                        playerHand={playerHand}
+                        key={`card-${card.id}`}
+                        onClick={
+                          // () => handleCardClick(card, playerHand.id)
+                          () => debouncedHandleCardClick(card, playerHand.id)
+                        }
+                      />
+                    </Droppable>
                   ))}
                 </div>
               </div>

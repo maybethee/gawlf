@@ -7,11 +7,12 @@ import { useState, useEffect, useRef } from "react";
 import UIOptions from "./UIOptions";
 import { Eye, Play } from "lucide-react";
 import turnSound from "/assets/your-turn.mp3";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 import CurrentScoresTable from "./CurrentScoresTable";
 import { updateUserConfig } from "../../utils/api";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import Draggable from "./Draggable";
+import Droppable from "./Droppable";
 
 function notifyTurnUntilVisible(globalVolume) {
   const originalTitle = document.title;
@@ -329,13 +330,15 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
   };
 
   const [isDragging, setIsDragging] = useState(false);
+  const [isDropped, setIsDropped] = useState(false);
 
   const handleDragStart = () => {
     setIsDragging(true);
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (event) => {
     setIsDragging(false);
+    if (event.over && event.over.id === "droppable") setIsDropped(true);
   };
 
   if (!gameId) {
@@ -603,7 +606,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
           <CurrentScoresTable />
           {/* <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2> */}
 
-          <DragOverlay>
+          <DragOverlay style={{ zIndex: "99999999" }}>
             <div
               className={setDrawnCardClass()}
               onClick={
@@ -700,6 +703,10 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
               </div>
             </div>
           </div>
+
+          <Droppable>
+            <div className="droppabletest"></div>
+          </Droppable>
           <PlayerHands playerId={playerId} />
         </div>
         {roundOver && (
