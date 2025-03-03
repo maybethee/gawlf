@@ -329,16 +329,17 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
     updateUserConfig(userId, newConfig);
   };
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [isDropped, setIsDropped] = useState(false);
+  // const [isDragging, setIsDragging] = useState(false);
+  const [activeId, setActiveId] = useState(null);
+  // const [isDropped, setIsDropped] = useState(false);
 
-  const handleDragStart = () => {
-    setIsDragging(true);
+  const handleDragStart = (event) => {
+    console.log("Drag started:", event.active.id);
+    setActiveId(event.active.id);
   };
 
   const handleDragEnd = (event) => {
-    setIsDragging(false);
-    if (event.over && event.over.id === "droppable") setIsDropped(true);
+    setActiveId(null);
   };
 
   if (!gameId) {
@@ -606,21 +607,6 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
           <CurrentScoresTable />
           {/* <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2> */}
 
-          <DragOverlay style={{ zIndex: "99999999" }}>
-            <div
-              className={setDrawnCardClass()}
-              onClick={
-                isPlayerTurn && !drawnCard ? debouncedHandleDrawCard : null
-              }
-            >
-              {drawnCard && (
-                <div className="card-content-container">
-                  <p>{displayCardContent(drawnCard)}</p>
-                </div>
-              )}
-            </div>
-          </DragOverlay>
-
           <div
             style={{ left: "51%" }}
             className={styles.draw_and_discard_piles_container}
@@ -645,7 +631,11 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
             </div>
             <div className={styles.draw_and_discard_piles}>
               <div className={styles.deck}>
-                <Draggable>
+                <Draggable id="draggable">
+                  <div className="card black revealed selected clickable"></div>
+                </Draggable>
+                {/* <Draggable id="draggable"> */}
+                <div>
                   <div
                     className={setDrawnCardClass()}
                     onClick={
@@ -660,7 +650,8 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
                       </div>
                     )}
                   </div>
-                </Draggable>
+                </div>
+                {/* </Draggable> */}
               </div>
 
               <div>
@@ -707,7 +698,46 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
           <Droppable>
             <div className="droppabletest"></div>
           </Droppable>
+
           <PlayerHands playerId={playerId} />
+
+          <DragOverlay
+          // style={{
+          //   zIndex: "99999999",
+          //   width: "80px",
+          //   height: "120px",
+          //   backgroundColor: "red",
+          // }}
+          >
+            {activeId === "draggable" && (
+              <div
+                id={activeId}
+                className="card black revealed clickable"
+                style={{
+                  width: "100px",
+                  height: "150px",
+                  backgroundColor: "blue",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                }}
+              >
+                {/* <div
+                  className={setDrawnCardClass()}
+                  onClick={
+                    isPlayerTurn && !drawnCard ? debouncedHandleDrawCard : null
+                  }
+                >
+                  {drawnCard && (
+                    <div className="card-content-container">
+                      <p>{displayCardContent(drawnCard)}</p>
+                    </div>
+                  )}
+                </div> */}
+              </div>
+            )}
+          </DragOverlay>
         </div>
         {roundOver && (
           <button
