@@ -270,7 +270,11 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
   };
 
   const setDiscardPileCardClass = (card, index) => {
-    let classes = "card hidden-history";
+    let classes = "card";
+
+    if (index !== discardPile.length - 1) {
+      classes += " hidden-history";
+    }
     if (index === discardPile.length - 1 && isPlayerTurn && !initializingGame)
       classes += " clickable";
     if (selectedDiscardPile && index === discardPile.length - 1) {
@@ -329,17 +333,19 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
     updateUserConfig(userId, newConfig);
   };
 
-  // const [isDragging, setIsDragging] = useState(false);
-  const [activeId, setActiveId] = useState(null);
-  // const [isDropped, setIsDropped] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  // const [activeId, setActiveId] = useState(null);
+  const [isDropped, setIsDropped] = useState(false);
 
-  const handleDragStart = (event) => {
-    console.log("Drag started:", event.active.id);
-    setActiveId(event.active.id);
+  const handleDragStart = () => {
+    // console.log("Drag started:", event.active.id);
+    // setActiveId(event.active.id);
+    setIsDragging(true);
   };
 
-  const handleDragEnd = (event) => {
-    setActiveId(null);
+  const handleDragEnd = () => {
+    // setActiveId(null);
+    setIsDragging(false);
   };
 
   if (!gameId) {
@@ -605,7 +611,6 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
           <TheDayThat />
 
           <CurrentScoresTable />
-          {/* <h2 className={styles.current_hole}>Hole: {currentHole} / 9</h2> */}
 
           <div
             style={{ left: "51%" }}
@@ -629,13 +634,10 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
                 </div>
               )}
             </div>
+
             <div className={styles.draw_and_discard_piles}>
-              <div className={styles.deck}>
-                <Draggable id="draggable">
-                  <div className="card black revealed selected clickable"></div>
-                </Draggable>
-                {/* <Draggable id="draggable"> */}
-                <div>
+              <Draggable>
+                <div className={styles.deck}>
                   <div
                     className={setDrawnCardClass()}
                     onClick={
@@ -651,93 +653,77 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
                     )}
                   </div>
                 </div>
-                {/* </Draggable> */}
-              </div>
+              </Draggable>
 
               <div>
-                <div className={styles.discard_pile_container}>
-                  {discardPile.map((card, index) => {
-                    return (
-                      <div
-                        className={setDiscardPileCardClass(card, index)}
-                        key={index}
-                        disabled={performAction}
-                        onClick={
-                          index === discardPile.length - 1
-                            ? debouncedHandleDiscardPileClick
-                            : null
-                        }
-                      >
-                        <div className="card-content-container">
-                          <p>
-                            {card.rank}
-                            {card.suit}
-                          </p>
-                        </div>
+                <div
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  {/* discard */}
+                  <div>
+                    {/* last discarded card" */}
+                    <div
+                      className={setDiscardPileCardClass(
+                        discardPile[discardPile.length - 1],
+                        discardPile.length - 1
+                      )}
+                      disabled={performAction}
+                      onClick={debouncedHandleDiscardPileClick}
+                    >
+                      <div className="card-content-container">
+                        <p>
+                          {discardPile[discardPile.length - 1].rank}
+                          {discardPile[discardPile.length - 1].suit}
+                        </p>
                       </div>
-                    );
-                  })}
-                  <button
-                    style={{
-                      transform: checkingHistory ? "rotate(-180deg)" : "",
-                      transition: "transform .35s",
-                    }}
-                    className={styles.history_btn}
-                    onClick={() => setCheckingHistory(!checkingHistory)}
-                  >
-                    <Play
-                      style={{ stroke: "black", fill: "#fbe9d2" }}
-                      size={36}
-                    />
-                  </button>
+                    </div>
+                  </div>
+
+                  {/* history */}
+                  <div className={styles.history_pile}>
+                    {discardPile
+                      .slice(0, -1)
+                      .reverse()
+                      .map((card, index) => {
+                        return (
+                          <div
+                            className={setDiscardPileCardClass(card, index)}
+                            key={index}
+                            disabled={performAction}
+                          >
+                            <div className="card-content-container">
+                              <p>
+                                {card.rank}
+                                {card.suit}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    <button
+                      style={{
+                        transform: checkingHistory ? "rotate(-180deg)" : "",
+                        transition: "transform .35s",
+                      }}
+                      className={styles.history_btn}
+                      onClick={() => setCheckingHistory(!checkingHistory)}
+                    >
+                      <Play
+                        style={{ stroke: "black", fill: "#fbe9d2" }}
+                        size={36}
+                      />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <Droppable>
-            <div className="droppabletest"></div>
-          </Droppable>
+          <Droppable></Droppable>
 
           <PlayerHands playerId={playerId} />
-
-          <DragOverlay
-          // style={{
-          //   zIndex: "99999999",
-          //   width: "80px",
-          //   height: "120px",
-          //   backgroundColor: "red",
-          // }}
-          >
-            {activeId === "draggable" && (
-              <div
-                id={activeId}
-                className="card black revealed clickable"
-                style={{
-                  width: "100px",
-                  height: "150px",
-                  backgroundColor: "blue",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "white",
-                }}
-              >
-                {/* <div
-                  className={setDrawnCardClass()}
-                  onClick={
-                    isPlayerTurn && !drawnCard ? debouncedHandleDrawCard : null
-                  }
-                >
-                  {drawnCard && (
-                    <div className="card-content-container">
-                      <p>{displayCardContent(drawnCard)}</p>
-                    </div>
-                  )}
-                </div> */}
-              </div>
-            )}
-          </DragOverlay>
         </div>
         {roundOver && (
           <button

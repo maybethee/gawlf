@@ -61,8 +61,8 @@
   text-align: center;
   position: absolute;
   max-width: 70%;
-  overflow-x: auto;
-  overflow-y: hidden;
+  /* overflow-x: auto;
+  overflow-y: hidden; */
   top: 53%;
   transform: translate(-50%, -50%);
   z-index: 993;
@@ -74,9 +74,16 @@
   column-gap: 0.5rem;
 }
 
+.history_pile {
+  position: absolute;
+  margin-left: 65px;
+  display: flex;
+  width: clamp(100px, 30vw, 1000px);
+  overflow-x: auto;
+}
+
 .deck {
   padding-left: 6px;
-  margin-right: 65px;
 }
 
 .discard_pile_container {

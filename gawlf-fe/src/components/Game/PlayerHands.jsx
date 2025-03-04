@@ -211,30 +211,19 @@ function PlayerHands({ playerId }) {
                       </div>
                     </button>
                   )}
-
-                  {/* {!initializingGame &&
-                    (playerHand.id ===
-                    turnOrder[
-                      (turnOrder.indexOf(currentPlayerId) + 1) %
-                        turnOrder.length
-                    ] ? (
-                      <p className={styles.next_player}>next</p>
-                    ) : null)} */}
                 </div>
                 <div className={styles.hand}>
                   {playerHand.hand.map((card) => (
-                    <Droppable key={`card-${card.id}`}>
-                      <Card
-                        card={card}
-                        playerId={playerId}
-                        playerHand={playerHand}
-                        key={`card-${card.id}`}
-                        onClick={
-                          // () => handleCardClick(card, playerHand.id)
-                          () => debouncedHandleCardClick(card, playerHand.id)
-                        }
-                      />
-                    </Droppable>
+                    <Card
+                      card={card}
+                      playerId={playerId}
+                      playerHand={playerHand}
+                      key={`card-${card.id}`}
+                      onClick={
+                        // () => handleCardClick(card, playerHand.id)
+                        () => debouncedHandleCardClick(card, playerHand.id)
+                      }
+                    />
                   ))}
                 </div>
               </div>
