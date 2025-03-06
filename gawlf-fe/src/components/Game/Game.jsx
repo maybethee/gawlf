@@ -336,6 +336,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
   const [isDragging, setIsDragging] = useState(false);
   // const [activeId, setActiveId] = useState(null);
   const [isDropped, setIsDropped] = useState(false);
+  const draggableMarkup = <Draggable>Drag me</Draggable>;
 
   const handleDragStart = () => {
     // console.log("Drag started:", event.active.id);
@@ -343,9 +344,12 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
     setIsDragging(true);
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (event) => {
+    if (event.over && event.over.id === "droppable") {
+      setIsDropped(true);
+      setIsDragging(false);
+    }
     // setActiveId(null);
-    setIsDragging(false);
   };
 
   if (!gameId) {
@@ -721,7 +725,9 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
             </div>
           </div>
 
-          <Droppable></Droppable>
+          {!isDropped ? draggableMarkup : null}
+
+          <Droppable>{isDropped ? draggableMarkup : "drop here"}</Droppable>
 
           <PlayerHands playerId={playerId} />
         </div>

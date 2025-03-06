@@ -214,6 +214,7 @@ function PlayerHands({ playerId }) {
                 </div>
                 <div className={styles.hand}>
                   {playerHand.hand.map((card) => (
+                    // <Droppable>
                     <Card
                       card={card}
                       playerId={playerId}
@@ -224,6 +225,7 @@ function PlayerHands({ playerId }) {
                         () => debouncedHandleCardClick(card, playerHand.id)
                       }
                     />
+                    // </Droppable>
                   ))}
                 </div>
               </div>
