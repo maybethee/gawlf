@@ -12,7 +12,7 @@ class Game < ApplicationRecord
   def calculate_scores(_hole)
     round_scores = []
     players.all.each do |player|
-      Rails.logger.debug("\n\ncalculate scores, working on player: #{player.inspect}")
+      # Rails.logger.debug("\n\ncalculate scores, working on player: #{player.inspect}")
 
       scoring_array = player.hand.map do |card|
         { rank: card['rank'].to_sym }
@@ -52,7 +52,7 @@ class Game < ApplicationRecord
   end
 
   def update_stats(round_scores, hole)
-    Rails.logger.debug("\n\nPassed round scores: #{round_scores}")
+    # Rails.logger.debug("\n\nPassed round scores: #{round_scores}")
 
     round_scores.each do |score_data|
       game_stat = GameStat.find_or_initialize_by(
@@ -60,12 +60,12 @@ class Game < ApplicationRecord
         user_id: score_data[:user_id]
       )
 
-      Rails.logger.debug("GameStat before update: #{game_stat.inspect}")
+      # Rails.logger.debug("GameStat before update: #{game_stat.inspect}")
 
       game_stat.round_scores ||= []
 
-      Rails.logger.debug("\n\nupdate stats, game stat: #{game_stat.inspect}")
-      Rails.logger.debug("\n\ngame stat round scores before pushing new score data: #{game_stat.round_scores}")
+      # Rails.logger.debug("\n\nupdate stats, game stat: #{game_stat.inspect}")
+      # Rails.logger.debug("\n\ngame stat round scores before pushing new score data: #{game_stat.round_scores}")
 
       # ensure score data only gets pushed once per hole
       game_stat.round_scores << score_data[:round_score] if game_stat.round_scores.length < hole
@@ -80,7 +80,7 @@ class Game < ApplicationRecord
 
   def all_round_scores
     stats = GameStat.where(game_id: id).index_by(&:user_id)
-    Rails.logger.debug("Stats retrieved: #{stats.values.map(&:inspect)}")
+    # Rails.logger.debug("Stats retrieved: #{stats.values.map(&:inspect)}")
 
     players.includes(:user).map do |player|
       stat = stats[player.user_id]
@@ -140,5 +140,20 @@ class Game < ApplicationRecord
     Rails.logger.debug("\n\n\n\nnext player index is: #{next_player_id}")
 
     Player.find(next_player_id)
+  end
+
+  def next_player_id
+    # Rails.logger.debug("game's players (ordered by turn_order): #{players.order(:turn_order).inspect}")
+    turn_order = self.turn_order
+
+    current_index = turn_order.index(current_player_id)
+
+    # Rails.logger.debug("\n\n\n\ncurrent index: #{current_index}")
+
+    next_index = (current_index + 1) % turn_order.size
+
+    # Rails.logger.debug("\n\n\n\nnext index is: #{next_index}")
+
+    turn_order[next_index]
   end
 end

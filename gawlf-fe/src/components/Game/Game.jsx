@@ -7,12 +7,9 @@ import { useState, useEffect, useRef } from "react";
 import UIOptions from "./UIOptions";
 import { Eye, Play } from "lucide-react";
 import turnSound from "/assets/your-turn.mp3";
-import { debounce, set } from "lodash";
+import { debounce } from "lodash";
 import CurrentScoresTable from "./CurrentScoresTable";
 import { updateUserConfig } from "../../utils/api";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
-import Draggable from "./Draggable";
-import Droppable from "./Droppable";
 
 function notifyTurnUntilVisible(globalVolume) {
   const originalTitle = document.title;
@@ -68,7 +65,6 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
     discardPile,
     currentPlayerId,
     currentPlayerName,
-    prevFirstPlayer,
     initializingGame,
     selectedDiscardPile,
     setSelectedDiscardPile,
@@ -106,7 +102,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
     }, 300);
   };
 
-  const debouncedHandleDrawCard = debounce(handleDrawCard, 300, {
+  const debouncedHandleDrawCard = debounce(handleDrawCard, 2000, {
     leading: true,
     trailing: false,
   });
@@ -131,7 +127,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
 
   const debouncedHandleDiscardPileClick = debounce(
     handleDiscardPileClick,
-    300,
+    2000,
     {
       leading: true,
       trailing: false,
@@ -143,7 +139,7 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
       performAction("play_audio", { audio_clip: "/assets/shuffle.mp3" });
 
       setTimeout(() => {
-        performAction("setup_hole", { prev_first_player_id: prevFirstPlayer });
+        performAction("setup_hole");
       }, 300);
     },
     3000,
@@ -331,25 +327,6 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
     setUpdatedConfig(newConfig);
 
     updateUserConfig(userId, newConfig);
-  };
-
-  const [isDragging, setIsDragging] = useState(false);
-  // const [activeId, setActiveId] = useState(null);
-  const [isDropped, setIsDropped] = useState(false);
-  const draggableMarkup = <Draggable>Drag me</Draggable>;
-
-  const handleDragStart = () => {
-    // console.log("Drag started:", event.active.id);
-    // setActiveId(event.active.id);
-    setIsDragging(true);
-  };
-
-  const handleDragEnd = (event) => {
-    if (event.over && event.over.id === "droppable") {
-      setIsDropped(true);
-      setIsDragging(false);
-    }
-    // setActiveId(null);
   };
 
   if (!gameId) {
@@ -593,155 +570,145 @@ function Game({ gameId, playerId, isLobbyHost, userId, userConfig }) {
   }
 
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className={styles.game_page}>
-        <UIOptions
-          updateBackground={updateBackgroundImage}
-          backgrounds={backgrounds}
-          backgroundUrl={backgroundUrl}
-          userId={userId}
-          userConfig={userConfig}
-          updatedConfig={updatedConfig}
-          setUpdatedConfig={setUpdatedConfig}
-        />
+    <div className={styles.game_page}>
+      <UIOptions
+        updateBackground={updateBackgroundImage}
+        backgrounds={backgrounds}
+        backgroundUrl={backgroundUrl}
+        userId={userId}
+        userConfig={userConfig}
+        updatedConfig={updatedConfig}
+        setUpdatedConfig={setUpdatedConfig}
+      />
+      <div
+        className={styles.game_container}
+        style={{
+          backgroundImage: `url(${backgroundUrl})`,
+          pointerEvents: roundOver ? "none" : "",
+          opacity: roundOver ? ".8" : "1",
+        }}
+      >
+        <TheDayThat />
+
+        <CurrentScoresTable />
+
         <div
-          className={styles.game_container}
-          style={{
-            backgroundImage: `url(${backgroundUrl})`,
-            pointerEvents: roundOver ? "none" : "",
-            opacity: roundOver ? ".8" : "1",
-          }}
+          style={{ left: "51%" }}
+          className={styles.draw_and_discard_piles_container}
         >
-          <TheDayThat />
+          <div>
+            {!roundOver && (
+              <div>
+                {!isPlayerTurn ? (
+                  <h3 className={styles.turn_message}>
+                    Waiting for {currentPlayerName}'s turn...
+                  </h3>
+                ) : (
+                  <h3
+                    style={{ backgroundColor: "#fef08a" }}
+                    className={styles.turn_message}
+                  >
+                    Your Turn
+                  </h3>
+                )}
+              </div>
+            )}
+          </div>
 
-          <CurrentScoresTable />
-
-          <div
-            style={{ left: "51%" }}
-            className={styles.draw_and_discard_piles_container}
-          >
-            <div>
-              {!roundOver && (
-                <div>
-                  {!isPlayerTurn ? (
-                    <h3 className={styles.turn_message}>
-                      Waiting for {currentPlayerName}'s turn...
-                    </h3>
-                  ) : (
-                    <h3
-                      style={{ backgroundColor: "#fef08a" }}
-                      className={styles.turn_message}
-                    >
-                      Your Turn
-                    </h3>
-                  )}
-                </div>
-              )}
+          <div className={styles.draw_and_discard_piles}>
+            <div className={styles.deck}>
+              <div
+                className={setDrawnCardClass()}
+                onClick={
+                  isPlayerTurn && !drawnCard ? debouncedHandleDrawCard : null
+                }
+              >
+                {drawnCard && (
+                  <div className="card-content-container">
+                    <p>{displayCardContent(drawnCard)}</p>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className={styles.draw_and_discard_piles}>
-              <Draggable>
-                <div className={styles.deck}>
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                }}
+              >
+                {/* discard */}
+                <div>
+                  {/* last discarded card" */}
                   <div
-                    className={setDrawnCardClass()}
-                    onClick={
-                      isPlayerTurn && !drawnCard
-                        ? debouncedHandleDrawCard
-                        : null
-                    }
-                  >
-                    {drawnCard && (
-                      <div className="card-content-container">
-                        <p>{displayCardContent(drawnCard)}</p>
-                      </div>
+                    className={setDiscardPileCardClass(
+                      discardPile[discardPile.length - 1],
+                      discardPile.length - 1
                     )}
-                  </div>
-                </div>
-              </Draggable>
-
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                  }}
-                >
-                  {/* discard */}
-                  <div>
-                    {/* last discarded card" */}
-                    <div
-                      className={setDiscardPileCardClass(
-                        discardPile[discardPile.length - 1],
-                        discardPile.length - 1
-                      )}
-                      disabled={performAction}
-                      onClick={debouncedHandleDiscardPileClick}
-                    >
-                      <div className="card-content-container">
-                        <p>
-                          {discardPile[discardPile.length - 1].rank}
-                          {discardPile[discardPile.length - 1].suit}
-                        </p>
-                      </div>
+                    disabled={performAction}
+                    onClick={debouncedHandleDiscardPileClick}
+                  >
+                    <div className="card-content-container">
+                      <p>
+                        {discardPile[discardPile.length - 1].rank}
+                        {discardPile[discardPile.length - 1].suit}
+                      </p>
                     </div>
                   </div>
+                </div>
 
-                  {/* history */}
-                  <div className={styles.history_pile}>
-                    {discardPile
-                      .slice(0, -1)
-                      .reverse()
-                      .map((card, index) => {
-                        return (
-                          <div
-                            className={setDiscardPileCardClass(card, index)}
-                            key={index}
-                            disabled={performAction}
-                          >
-                            <div className="card-content-container">
-                              <p>
-                                {card.rank}
-                                {card.suit}
-                              </p>
-                            </div>
+                {/* history */}
+                <div className={styles.history_pile}>
+                  {discardPile
+                    .slice(0, -1)
+                    .reverse()
+                    .map((card, index) => {
+                      return (
+                        <div
+                          className={setDiscardPileCardClass(card, index)}
+                          key={index}
+                          disabled={performAction}
+                        >
+                          <div className="card-content-container">
+                            <p>
+                              {card.rank}
+                              {card.suit}
+                            </p>
                           </div>
-                        );
-                      })}
-                    <button
-                      style={{
-                        transform: checkingHistory ? "rotate(-180deg)" : "",
-                        transition: "transform .35s",
-                      }}
-                      className={styles.history_btn}
-                      onClick={() => setCheckingHistory(!checkingHistory)}
-                    >
-                      <Play
-                        style={{ stroke: "black", fill: "#fbe9d2" }}
-                        size={36}
-                      />
-                    </button>
-                  </div>
+                        </div>
+                      );
+                    })}
+                  <button
+                    style={{
+                      transform: checkingHistory ? "rotate(-180deg)" : "",
+                      transition: "transform .35s",
+                    }}
+                    className={styles.history_btn}
+                    onClick={() => setCheckingHistory(!checkingHistory)}
+                  >
+                    <Play
+                      style={{ stroke: "black", fill: "#fbe9d2" }}
+                      size={36}
+                    />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-
-          {!isDropped ? draggableMarkup : null}
-
-          <Droppable>{isDropped ? draggableMarkup : "drop here"}</Droppable>
-
-          <PlayerHands playerId={playerId} />
         </div>
-        {roundOver && (
-          <button
-            style={{ pointerEvents: "auto", opacity: roundOver ? "1" : "" }}
-            className={styles.view_results_btn}
-            onClick={() => setViewingRoundResults(true)}
-          >
-            See Results
-          </button>
-        )}
+
+        <PlayerHands playerId={playerId} />
       </div>
-    </DndContext>
+      {roundOver && (
+        <button
+          style={{ pointerEvents: "auto", opacity: roundOver ? "1" : "" }}
+          className={styles.view_results_btn}
+          onClick={() => setViewingRoundResults(true)}
+        >
+          See Results
+        </button>
+      )}
+    </div>
   );
 }
 

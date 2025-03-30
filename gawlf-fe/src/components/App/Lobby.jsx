@@ -25,7 +25,6 @@ function Lobby({
 
   const [playerName, setPlayerName] = useState("");
   const [error, setError] = useState("");
-  const [activeId, setActiveId] = useState(null);
 
   useEffect(() => {
     console.log("Lobby component, user id:", userId);
@@ -63,7 +62,16 @@ function Lobby({
     setPlayerId(data.id);
   };
 
-  let isJoined = joinedPlayers?.find((player) => player.user_id === userId);
+  const debouncedHandleCreatePlayer = debounce(handleCreatePlayer, 5000, {
+    leading: true,
+    trailing: false,
+  });
+
+  const [isJoined, setIsJoined] = useState(false);
+
+  useEffect(() => {
+    setIsJoined(joinedPlayers?.find((player) => player.user_id === userId));
+  }, [joinedPlayers]);
 
   const handleSetupGame = () => {
     performAction("play_audio", { audio_clip: "/assets/shuffle.mp3" });
@@ -78,21 +86,13 @@ function Lobby({
     trailing: false,
   });
 
-  const handleDragStart = (event) => {
-    setActiveId(event.active.id);
-  };
-
-  const handleDragEnd = () => {
-    setActiveId(null);
-  };
-
   if (lobbyStatus !== "active")
     return (
       <div className={styles.lobby_content_container}>
         <div
           onClick={() => {
             setLobbyStatus(!lobbyStatus);
-            isJoined = false;
+            setIsJoined(false);
           }}
           className={styles.back_btn}
         >
@@ -112,7 +112,7 @@ function Lobby({
           {!isJoined && (
             <form
               className={styles.join_game_form}
-              onSubmit={handleCreatePlayer}
+              onSubmit={debouncedHandleCreatePlayer}
               action=""
             >
               <label className="visually-hidden" htmlFor="">

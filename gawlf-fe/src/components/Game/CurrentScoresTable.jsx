@@ -45,8 +45,8 @@ function CurrentScoresTable() {
                         </th>
 
                         {holeNumbers.map((hole) => {
-                          console.log("hole:", hole);
-                          console.log("player:", player);
+                          // console.log("hole:", hole);
+                          // console.log("player:", player);
                           return (
                             <td className={styles.compact_td} key={hole}>
                               {player.round_scores[hole - 1]}

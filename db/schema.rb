@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_27_153730) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_30_193351) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,7 +40,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_27_153730) do
     t.boolean "in_progress", default: false, null: false
     t.jsonb "turn_order", default: []
     t.integer "creator_id"
-    t.integer "previous_player_id"
   end
 
   create_table "players", force: :cascade do |t|
@@ -50,8 +49,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_27_153730) do
     t.datetime "updated_at", null: false
     t.jsonb "hand", default: [], null: false
     t.bigint "user_id"
-    t.string "last_action_name"
-    t.datetime "last_action_timestamp"
     t.index ["game_id"], name: "index_players_on_game_id"
     t.index ["user_id"], name: "index_players_on_user_id"
   end

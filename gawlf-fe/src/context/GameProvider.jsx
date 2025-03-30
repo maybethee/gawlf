@@ -9,7 +9,6 @@ export const GameProvider = ({ children }) => {
   const [gameState, setGameState] = useState(null);
   const [currentHole, setCurrentHole] = useState(null);
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
-  const [prevFirstPlayer, setPrevFirstPlayer] = useState(null);
   const [currentPlayerName, setCurrentPlayerName] = useState("");
   const [drawnCard, setDrawnCard] = useState(null);
   const [discardPile, setDiscardPile] = useState([]);
@@ -37,17 +36,16 @@ export const GameProvider = ({ children }) => {
   useEffect(() => {
     console.log("gameId changed to:", gameId);
 
-    if (gameId) {
-      if (subscriptionRef.current) {
-        console.log(
-          "Cleaning up existing subscription before creating a new one"
-        );
-        subscriptionRef.current.unsubscribe();
-        subscriptionRef.current = null;
-      }
+    if (subscriptionRef.current) {
+      console.log(
+        "Cleaning up existing subscription before creating a new one"
+      );
+
+      subscriptionRef.current.unsubscribe();
+      subscriptionRef.current = null;
     }
 
-    if (gameId && !subscriptionRef.current) {
+    if (gameId) {
       subscriptionRef.current = cable.subscriptions.create(
         { channel: "GameChannel", game_id: gameId },
         {
@@ -117,7 +115,7 @@ export const GameProvider = ({ children }) => {
   const handleCardDrawn = (data) => {
     console.log("handle card drawn called, data received:", data);
 
-    setDrawnCard(data.card);
+    setDrawnCard(data.game_state.drawn_card);
     setSelectedDiscardPile(null);
     setGameState(data.game_state);
   };
@@ -136,6 +134,8 @@ export const GameProvider = ({ children }) => {
     console.log(data);
     setGameOver(false);
     setLobbyStatus("active");
+    setRecordedTheDayThat("");
+    setIsEditing(true);
 
     if (isLobbyHost) {
       console.log("Host setting up the first hole...");
@@ -145,15 +145,9 @@ export const GameProvider = ({ children }) => {
 
   const handleHoleSetup = (data) => {
     console.log("received action in Game.jsx");
-    // setTurnOrder(data.turn_order);
 
     const hands = [];
     const allCards = [];
-
-    // console.log("data players:", data.players);
-    // const sortedPlayers = data.players.sort((a, b) => a.id - b.id);
-
-    // console.log("sorted?", sortedPlayers);
 
     data.players.forEach((player) => {
       hands.push({ id: player.id, name: player.name, hand: player.hand });
@@ -195,13 +189,11 @@ export const GameProvider = ({ children }) => {
     setPlayerHands(hands);
     setCurrentHole(data.current_hole);
     setDiscardPile(data.game_state.discard_pile);
-    setCurrentPlayerId(data.current_player_id);
-    setPrevFirstPlayer(data.current_player_id);
+    setCurrentPlayerId(data.game_state.turn_order[0]);
     setCurrentPlayerName(data.current_player_name);
     setGameState(data.game_state);
     setRoundOver(false);
     setViewingRoundResults(false);
-    // setGameOver(false);
     setInitializingGame(true);
   };
 
@@ -229,21 +221,12 @@ export const GameProvider = ({ children }) => {
 
     console.log("Updated Hand from Backend:", updatedHand);
 
-    const deduplicateHand = (hand) => {
-      const uniqueIds = new Set(hand.map((card) => card.id));
-      return Array.from(uniqueIds).map((id) =>
-        hand.find((card) => card.id === id)
-      );
-    };
-
-    console.log("Deduplicated Hand:", deduplicateHand(updatedHand));
-
     setPlayerHands((prevHands) =>
       prevHands.map((hand) =>
         hand.id === playerId
           ? {
               ...hand,
-              hand: deduplicateHand(updatedHand),
+              hand: updatedHand,
             }
           : hand
       )
@@ -265,7 +248,6 @@ export const GameProvider = ({ children }) => {
       console.log("round scores", data.curr_round_scores);
       setRoundScores(data.curr_round_scores);
       setAllRoundScores(data.all_round_scores);
-      // setRoundScores(data.curr_round_scores);
       setRoundOver(true);
     }
 
@@ -297,33 +279,15 @@ export const GameProvider = ({ children }) => {
     subscriptionRef.current?.perform(action, payload);
   };
 
-  // const performAction = (actionType, payload) => {
-  //   // Simulating the structure of your performAction
-  //   return new Promise((resolve, reject) => {
-  //     // Perform the action here
-
-  //     subscriptionRef.current?.perform(actionType, payload);
-
-  //     // Ensure resolve/reject is always called
-  //     if (actionType) {
-  //       resolve("Action completed");
-  //     } else {
-  //       reject("Action failed");
-  //     }
-  //   });
-  // };
-
   const handleCleanup = () => {
     setCurrentHole(null);
     setRoundScores([]);
     setAllRoundScores([]);
     setDiscardPile([]);
     setCurrentPlayerId(null);
-    setPrevFirstPlayer(null);
     setCurrentPlayerName(null);
     setGameState(null);
     setIsLobbyHost(false);
-    setRecordedTheDayThat("");
     setLobbyStatus("");
     setPlayerHands([]);
   };
@@ -346,7 +310,6 @@ export const GameProvider = ({ children }) => {
         playerHands,
         currentPlayerId,
         currentPlayerName,
-        prevFirstPlayer,
         initializingGame,
         setInitializingGame,
         selectedCards,
